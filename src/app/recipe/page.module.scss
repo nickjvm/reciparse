@@ -1,0 +1,20 @@
+.instructions {
+  counter-reset: step;
+
+  li {
+    position: relative;
+    display: grid;
+    gap: 16px;
+    grid-auto-flow: column;
+  }
+
+  li:before {
+    counter-increment: step; /* Increment the value of section counter by 1 */
+    content: counter(step);
+    font-size: 1.25rem;
+    line-height: 1.5rem;
+    font-weight: bold;
+    text-align: right;
+    padding-top: 2px;
+  }
+}

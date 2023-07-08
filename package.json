@@ -9,14 +9,27 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.15",
+    "@heroicons/react": "^2.0.18",
+    "@tailwindcss/forms": "^0.5.3",
     "@types/node": "20.3.2",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
+    "classnames": "^2.3.2",
     "eslint": "8.43.0",
     "eslint-config-next": "13.4.7",
+    "html-entities": "^2.4.0",
     "next": "13.4.7",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "sass": "^1.63.6",
+    "tinyduration": "^3.3.0",
     "typescript": "5.1.6"
+  },
+  "devDependencies": {
+    "@next/eslint-plugin-next": "^13.4.9",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.24",
+    "tailwindcss": "^3.3.2"
   }
 }

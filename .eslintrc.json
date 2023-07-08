@@ -1,3 +1,7 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": ["eslint:recommended", "next"],
+  "rules": {
+    "no-undef": "off",
+    "indent": ["error", 2, { "SwitchCase": 1 }]
+  }
 }
