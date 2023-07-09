@@ -10,6 +10,7 @@ interface Context {
 
 interface Props {
   children: ReactNode
+  user: User | null
 }
 
 const AuthContext = createContext<Context>({
@@ -17,10 +18,11 @@ const AuthContext = createContext<Context>({
   userLoading: true,
 })
 
-export function AuthContextProvider({ children }: Props) {
+export function AuthContextProvider({ children, user: serverUser}: Props) {
   const supabase = createClientComponentClient<Database>()
-  const [user, setUser] = useState<User|null>(null)
-  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState<User|null>(serverUser)
+  const [loading, setLoading] = useState(false)
+
   useEffect(() => {
     supabase.auth.onAuthStateChange(async (event, session) => {
       try {
