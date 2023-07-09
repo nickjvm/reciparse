@@ -1,6 +1,6 @@
 export interface Recipe {
   name: string
-  image: string[] | RecipeImage[]
+  image: string
   recipeIngredient: string[]
   recipeInstructions: RecipeInstruction[]
   notes?: string
@@ -12,9 +12,16 @@ export interface Recipe {
     source: string
     raw_source: string
     saved?: boolean
+    id: number
   }
 }
 
+interface SupaRecipe {
+  id: number,
+  name: string,
+  url: string,
+  image_url: string,
+}
 export interface RecipeImage {
   url: string
   '@type': 'ImageObject'

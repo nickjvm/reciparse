@@ -8,6 +8,7 @@ async function request(supabase: SupabaseClient, resource: string, options: Requ
   let finalResource = resource
   headers = new Headers(headers)
 
+  headers.append('Content-Type', 'application/json')
   if (session) {
     headers.append('authorization', `Bearer ${session.access_token}`)
   }
@@ -26,9 +27,12 @@ export async function clientRequest(url: string, options?: RequestInit) {
 
 }
 
-export async function serverRequest(url: string, options?: RequestInit) {
+export async function serverRequest(url: string, options: RequestInit = {}) {
   const { cookies } = await import('next/headers')
   const supabase = createServerComponentClient<Database>({ cookies })
 
+  options.next = {
+    revalidate: 1
+  }
   return request(supabase, url, options)
 }

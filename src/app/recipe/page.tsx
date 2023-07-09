@@ -1,15 +1,14 @@
 import { Fragment } from 'react'
 import Image from 'next/image'
-import styles from './page.module.scss'
 import Link from 'next/link'
 import { decode } from 'html-entities';
 import IngredientsList from '@/components/Ingredients';
-import { HeartIcon, Squares2X2Icon } from '@heroicons/react/24/outline';
-import { HeartIcon as HeartIconFilled } from '@heroicons/react/24/solid';
+import { Squares2X2Icon } from '@heroicons/react/24/outline';
 import Time from '@/components/Time';
-import { HowToSection, Recipe, RecipeInstruction } from '@/types';
+import { HowToSection, Recipe, RecipeInstruction, SupaRecipe } from '@/types';
 import { serverRequest } from '@/lib/api';
 import SaveRecipe from '@/components/SaveRecipe';
+import withHeader from '@/components/withHeader';
 
 
 interface Props {
@@ -20,8 +19,9 @@ interface Props {
   }
 }
 
-export default async function Page({ searchParams }: Props) {
+export async function Page({ searchParams }: Props) {
   const recipe: Recipe = await serverRequest(`/api/recipes/parse?url=${searchParams.url}&ref=${searchParams.ref || 'direct'}`, { method: 'POST' })
+  const favorites: SupaRecipe[] = await serverRequest('/api/recipes/favorites')
 
   const instructions = recipe.recipeInstructions.reduce((acc: HowToSection[], instruction: RecipeInstruction) => {
     if (typeof instruction === 'string') {
@@ -69,10 +69,9 @@ export default async function Page({ searchParams }: Props) {
     return (
       <Fragment key={i}>
         {section.name && <h2 className="text-lg font-bold mb-2">{section.name}</h2>}
-        <ol className={styles.instructions}>
+        <ol className="[counter-reset: step]">
           {section.itemListElement.map((step, i) => (
-            <li key={i} className="mb-2 before:text-brand-alt grid grid-cols-12">
-
+            <li key={i} className="mb-2 before:text-brand-alt grid grid-cols-12 before:content-[counter(step)] before:font-bold before:text-xl" style={{ counterIncrement: 'step' }}>
               <span className="flex-grow col-span-11">
                 {step.name && step.name !== step.text && <span className="font-bold">{step.name}: </span>}
                 {decode(step.text || step as unknown as string)}
@@ -84,19 +83,13 @@ export default async function Page({ searchParams }: Props) {
     )
   }
 
-  let image
-  if (typeof recipe.image[0] === 'string') {
-    image = recipe.image[0]
-  } else {
-    image = recipe.image[0].url
-  }
   return (
-    <main className="bg-stone-100 print:bg-white md:min-h-screen print:min-h-0 md:p-4 print:p-0">
+    <main className="print:bg-white md:min-h-screen print:min-h-0 md:p-4 print:p-0">
       <div className="m-auto max-w-3xl p-4 md:p-8 print:p-0 md:rounded-md ring-brand-alt md:ring-2 print:ring-0 print:shadow-none shadow-lg bg-white">
         <div>
           <header className="grid auto-rows-auto md:grid-cols-12 print:grid-cols-12 gap-4 mb-4">
             <div className="relative w-full md:col-span-3 print:col-span-3">
-              <Image className="w-full rounded aspect-square" style={{ objectFit: 'cover' }} alt={recipe.name} width={150} height={150} src={image} />
+              <Image className="w-full rounded aspect-square" style={{ objectFit: 'cover' }} alt={recipe.name} width={150} height={150} src={recipe.image} />
             </div>
             <div className="md:col-span-9 print:col-span-8">
               <div className="mb-4">
@@ -106,11 +99,11 @@ export default async function Page({ searchParams }: Props) {
               <div className="flex gap-4">
                 <span className="inline-flex ring-2 ring-brand-alt focus-visible:outline-0 gap-1 items-center px-2 py-1 rounded">
                   <Squares2X2Icon className="w-5"/>
-                  <h4>{parseYield(recipe.recipeYield)}</h4>
+                  <h4 className="max-w-[200px] truncate" title={parseYield(recipe.recipeYield)}>{parseYield(recipe.recipeYield)}</h4>
                 </span>
 
                 <Time prepTime={recipe.prepTime} cookTime={recipe.cookTime} totalTime={recipe.totalTime} />
-                <SaveRecipe id="123" saved={!!recipe.meta.saved} />
+                <SaveRecipe id={recipe.meta.id} saved={!!favorites.find(f => f.id === recipe.meta.id)} />
               </div>
             </div>
           </header>
@@ -121,14 +114,10 @@ export default async function Page({ searchParams }: Props) {
               {instructions.map(renderInstructionSection)}
             </div>
           </div>
-          {recipe.notes && (
-            <div className={styles.notes}>
-              <h3>Notes</h3>
-              <p>{recipe.notes}</p>
-            </div>
-          )}
         </div>
       </div>
     </main>
   )
 }
+
+export default withHeader(Page, { withSearch: true, className: "bg-stone-100" })

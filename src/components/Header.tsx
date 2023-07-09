@@ -25,7 +25,7 @@ export default function Header({
         <div className="flex md:flex-1 col-span-2">
           <Link href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Your Company</span>
-            <Image width="100" height="100" className="h-8 max-w-[125px] w-auto" src="logo.svg" alt="" />
+            <Image width="100" height="100" className="h-8 max-w-[125px] w-auto" src="/logo.svg" alt="" />
           </Link>
         </div>
         <div className="flex md:gap-x-12 col-span-7 col-start-4 print:hidden">
