@@ -28,6 +28,7 @@ export default function QuickSearch({ size = 'md', inputClassName, autoFocus }: 
     if (inputRef.current) {
       try {
         const recipeUrl = new URL(url)
+        router.refresh()
         router.push(`/recipe?url=${recipeUrl.toString()}`)
         inputRef.current.blur()
       } catch (err) {

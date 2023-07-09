@@ -1,5 +1,5 @@
 'use client'
-import { MouseEvent, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import { HeartIcon } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconFilled } from "@heroicons/react/24/solid";
 import { clientRequest } from "@/lib/api";
@@ -14,6 +14,10 @@ export default function SaveRecipe({ id, saved: _saved }: Props) {
   const { user } = useAuthContext()
   const router = useRouter()
   const [saved, setSaved] = useState<boolean>(_saved)
+
+  useEffect(() => {
+    setSaved(_saved)
+  }, [_saved])
   const handleClick = async (e: MouseEvent) => {
     e.preventDefault()
     try {

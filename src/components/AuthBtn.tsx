@@ -9,25 +9,33 @@ import { Popover } from '@headlessui/react'
 import { HeartIcon, UserIcon, ArrowLeftOnRectangleIcon} from '@heroicons/react/20/solid'
 import { useRouter } from 'next/navigation'
 import { AuthAction } from '@/types'
+import { AuthError } from '@supabase/supabase-js'
 
 function AuthBtn() {
   const router = useRouter()
   const supabase = createClientComponentClient()
-  const { user, userLoading } = useAuthContext()
+  const { user } = useAuthContext()
   const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [action, setAction] = useState<AuthAction>('signin')
+  const [error, setError] = useState<AuthError|null>()
 
   const handleSubmit = async (values: { email: string, password: string, action: AuthAction}, e: FormEvent) => {
     e.preventDefault()
+    setLoading(true)
     if (values.action === 'signin') {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email: values.email,
         password: values.password,
       })
-      console.log(values.action, { data, error })
-      if (!error) {
+
+      setLoading(false)
+      if (error) {
+        setError(error)
+      } else {
         setOpen(false)
         router.refresh()
+        // @TODO: notification toaster?
       }
     } else if (values.action === 'signup') {
       const { data, error } = await supabase.auth.signUp({
@@ -37,19 +45,29 @@ function AuthBtn() {
           emailRedirectTo: `${location.origin}/auth/callback`,
         }
       })
-      console.log(values.action, { data, error })
-      if (!error) {
-        setOpen(false)
-        router.refresh()
+      setLoading(false)
+      if (error) {
+        setError(error)
+      } else {
+        if (data.user?.identities?.length) {
+          setOpen(false)
+          router.refresh()
+        } else {
+          setError(new AuthError('Account already exists for this email address.', 401))
+        }
+        // @TODO: notification toaster?
       }
     } else if (values.action === 'reset') {
-      const { data, error } = await supabase.auth.resetPasswordForEmail(values.email, {
+      const { error } = await supabase.auth.resetPasswordForEmail(values.email, {
         redirectTo: `${location.origin}/auth/callback?dest=/update-password`,
       })
-      setAction('reset_sent')
-      console.log(values.action, { data, error })
+      setLoading(false)
+      if (error) {
+        setError(error)
+      } else {
+        setAction('reset_sent')
+      }
     }
-
   }
 
   const handleSignOut = async () => {
@@ -57,16 +75,28 @@ function AuthBtn() {
     router.push('/')
   }
 
-  if (userLoading) {
-    return null
+  const handleChange = () => {
+    setError(null)
   }
 
   if (!user) {
     return (
       <>
         <button className="text-sm font-semibold leading-6 text-gray-900" onClick={() => setOpen(true)}>Log In</button>
-        <Modal open={open} onClose={() => setOpen(false)}>
-          <SignIn action={action} onSubmit={handleSubmit} />
+        <Modal open={open} onClose={() => {
+          setOpen(false)
+          setAction('signin')
+          setError(null)
+          setLoading(false)
+        }}>
+          <SignIn
+            action={action}
+            disabled={loading}
+            onSubmit={handleSubmit}
+            error={error}
+            onChange={handleChange}
+            onActionChange={() => setError(null)}
+          />
         </Modal>
       </>
     )
