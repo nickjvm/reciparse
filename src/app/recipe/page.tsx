@@ -9,6 +9,7 @@ import { HowToSection, Recipe, RecipeInstruction, SupaRecipe } from '@/types';
 import { serverRequest } from '@/lib/api';
 import SaveRecipe from '@/components/SaveRecipe';
 import withHeader from '@/components/withHeader';
+import RecipeError from '@/components/RecipeError';
 
 
 interface Props {
@@ -22,6 +23,14 @@ interface Props {
 export async function Page({ searchParams }: Props) {
   const recipe: Recipe = await serverRequest(`/api/recipes/parse?url=${searchParams.url}&ref=${searchParams.ref || 'direct'}`, { method: 'POST' })
   const favorites: SupaRecipe[] = await serverRequest('/api/recipes/favorites')
+
+  if (recipe.error) {
+    return <RecipeError
+      actionUrl={searchParams.url}
+      errorText="We tried our best, but couldn't find a recipe to parse at the URL you entered."
+      actionText="Take me to the source!"
+    />
+  }
 
   const instructions = recipe.recipeInstructions.reduce((acc: HowToSection[], instruction: RecipeInstruction) => {
     if (typeof instruction === 'string') {

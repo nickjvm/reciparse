@@ -15,7 +15,7 @@ function AuthBtn() {
   const supabase = createClientComponentClient()
   const { user, userLoading } = useAuthContext()
   const [open, setOpen] = useState(false)
-  const [action, setAction] = useState('signin')
+  const [action, setAction] = useState<AuthAction>('signin')
 
   const handleSubmit = async (values: { email: string, password: string, action: AuthAction}, e: FormEvent) => {
     e.preventDefault()

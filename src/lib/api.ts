@@ -18,7 +18,13 @@ async function request(supabase: SupabaseClient, resource: string, options: Requ
     finalResource = `${process.env.NEXT_PUBLIC_SITE_URL}${resource}`
   }
 
-  return fetch(finalResource, options).then(r => r.json()).catch(e => ({ message: e.message }))
+  return fetch(finalResource, options).then(r => {
+    if (r.ok) {
+      return r.json()
+    } else {
+      throw r.json()
+    }
+  }).catch(e => ({ error: true, message: e.message }))
 }
 export async function clientRequest(url: string, options?: RequestInit) {
   const supabase = createClientComponentClient<Database>()

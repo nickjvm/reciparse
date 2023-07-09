@@ -1,5 +1,5 @@
 'use client'
-import { FormEvent, useRef } from 'react'
+import { ChangeEvent, FormEvent, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import classNames from 'classnames';
@@ -11,31 +11,34 @@ interface Props {
 }
 
 export default function QuickSearch({ size = 'md', inputClassName, autoFocus }: Props) {
+  const [url, setUrl] = useState('')
+  const [error, setError] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter()
+
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setError(false)
+    setUrl(e.target.value)
+  }
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault()
 
-
+    setError(false)
     if (inputRef.current) {
-      inputRef.current.classList.remove('ring-red-300', 'focus:ring-red-600')
-      inputRef.current.classList.add('ring-gray-300', 'focus:ring-blue-600')
       try {
-        const url = new URL(inputRef.current?.value)
-        router.push(`/recipe?url=${url.toString()}&ref=qs`)
-        inputRef.current.value = ''
+        const recipeUrl = new URL(url)
+        router.push(`/recipe?url=${recipeUrl.toString()}`)
         inputRef.current.blur()
       } catch (err) {
-        inputRef.current.classList.remove('ring-gray-300', 'focus:ring-blue-600')
-        inputRef.current.classList.add('ring-red-300', 'focus:ring-red-600')
+        setError(true)
         inputRef.current.focus()
       }
     }
   }
 
   return (
-    <div className="w-full ">
+    <div className="w-full">
       <label htmlFor="search" className="sr-only">
         Quick search
       </label>
@@ -48,16 +51,23 @@ export default function QuickSearch({ size = 'md', inputClassName, autoFocus }: 
             id="search"
             placeholder="Paste a recipe URL"
             autoFocus={!!autoFocus}
+            required
+            value={url}
+            onChange={onChange}
             className={classNames(
-              "block transition w-full rounded-md border-0 py-1.5 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-brand-alt",
+              error && 'ring-red-300 focus:ring-red-600',
+              !error && 'ring-gray-300 focus:ring-brand-alt',
+              'block transition w-full rounded-md border-0 py-1.5 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-inset',
               `sm:text-${size}`,
               inputClassName, {
                 'py-3 sm:leading-8 sm:text-lg': size === 'lg',
               })}
           />
           <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
-            <button type="submit" className="text-brand-alt relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-1 py-2 text-sm font-semibold">
+            <button type="submit" className="relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-1 py-2 text-sm font-semibold">
               <ArrowRightIcon className={classNames({
+                'text-red-500': error,
+                'text-brand-alt': !error,
                 'w-4': size === 'sm',
                 'w-5': size === 'md',
                 'w-8': size === 'lg',

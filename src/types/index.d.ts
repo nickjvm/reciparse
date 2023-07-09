@@ -1,4 +1,6 @@
 export interface Recipe {
+  error?: boolean
+  message?: string
   name: string
   image: string
   recipeIngredient: string[]
