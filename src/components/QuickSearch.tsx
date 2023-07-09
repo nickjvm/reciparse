@@ -23,7 +23,7 @@ export default function QuickSearch({ size = 'md', inputClassName, autoFocus }: 
       inputRef.current.classList.add('ring-gray-300', 'focus:ring-blue-600')
       try {
         const url = new URL(inputRef.current?.value)
-        router.push(`/recipe?url=${url.toString()}`)
+        router.push(`/recipe?url=${url.toString()}&ref=qs`)
         inputRef.current.value = ''
         inputRef.current.blur()
       } catch (err) {

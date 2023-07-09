@@ -1,8 +1,6 @@
 export interface Recipe {
-  id: string
   name: string
   image: string[] | RecipeImage[]
-  slug: string
   recipeIngredient: string[]
   recipeInstructions: RecipeInstruction[]
   notes?: string
@@ -13,6 +11,7 @@ export interface Recipe {
   meta: {
     source: string
     raw_source: string
+    saved?: boolean
   }
 }
 

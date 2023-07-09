@@ -1,5 +1,6 @@
 import Header from "@/components/Header"
 import QuickSearch from "@/components/QuickSearch"
+import request, { serverRequest } from "@/lib/api"
 import classNames from "classnames"
 import Image from "next/image"
 import Link from "next/link"
@@ -11,7 +12,8 @@ interface RecentRecipe {
   image_url: string,
 }
 export default async function Page() {
-  const recent: RecentRecipe[] = await fetch(`http://localhost:8080/recipes/recent`).then(r => r.json())
+  const recent: RecentRecipe[] = await serverRequest('/api/recipes/recent')
+
   return (
     <div className="flex flex-col h-screen">
       <Header withBorder withSearch={false} />

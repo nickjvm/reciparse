@@ -4,20 +4,24 @@ import styles from './page.module.scss'
 import Link from 'next/link'
 import { decode } from 'html-entities';
 import IngredientsList from '@/components/Ingredients';
-import { Squares2X2Icon } from '@heroicons/react/24/outline';
+import { HeartIcon, Squares2X2Icon } from '@heroicons/react/24/outline';
+import { HeartIcon as HeartIconFilled } from '@heroicons/react/24/solid';
 import Time from '@/components/Time';
 import { HowToSection, Recipe, RecipeInstruction } from '@/types';
+import { serverRequest } from '@/lib/api';
+import SaveRecipe from '@/components/SaveRecipe';
 
 
 interface Props {
   params: { slug: string };
   searchParams: {
     url: string | undefined
+    ref?: string
   }
 }
 
 export default async function Page({ searchParams }: Props) {
-  const recipe: Recipe = await fetch(`http://localhost:8080/recipes/parse?url=${searchParams.url}`, { method: 'POST' }).then(r => r.json())
+  const recipe: Recipe = await serverRequest(`/api/recipes/parse?url=${searchParams.url}&ref=${searchParams.ref || 'direct'}`, { method: 'POST' })
 
   const instructions = recipe.recipeInstructions.reduce((acc: HowToSection[], instruction: RecipeInstruction) => {
     if (typeof instruction === 'string') {
@@ -91,7 +95,9 @@ export default async function Page({ searchParams }: Props) {
       <div className="m-auto max-w-3xl p-4 md:p-8 print:p-0 md:rounded-md ring-brand-alt md:ring-2 print:ring-0 print:shadow-none shadow-lg bg-white">
         <div>
           <header className="grid auto-rows-auto md:grid-cols-12 print:grid-cols-12 gap-4 mb-4">
-            <Image className="w-full md:col-span-3 print:col-span-3 rounded aspect-square" style={{ objectFit: 'cover' }} alt={recipe.name} width={150} height={150} src={image} />
+            <div className="relative w-full md:col-span-3 print:col-span-3">
+              <Image className="w-full rounded aspect-square" style={{ objectFit: 'cover' }} alt={recipe.name} width={150} height={150} src={image} />
+            </div>
             <div className="md:col-span-9 print:col-span-8">
               <div className="mb-4">
                 <h2 className="font-display text-brand-alt text-3xl font-bold">{recipe.name}</h2>
@@ -104,6 +110,7 @@ export default async function Page({ searchParams }: Props) {
                 </span>
 
                 <Time prepTime={recipe.prepTime} cookTime={recipe.cookTime} totalTime={recipe.totalTime} />
+                <SaveRecipe id="123" saved={!!recipe.meta.saved} />
               </div>
             </div>
           </header>
