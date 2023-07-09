@@ -2,8 +2,15 @@
 import { FormEvent, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
+import classNames from 'classnames';
 
-export default function QuickSearch() {
+interface Props {
+  size?: 'sm'|'md'|'lg'
+  inputClassName?: string
+  autoFocus?: boolean
+}
+
+export default function QuickSearch({ size = 'md', inputClassName, autoFocus }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter()
 
@@ -28,7 +35,7 @@ export default function QuickSearch() {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full ">
       <label htmlFor="search" className="sr-only">
         Quick search
       </label>
@@ -40,11 +47,21 @@ export default function QuickSearch() {
             name="search"
             id="search"
             placeholder="Paste a recipe URL"
-            className="block w-full rounded-md border-0 py-1.5 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+            autoFocus={!!autoFocus}
+            className={classNames(
+              "block transition w-full rounded-md border-0 py-1.5 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-brand-alt",
+              `sm:text-${size}`,
+              inputClassName, {
+                'py-3 sm:leading-8 sm:text-lg': size === 'lg',
+              })}
           />
           <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
             <button type="submit" className="text-brand-alt relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-1 py-2 text-sm font-semibold">
-              <ArrowRightIcon className="w-5"/>
+              <ArrowRightIcon className={classNames({
+                'w-4': size === 'sm',
+                'w-5': size === 'md',
+                'w-8': size === 'lg',
+              })}/>
             </button>
           </div>
         </form>

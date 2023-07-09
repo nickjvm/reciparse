@@ -1,9 +1,21 @@
 
-import { Open_Sans } from 'next/font/google'
+import { Open_Sans, Yeseva_One } from 'next/font/google'
+import classNames from 'classnames'
 
-const openSans = Open_Sans({ subsets: ['latin'] })
+import { AuthContextProvider } from '@/context/AuthContext'
 
 import './globals.css'
+
+const openSans = Open_Sans({
+  subsets: ['latin'],
+  variable: '--font-opensans',
+})
+const yesevaOne = Yeseva_One({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-yesevaone',
+})
+
 
 export const metadata = {
   title: 'Create Next App',
@@ -16,8 +28,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={openSans.className}>
-      <body>{children}</body>
+    <html lang="en" className={classNames(openSans.className, openSans.variable, yesevaOne.variable)}>
+      <body>
+        <AuthContextProvider>
+          {children}
+        </AuthContextProvider>
+      </body>
     </html>
   )
 }

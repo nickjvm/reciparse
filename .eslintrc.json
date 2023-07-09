@@ -1,7 +1,12 @@
 {
-  "extends": ["eslint:recommended", "next"],
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "root": true,
   "rules": {
     "no-undef": "off",
-    "indent": ["error", 2, { "SwitchCase": 1 }]
+    "no-unused-vars": "off",
+    "indent": ["error", 2, { "SwitchCase": 1 }],
+    "@typescript-eslint/no-unused-vars": "error"
   }
 }

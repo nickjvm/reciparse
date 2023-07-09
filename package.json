@@ -11,25 +11,31 @@
   "dependencies": {
     "@headlessui/react": "^1.7.15",
     "@heroicons/react": "^2.0.18",
+    "@supabase/auth-helpers-nextjs": "^0.7.2",
+    "@supabase/supabase-js": "^2.26.0",
     "@tailwindcss/forms": "^0.5.3",
     "@types/node": "20.3.2",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
     "classnames": "^2.3.2",
-    "eslint": "8.43.0",
     "eslint-config-next": "13.4.7",
     "html-entities": "^2.4.0",
     "next": "13.4.7",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "sass": "^1.63.6",
-    "tinyduration": "^3.3.0",
-    "typescript": "5.1.6"
+    "tinyduration": "^3.3.0"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^13.4.9",
+    "@typescript-eslint/eslint-plugin": "^5.61.0",
+    "@typescript-eslint/parser": "^5.61.0",
     "autoprefixer": "^10.4.14",
+    "encoding": "^0.1.13",
+    "eslint": "^8.44.0",
     "postcss": "^8.4.24",
-    "tailwindcss": "^3.3.2"
+    "supabase": "^1.75.3",
+    "tailwindcss": "^3.3.2",
+    "typescript": "^5.1.6"
   }
 }

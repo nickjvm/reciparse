@@ -5,22 +5,32 @@ import { Dialog } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import Image from 'next/image'
 import QuickSearch from './QuickSearch'
+import classnames from 'classnames'
+import Link from 'next/link'
+import AuthBtn from './AuthBtn'
 
-export default function Header() {
+interface Props {
+  withSearch?: boolean
+  withBorder?: boolean
+}
+export default function Header({
+  withSearch = true,
+  withBorder
+}: Props) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
-    <header className="relative isolate z-10 bg-white">
+    <header className={classnames('relative isolate bg-white', withBorder && 'border-b-slate-100 shadow-sm border-b')}>
       <nav className="mx-auto grid grid-cols-12 max-w-5xl items-center justify-between p-4 print:px-0 md:px-6 gap-2" aria-label="Global">
         <div className="flex md:flex-1 col-span-2">
-          <a href="#" className="-m-1.5 p-1.5">
+          <Link href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Your Company</span>
             <Image width="100" height="100" className="h-8 max-w-[125px] w-auto" src="logo.svg" alt="" />
-          </a>
+          </Link>
         </div>
         <div className="flex md:gap-x-12 col-span-7 col-start-4 print:hidden">
           <div className="hidden md:block w-full">
-            <QuickSearch />
+            {withSearch && <QuickSearch />}
           </div>
         </div>
         <div className="flex md:hidden col-span-2 justify-end print:hidden">
@@ -34,9 +44,7 @@ export default function Header() {
           </button>
         </div>
         <div className="hidden md:flex md:flex-1 md:justify-end col-span-2 print:hidden">
-          <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
-            Log in
-          </a>
+          <AuthBtn />
         </div>
       </nav>
       <Dialog as="div" className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>

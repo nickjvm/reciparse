@@ -23,7 +23,7 @@ export default function Time(props: Props) {
       <Popover className="relative">
         {({ open }) => (
           <>
-            <Popover.Button className={classnames('inline-flex ring-2 ring-brand focus-visible:outline-0 gap-1 items-center px-2 py-1 rounded', { 'bg-slate-100': open })}>
+            <Popover.Button className={classnames('inline-flex ring-2 ring-brand-alt focus-visible:outline-0 gap-1 items-center px-2 py-1 rounded', { 'bg-slate-100': open })}>
               <ClockIcon className="w-5"/>
               {totalTime} minutes
             </Popover.Button>
@@ -38,7 +38,7 @@ export default function Time(props: Props) {
     )
   } else {
     return (
-      <span className="inline-flex ring-2 ring-brand focus-visible:outline-0 gap-1 items-center px-2 py-1 rounded">
+      <span className="inline-flex ring-2 ring-brand-alt focus-visible:outline-0 gap-1 items-center px-2 py-1 rounded">
         <ClockIcon className="w-5"/>
         {totalTime} minutes
       </span>

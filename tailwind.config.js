@@ -5,6 +5,10 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['var(--font-opensans)'],
+        display: ['var(--font-yesevaone)'],
+      },
       screens: {
         'print': {'raw': 'print'},
       },

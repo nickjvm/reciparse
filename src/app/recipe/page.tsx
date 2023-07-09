@@ -19,26 +19,25 @@ interface Props {
 export default async function Page({ searchParams }: Props) {
   const recipe: Recipe = await fetch(`http://localhost:8080/recipes/parse?url=${searchParams.url}`, { method: 'POST' }).then(r => r.json())
 
-  const instructions = recipe.recipeInstructions
-    .reduce((acc: HowToSection[], instruction: RecipeInstruction) => {
-      if (typeof instruction === 'string') {
-        acc[0].itemListElement.push({
-          '@type': 'HowToStep',
-          text: instruction
-        })
-      } else {
-        if (instruction['@type'] === 'HowToStep') {
-          acc[0].itemListElement.push(instruction)
-        } else if (instruction['@type'] === 'HowToSection') {
-          acc.push(instruction)
-        }
+  const instructions = recipe.recipeInstructions.reduce((acc: HowToSection[], instruction: RecipeInstruction) => {
+    if (typeof instruction === 'string') {
+      acc[0].itemListElement.push({
+        '@type': 'HowToStep',
+        text: instruction
+      })
+    } else {
+      if (instruction['@type'] === 'HowToStep') {
+        acc[0].itemListElement.push(instruction)
+      } else if (instruction['@type'] === 'HowToSection') {
+        acc.push(instruction)
       }
-      return acc
-    }, [{
-      name: '',
-      '@type': 'HowToSection',
-      itemListElement: []
-    }])
+    }
+    return acc
+  }, [{
+    name: '',
+    '@type': 'HowToSection',
+    itemListElement: []
+  }])
     .flat()
 
   const parseYield = (recipeYield: string | string[]): string => {
@@ -68,7 +67,7 @@ export default async function Page({ searchParams }: Props) {
         {section.name && <h2 className="text-lg font-bold mb-2">{section.name}</h2>}
         <ol className={styles.instructions}>
           {section.itemListElement.map((step, i) => (
-            <li key={i} className="mb-2 before:text-brand grid grid-cols-12">
+            <li key={i} className="mb-2 before:text-brand-alt grid grid-cols-12">
 
               <span className="flex-grow col-span-11">
                 {step.name && step.name !== step.text && <span className="font-bold">{step.name}: </span>}
@@ -89,17 +88,17 @@ export default async function Page({ searchParams }: Props) {
   }
   return (
     <main className="bg-stone-100 print:bg-white md:min-h-screen print:min-h-0 md:p-4 print:p-0">
-      <div className="m-auto max-w-3xl p-4 md:p-8 print:p-0 md:rounded-md ring-brand md:ring-2 print:ring-0 print:shadow-none shadow-lg bg-white">
+      <div className="m-auto max-w-3xl p-4 md:p-8 print:p-0 md:rounded-md ring-brand-alt md:ring-2 print:ring-0 print:shadow-none shadow-lg bg-white">
         <div>
           <header className="grid auto-rows-auto md:grid-cols-12 print:grid-cols-12 gap-4 mb-4">
             <Image className="w-full md:col-span-3 print:col-span-3 rounded aspect-square" style={{ objectFit: 'cover' }} alt={recipe.name} width={150} height={150} src={image} />
             <div className="md:col-span-9 print:col-span-8">
               <div className="mb-4">
-                <h2 className="text-3xl font-bold leading-none">{recipe.name}</h2>
+                <h2 className="font-display text-brand-alt text-3xl font-bold">{recipe.name}</h2>
                 <p className="text-slate-500 text-sm">from <Link target="_blank" href={recipe.meta.raw_source}>{recipe.meta.source}</Link></p>
               </div>
               <div className="flex gap-4">
-                <span className="inline-flex ring-2 ring-brand focus-visible:outline-0 gap-1 items-center px-2 py-1 rounded">
+                <span className="inline-flex ring-2 ring-brand-alt focus-visible:outline-0 gap-1 items-center px-2 py-1 rounded">
                   <Squares2X2Icon className="w-5"/>
                   <h4>{parseYield(recipe.recipeYield)}</h4>
                 </span>
