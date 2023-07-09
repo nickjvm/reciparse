@@ -22,13 +22,11 @@ export function AuthContextProvider({ children }: Props) {
   const [user, setUser] = useState<User|null>(null)
   const [loading, setLoading] = useState(true)
   useEffect(() => {
-    supabase.auth.onAuthStateChange(async (event) => {
+    supabase.auth.onAuthStateChange(async (event, session) => {
       try {
         if (event === 'SIGNED_OUT') {
           setUser(null)
         } else {
-          const { data: { session }, error } = await supabase.auth.getSession()
-
           if (session) {
             const { data: { user }, error } = await supabase.auth.getUser()
             if (user) {
@@ -36,8 +34,6 @@ export function AuthContextProvider({ children }: Props) {
             } else if (error) {
               throw error
             }
-          } else if (error) {
-            throw error
           }
         }
       } catch (e) {

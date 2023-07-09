@@ -8,22 +8,48 @@ import { useAuthContext } from '@/context/AuthContext'
 import { Popover } from '@headlessui/react'
 import { HeartIcon, UserIcon, ArrowLeftOnRectangleIcon} from '@heroicons/react/20/solid'
 import { useRouter } from 'next/navigation'
+import { AuthAction } from '@/types'
 
 function AuthBtn() {
   const router = useRouter()
   const supabase = createClientComponentClient()
   const { user, userLoading } = useAuthContext()
   const [open, setOpen] = useState(false)
+  const [action, setAction] = useState('signin')
 
-  const handleSubmit = async (values: { email: string, password: string}, e: FormEvent) => {
+  const handleSubmit = async (values: { email: string, password: string, action: AuthAction}, e: FormEvent) => {
     e.preventDefault()
+    if (values.action === 'signin') {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: values.email,
+        password: values.password,
+      })
+      console.log(values.action, { data, error })
+      if (!error) {
+        setOpen(false)
+        router.refresh()
+      }
+    } else if (values.action === 'signup') {
+      const { data, error } = await supabase.auth.signUp({
+        email: values.email,
+        password: values.password,
+        options: {
+          emailRedirectTo: `${location.origin}/auth/callback`,
+        }
+      })
+      console.log(values.action, { data, error })
+      if (!error) {
+        setOpen(false)
+        router.refresh()
+      }
+    } else if (values.action === 'reset') {
+      const { data, error } = await supabase.auth.resetPasswordForEmail(values.email, {
+        redirectTo: `${location.origin}/auth/callback?dest=/update-password`,
+      })
+      setAction('reset_sent')
+      console.log(values.action, { data, error })
+    }
 
-    await supabase.auth.signInWithPassword({
-      email: values.email,
-      password: values.password,
-    })
-
-    setOpen(false)
   }
 
   const handleSignOut = async () => {
@@ -40,7 +66,7 @@ function AuthBtn() {
       <>
         <button className="text-sm font-semibold leading-6 text-gray-900" onClick={() => setOpen(true)}>Log In</button>
         <Modal open={open} onClose={() => setOpen(false)}>
-          <SignIn action="signin" onSubmit={handleSubmit} />
+          <SignIn action={action} onSubmit={handleSubmit} />
         </Modal>
       </>
     )
