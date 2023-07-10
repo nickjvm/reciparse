@@ -1,12 +1,16 @@
 {
-  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "next/core-web-vitals"],
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint"],
   "root": true,
   "rules": {
     "no-undef": "off",
     "no-unused-vars": "off",
+    "quotes": ["error", "single"],
+    "semi": ["error", "always"],
+    "jsx-quotes": ["error", "prefer-double"],
     "indent": ["error", 2, { "SwitchCase": 1 }],
+    "react-hooks/exhaustive-deps": "off",
     "@typescript-eslint/no-unused-vars": "error"
   }
 }

@@ -1,21 +1,21 @@
-'use client'
-import { useEffect, useState } from 'react'
-import { Database } from '@/types/database.types'
-import { Session, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { useRouter } from 'next/navigation'
+'use client';
+import { useEffect, useState } from 'react';
+import { Database } from '@/types/database.types';
+import { Session, createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { useRouter } from 'next/navigation';
 // import supabase from '@/lib/supabaseClient'
 
 export default function AccountForm({ session }: { session: Session | null }) {
-  const router = useRouter()
-  const supabase = createClientComponentClient<Database>()
-  const [loading, setLoading] = useState(true)
-  const [fullname, setFullname] = useState<string | null>(null)
-  const [username, setUsername] = useState<string | null>(null)
-  const [website, setWebsite] = useState<string | null>(null)
+  const router = useRouter();
+  const supabase = createClientComponentClient<Database>();
+  const [loading, setLoading] = useState(true);
+  const [fullname, setFullname] = useState<string | null>(null);
+  const [username, setUsername] = useState<string | null>(null);
+  const [website, setWebsite] = useState<string | null>(null);
   // const [avatar_url, setAvatarUrl] = useState<string | null>(null)
-  const user = session?.user
+  const user = session?.user;
 
-  console.log(session)
+  console.log(session);
   // const getProfile = useCallback(async () => {
   //   try {
   //     setLoading(true)
@@ -45,12 +45,12 @@ export default function AccountForm({ session }: { session: Session | null }) {
   // }, [user, supabase])
 
   const getUser = async () => {
-    const user = await supabase.auth.getUser()
-    console.log(user)
-  }
+    const user = await supabase.auth.getUser();
+    console.log(user);
+  };
   useEffect(() => {
-    getUser()
-  }, [])
+    getUser();
+  }, []);
 
   async function updateProfile({
     username,
@@ -63,7 +63,7 @@ export default function AccountForm({ session }: { session: Session | null }) {
     avatar_url: string | null
   }) {
     try {
-      setLoading(true)
+      setLoading(true);
 
       const { error } = await supabase.from('profiles').upsert({
         id: user?.id as string,
@@ -72,20 +72,20 @@ export default function AccountForm({ session }: { session: Session | null }) {
         website,
         avatar_url,
         updated_at: new Date().toISOString(),
-      })
-      if (error) throw error
-      alert('Profile updated!')
+      });
+      if (error) throw error;
+      alert('Profile updated!');
     } catch (error) {
-      alert('Error updating the data!')
+      alert('Error updating the data!');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   const handleSignOut = async () => {
-    supabase.auth.signOut()
-    router.push('/')
-  }
+    supabase.auth.signOut();
+    router.push('/');
+  };
 
   return (
     <div className="form-widget">
@@ -137,5 +137,5 @@ export default function AccountForm({ session }: { session: Session | null }) {
         </button>
       </div>
     </div>
-  )
+  );
 }

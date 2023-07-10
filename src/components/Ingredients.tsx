@@ -1,9 +1,9 @@
-'use client'
+'use client';
 import { decode } from 'html-entities';
-import { Disclosure } from '@headlessui/react'
+import { Disclosure } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 
-import classnames from 'classnames'
+import classnames from 'classnames';
 
 interface Props {
   ingredients: string[]
@@ -21,8 +21,8 @@ export default function IngredientsList({ ingredients }: Props) {
       </div>
       <Disclosure>
         {({ open }) => (
-          <div className={classnames(`fixed block print:hidden md:hidden bottom-0 left-0 right-0 z-10 border-t-2 transition bg-white border-brand`)}>
-            <Disclosure.Button className={open ? "py-2 mb-2 w-full text-left" : "py-2 w-full text-left"}>
+          <div className={classnames('fixed block print:hidden md:hidden bottom-0 left-0 right-0 z-10 border-t-2 transition bg-white border-brand')}>
+            <Disclosure.Button className={open ? 'py-2 mb-2 w-full text-left' : 'py-2 w-full text-left'}>
               <h3 className="px-5 text-lg font-bold flex justify-between">
                   Ingredients
                 <ChevronDownIcon className={open ? 'w-5 rotate-180 transform' : 'w-5'} />
@@ -39,5 +39,5 @@ export default function IngredientsList({ ingredients }: Props) {
         )}
       </Disclosure>
     </div>
-  )
+  );
 }

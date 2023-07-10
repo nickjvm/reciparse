@@ -1,13 +1,13 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { Dialog } from '@headlessui/react'
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
-import Image from 'next/image'
-import QuickSearch from './QuickSearch'
-import classnames from 'classnames'
-import Link from 'next/link'
-import AuthBtn from './AuthBtn'
+import { useState } from 'react';
+import { Dialog } from '@headlessui/react';
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import Image from 'next/image';
+import QuickSearch from './QuickSearch';
+import classnames from 'classnames';
+import Link from 'next/link';
+import AuthBtn from './AuthBtn';
 
 interface Props {
   withSearch?: boolean
@@ -17,7 +17,7 @@ export default function Header({
   withSearch = true,
   withBorder
 }: Props) {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <header className={classnames('relative isolate bg-white', withBorder && 'border-b-slate-100 shadow-sm border-b')}>
@@ -78,5 +78,5 @@ export default function Header({
         </Dialog.Panel>
       </Dialog>
     </header>
-  )
+  );
 }

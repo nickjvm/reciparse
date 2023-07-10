@@ -1,17 +1,17 @@
-import { Fragment } from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
+import { Fragment } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import { decode } from 'html-entities';
 import IngredientsList from '@/components/Ingredients';
 import { Squares2X2Icon } from '@heroicons/react/24/outline';
 import Time from '@/components/Time';
 import { HowToSection, Recipe, RecipeInstruction, SupaRecipe } from '@/types';
-import { serverRequest } from '@/lib/api';
+import serverRequest from '@/lib/api/server';
 import SaveRecipe from '@/components/SaveRecipe';
 import withHeader from '@/components/withHeader';
 import RecipeError from '@/components/RecipeError';
 
-
+export const dynamic = 'force-dynamic';
 interface Props {
   params: { slug: string };
   searchParams: {
@@ -21,15 +21,15 @@ interface Props {
 }
 
 async function Page({ searchParams }: Props) {
-  const recipe: Recipe = await serverRequest(`/api/recipes/parse?url=${searchParams.url}&ref=${searchParams.ref || 'direct'}`, { method: 'POST' })
-  const favorites: SupaRecipe[] = await serverRequest('/api/recipes/favorites')
+  const recipe: Recipe = await serverRequest(`/api/recipes/parse?url=${searchParams.url}&ref=${searchParams.ref || 'direct'}`, { method: 'POST' });
+  const favorites: SupaRecipe[] = await serverRequest('/api/recipes/favorites');
 
   if (recipe.error) {
     return <RecipeError
       actionUrl={searchParams.url}
       errorText="We tried our best, but couldn't find a recipe to parse at the URL you entered."
       actionText="Take me to the source!"
-    />
+    />;
   }
 
   const instructions = recipe.recipeInstructions.reduce((acc: HowToSection[], instruction: RecipeInstruction) => {
@@ -37,38 +37,38 @@ async function Page({ searchParams }: Props) {
       acc[0].itemListElement.push({
         '@type': 'HowToStep',
         text: instruction
-      })
+      });
     } else {
       if (instruction['@type'] === 'HowToStep') {
-        acc[0].itemListElement.push(instruction)
+        acc[0].itemListElement.push(instruction);
       } else if (instruction['@type'] === 'HowToSection') {
-        acc.push(instruction)
+        acc.push(instruction);
       }
     }
-    return acc
+    return acc;
   }, [{
     name: '',
     '@type': 'HowToSection',
     itemListElement: []
   }])
-    .flat()
+    .flat();
 
   const parseYield = (recipeYield: string | string[]): string => {
     if (Array.isArray(recipeYield)) {
-      return Array.from(new Set(recipeYield.map(parseYield).filter(v => v))).join(', ')
+      return Array.from(new Set(recipeYield.map(parseYield).filter(v => v))).join(', ');
     } else {
-      const recipeYieldNum = Number(recipeYield)
+      const recipeYieldNum = Number(recipeYield);
 
       if (!isNaN(recipeYieldNum)) {
         if (recipeYieldNum > 0) {
-          return `${recipeYieldNum} serving${recipeYieldNum !== 1 ? 's' : ''}`
+          return `${recipeYieldNum} serving${recipeYieldNum !== 1 ? 's' : ''}`;
         }
-        return ''
+        return '';
       } else {
-        return recipeYield.replace(/^0/, '').trim()
+        return recipeYield.replace(/^0/, '').trim();
       }
     }
-  }
+  };
 
   const renderInstructionSection = (section: HowToSection, i: number, instructions: HowToSection[]) => {
     if (instructions.length === 1 && !section.itemListElement.length) {
@@ -77,7 +77,7 @@ async function Page({ searchParams }: Props) {
           <p className="mb-4">We couldn&apos;t find any directions in this recipe :(</p>
           <p>Try viewing the recipe at the source: <Link className="text-blue-500 underline" href={recipe.meta.raw_source} target="_blank">{recipe.meta.raw_source}</Link></p>
         </>
-      )
+      );
     }
     return (
       <Fragment key={i}>
@@ -93,8 +93,8 @@ async function Page({ searchParams }: Props) {
           ))}
         </ol>
       </Fragment>
-    )
-  }
+    );
+  };
 
   return (
     <main className="print:bg-white md:min-h-screen print:min-h-0 md:p-4 print:p-0">
@@ -130,7 +130,7 @@ async function Page({ searchParams }: Props) {
         </div>
       </div>
     </main>
-  )
+  );
 }
 
-export default withHeader(Page, { withSearch: true, className: "bg-stone-100" })
+export default withHeader(Page, { withSearch: true, className: 'bg-stone-100' });

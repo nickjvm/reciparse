@@ -1,59 +1,59 @@
-'use client'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { Database } from '@/types/database.types'
-import withHeader from '@/components/withHeader'
-import { FormEvent, useEffect, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import Link from 'next/link'
+'use client';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { Database } from '@/types/database.types';
+import withHeader from '@/components/withHeader';
+import { FormEvent, useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 
 function Page() {
-  const supabase = createClientComponentClient<Database>()
-  const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  const router = useRouter()
-  const params = useSearchParams()
+  const supabase = createClientComponentClient<Database>();
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const router = useRouter();
+  const params = useSearchParams();
 
 
   useEffect(() => {
-    const hashQuery = window.location.hash.substring(1)
+    const hashQuery = window.location.hash.substring(1);
     if (hashQuery || !params.get('code')) {
-      const details = new URLSearchParams(window.location.hash.substring(1))
+      const details = new URLSearchParams(window.location.hash.substring(1));
       if (details.get('error')) {
-        setError(details.get('error_description') || 'Something went wrong. Please try again.')
+        setError(details.get('error_description') || 'Something went wrong. Please try again.');
       } else {
-        setError('Something went wrong. Please try again')
+        setError('Something went wrong. Please try again');
       }
-      setLoading(false)
+      setLoading(false);
     } else {
       const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
         if (session) {
-          setLoading(false)
+          setLoading(false);
         }
-      })
-      return () => authListener.subscription.unsubscribe()
+      });
+      return () => authListener.subscription.unsubscribe();
     }
-  }, [])
+  }, []);
 
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
       const { data, error } = await supabase.auth.updateUser({
         password
-      })
-      console.log(data, error)
+      });
+      console.log(data, error);
       if (error) {
-        throw error
+        throw error;
       } else {
-        router.push('/account')
+        router.push('/account');
       }
     } catch (e) {
-      setError(e as string || 'Something went wrong. Please try again.')
+      setError(e as string || 'Something went wrong. Please try again.');
     }
-  }
+  };
 
   if (loading) {
-    return null
+    return null;
   }
   if (error) {
     return (
@@ -63,7 +63,7 @@ function Page() {
           <Link href="/" className="transition inline-block py-1.5 mx-auto justify-center rounded-md bg-brand-alt px-8 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-alt">Return home</Link>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -92,7 +92,7 @@ function Page() {
         Update password
       </button>
     </form>
-  )
+  );
 }
 
-export default withHeader(Page, { withSearch: false })
+export default withHeader(Page, { withSearch: false });

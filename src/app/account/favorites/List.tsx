@@ -1,38 +1,38 @@
-'use client'
+'use client';
 
-import RecipeError from "@/components/RecipeError"
-import { useDebounce } from "@/hooks/useDebounce"
-import { clientRequest } from "@/lib/api"
-import { SupaRecipe } from "@/types"
-import classNames from "classnames"
-import Image from "next/image"
-import Link from "next/link"
-import { ChangeEvent, useEffect, useState } from "react"
+import RecipeError from '@/components/RecipeError';
+import { useDebounce } from '@/hooks/useDebounce';
+import clientRequest from '@/lib/api/client';
+import { SupaRecipe } from '@/types';
+import classNames from 'classnames';
+import Image from 'next/image';
+import Link from 'next/link';
+import { ChangeEvent, useEffect, useState } from 'react';
 
 interface Props {
   data: SupaRecipe[]
 }
 
 export default function FavoritesList({ data }: Props) {
-  const [value, setValue] = useState<string>('')
-  const debouncedValue = useDebounce<string>(value, 500)
-  const [results, setResults] = useState<SupaRecipe[]>(data)
+  const [value, setValue] = useState<string>('');
+  const debouncedValue = useDebounce<string>(value, 500);
+  const [results, setResults] = useState<SupaRecipe[]>(data);
   const onChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setValue(event.target.value)
-  }
+    setValue(event.target.value);
+  };
 
   // Fetch API (optional)
   useEffect(() => {
     if (debouncedValue) {
       clientRequest('/api/recipes/search?q=' + debouncedValue).then((response: SupaRecipe[]) => {
-        setResults(response)
-      })
+        setResults(response);
+      });
     } else {
-      setResults(data)
+      setResults(data);
     }
     // Do fetch here...
     // Triggers when "debouncedValue" changes
-  }, [debouncedValue])
+  }, [debouncedValue]);
   return (
     <>
       <div className="w-full px-8 py-4">
@@ -62,5 +62,5 @@ export default function FavoritesList({ data }: Props) {
         {!results.length &&<div className="px-4"> <RecipeError errorText="We couldn't find any favorited recipes that matched your search." /></div>}
       </div>
     </>
-  )
+  );
 }

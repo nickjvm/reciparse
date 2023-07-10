@@ -1,8 +1,8 @@
-'use client'
-import { Popover } from '@headlessui/react'
-import { ClockIcon } from '@heroicons/react/24/outline'
-import * as td from 'tinyduration'
-import classnames from 'classnames'
+'use client';
+import { Popover } from '@headlessui/react';
+import { ClockIcon } from '@heroicons/react/24/outline';
+import * as td from 'tinyduration';
+import classnames from 'classnames';
 
 interface Props {
   prepTime?: string
@@ -14,31 +14,31 @@ function toHoursAndMinutes(totalMinutes: number): string {
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
 
-  let str = ''
+  let str = '';
   if (hours) {
-    str += hours + ' hour'
+    str += hours + ' hour';
     if (hours !== 1) {
-      str += 's'
+      str += 's';
     }
-    str += ' '
+    str += ' ';
   }
   if (minutes) {
-    str += minutes + ' minute'
+    str += minutes + ' minute';
     if (minutes !== 1) {
-      str += 's'
+      str += 's';
     }
   }
-  return str
+  return str;
 }
 
 export default function Time(props: Props) {
 
-  const prepTime = td.parse(props.prepTime || 'PT0M').minutes
-  const cookTime = td.parse(props.cookTime || 'PT0M').minutes
-  const totalTime = td.parse(props.totalTime || 'PT0M').minutes
+  const prepTime = td.parse(props.prepTime || 'PT0M').minutes;
+  const cookTime = td.parse(props.cookTime || 'PT0M').minutes;
+  const totalTime = td.parse(props.totalTime || 'PT0M').minutes;
 
   if (!totalTime) {
-    return null
+    return null;
   }
 
   if (prepTime && cookTime) {
@@ -58,13 +58,13 @@ export default function Time(props: Props) {
           </>
         )}
       </Popover>
-    )
+    );
   } else {
     return (
       <span className="inline-flex ring-2 ring-brand-alt focus-visible:outline-0 gap-1 items-center px-2 py-1 rounded">
         <ClockIcon className="w-5"/>
         {totalTime} minutes
       </span>
-    )
+    );
   }
 }
