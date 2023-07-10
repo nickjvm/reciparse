@@ -1,5 +1,5 @@
-import { Fragment, ReactNode } from 'react';
-import { Dialog, Transition } from '@headlessui/react';
+import { Fragment, ReactNode } from 'react'
+import { Dialog, Transition } from '@headlessui/react'
 
 interface Props {
   children: ReactNode
@@ -50,5 +50,5 @@ export default function Modal({ title, children, open = false, onClose }: Props)
         </div>
       </Dialog>
     </Transition.Root>
-  );
+  )
 }

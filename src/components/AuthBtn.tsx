@@ -1,40 +1,40 @@
-'use client';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { useState, FormEvent } from 'react';
-import Modal from './Modal';
-import SignIn from './SignIn';
-import Link from 'next/link';
-import { useAuthContext } from '@/context/AuthContext';
-import { Popover } from '@headlessui/react';
-import { HeartIcon, UserIcon, ArrowLeftOnRectangleIcon} from '@heroicons/react/20/solid';
-import { useRouter } from 'next/navigation';
-import { AuthAction } from '@/types';
-import { AuthError } from '@supabase/supabase-js';
+'use client'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useState, FormEvent } from 'react'
+import Modal from './Modal'
+import SignIn from './SignIn'
+import Link from 'next/link'
+import { useAuthContext } from '@/context/AuthContext'
+import { Popover } from '@headlessui/react'
+import { HeartIcon, UserIcon, ArrowLeftOnRectangleIcon} from '@heroicons/react/20/solid'
+import { useRouter } from 'next/navigation'
+import { AuthAction } from '@/types'
+import { AuthError } from '@supabase/supabase-js'
 
 function AuthBtn() {
-  const router = useRouter();
-  const supabase = createClientComponentClient();
-  const { user } = useAuthContext();
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [action, setAction] = useState<AuthAction>('signin');
-  const [error, setError] = useState<AuthError|null>();
+  const router = useRouter()
+  const supabase = createClientComponentClient()
+  const { user } = useAuthContext()
+  const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [action, setAction] = useState<AuthAction>('signin')
+  const [error, setError] = useState<AuthError|null>()
 
   const handleSubmit = async (values: { email: string, password: string, action: AuthAction}, e: FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault()
+    setLoading(true)
     if (values.action === 'signin') {
       const { error } = await supabase.auth.signInWithPassword({
         email: values.email,
         password: values.password,
-      });
+      })
 
-      setLoading(false);
+      setLoading(false)
       if (error) {
-        setError(error);
+        setError(error)
       } else {
-        setOpen(false);
-        router.refresh();
+        setOpen(false)
+        router.refresh()
         // @TODO: notification toaster?
       }
     } else if (values.action === 'signup') {
@@ -44,50 +44,50 @@ function AuthBtn() {
         options: {
           emailRedirectTo: `${location.origin}/auth/callback`,
         }
-      });
-      setLoading(false);
+      })
+      setLoading(false)
       if (error) {
-        setError(error);
+        setError(error)
       } else {
         if (data.user?.identities?.length) {
-          setOpen(false);
-          router.refresh();
+          setOpen(false)
+          router.refresh()
         } else {
-          setError(new AuthError('Account already exists for this email address.', 401));
+          setError(new AuthError('Account already exists for this email address.', 401))
         }
         // @TODO: notification toaster?
       }
     } else if (values.action === 'reset') {
       const { error } = await supabase.auth.resetPasswordForEmail(values.email, {
         redirectTo: `${location.origin}/auth/callback?dest=/update-password`,
-      });
-      setLoading(false);
+      })
+      setLoading(false)
       if (error) {
-        setError(error);
+        setError(error)
       } else {
-        setAction('reset_sent');
+        setAction('reset_sent')
       }
     }
-  };
+  }
 
   const handleSignOut = async () => {
-    supabase.auth.signOut();
-    router.push('/');
-  };
+    supabase.auth.signOut()
+    router.push('/')
+  }
 
   const handleChange = () => {
-    setError(null);
-  };
+    setError(null)
+  }
 
   if (!user) {
     return (
       <>
         <button className="text-sm font-semibold leading-6 text-gray-900" onClick={() => setOpen(true)}>Log In</button>
         <Modal open={open} onClose={() => {
-          setOpen(false);
-          setAction('signin');
-          setError(null);
-          setLoading(false);
+          setOpen(false)
+          setAction('signin')
+          setError(null)
+          setLoading(false)
         }}>
           <SignIn
             action={action}
@@ -99,7 +99,7 @@ function AuthBtn() {
           />
         </Modal>
       </>
-    );
+    )
   } else {
     return (
       <>
@@ -126,8 +126,8 @@ function AuthBtn() {
           </>
         </Popover>
       </>
-    );
+    )
   }
 }
 
-export default AuthBtn;
+export default AuthBtn

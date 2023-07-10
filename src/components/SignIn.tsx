@@ -1,7 +1,7 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import Image from 'next/image';
-import { AuthAction } from '@/types';
-import { AuthError } from '@supabase/supabase-js';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
+import Image from 'next/image'
+import { AuthAction } from '@/types'
+import { AuthError } from '@supabase/supabase-js'
 
 interface Values {
   email: string
@@ -19,33 +19,33 @@ interface Props {
 }
 
 export default function SignIn({ action: _action = 'signin', onSubmit, onChange: _onChange, onActionChange, disabled, error }: Props) {
-  const [action, setAction] = useState<AuthAction>(_action);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [action, setAction] = useState<AuthAction>(_action)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
   useEffect(() => {
-    onActionChange?.(action);
-    setPassword('');
-    setEmail('');
-  }, [action]);
+    onActionChange?.(action)
+    setPassword('')
+    setEmail('')
+  }, [action])
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    _onChange?.(e);
+    _onChange?.(e)
 
     switch (e.target.name) {
       case 'email': {
-        setEmail(e.target.value);
-        break;
+        setEmail(e.target.value)
+        break
       }
       case 'password': {
-        setPassword(e.target.value);
-        break;
+        setPassword(e.target.value)
+        break
       }
     }
-  };
+  }
 
   useEffect(() => {
-    setAction(_action);
-  }, [_action]);
+    setAction(_action)
+  }, [_action])
 
   return (
     <>
@@ -148,5 +148,5 @@ export default function SignIn({ action: _action = 'signin', onSubmit, onChange:
         )}
       </div>
     </>
-  );
+  )
 }

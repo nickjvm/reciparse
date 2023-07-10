@@ -1,5 +1,5 @@
-import Image from 'next/image';
-import Link from 'next/link';
+import Image from 'next/image'
+import Link from 'next/link'
 
 interface Props {
   actionUrl?: string
@@ -22,5 +22,5 @@ export default function RecipeError({ actionUrl, actionText, errorText }: Props)
         </div>
       </div>
     </div>
-  );
+  )
 }

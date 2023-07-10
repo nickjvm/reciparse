@@ -1,8 +1,8 @@
-'use client';
-import { ChangeEvent, FormEvent, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { ArrowRightIcon } from '@heroicons/react/20/solid';
-import classNames from 'classnames';
+'use client'
+import { ChangeEvent, FormEvent, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { ArrowRightIcon } from '@heroicons/react/20/solid'
+import classNames from 'classnames'
 
 interface Props {
   size?: 'sm'|'md'|'lg'
@@ -11,32 +11,32 @@ interface Props {
 }
 
 export default function QuickSearch({ size = 'md', inputClassName, autoFocus }: Props) {
-  const [url, setUrl] = useState('');
-  const [error, setError] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const router = useRouter();
+  const [url, setUrl] = useState('')
+  const [error, setError] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const router = useRouter()
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setError(false);
-    setUrl(e.target.value);
-  };
+    setError(false)
+    setUrl(e.target.value)
+  }
 
   const onSubmit = (e: FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    setError(false);
+    setError(false)
     if (inputRef.current) {
       try {
-        const recipeUrl = new URL(url);
-        router.refresh();
-        router.push(`/recipe?url=${recipeUrl.toString()}`);
-        inputRef.current.blur();
+        const recipeUrl = new URL(url)
+        router.refresh()
+        router.push(`/recipe?url=${recipeUrl.toString()}`)
+        inputRef.current.blur()
       } catch (err) {
-        setError(true);
-        inputRef.current.focus();
+        setError(true)
+        inputRef.current.focus()
       }
     }
-  };
+  }
 
   return (
     <div className="w-full">
@@ -78,5 +78,5 @@ export default function QuickSearch({ size = 'md', inputClassName, autoFocus }: 
         </form>
       </div>
     </div>
-  );
+  )
 }
