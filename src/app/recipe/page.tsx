@@ -20,7 +20,7 @@ interface Props {
   }
 }
 
-export async function Page({ searchParams }: Props) {
+async function Page({ searchParams }: Props) {
   const recipe: Recipe = await serverRequest(`/api/recipes/parse?url=${searchParams.url}&ref=${searchParams.ref || 'direct'}`, { method: 'POST' })
   const favorites: SupaRecipe[] = await serverRequest('/api/recipes/favorites')
 
