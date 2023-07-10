@@ -17,6 +17,8 @@ export default async function request(supabase: SupabaseClient, resource: string
     finalResource = `${process.env.NEXT_PUBLIC_SITE_URL}${resource}`;
   }
 
+  console.log('REQUEST', finalResource);
+
   return fetch(finalResource, options).then(r => {
     if (r.ok) {
       return r.json();
