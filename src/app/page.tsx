@@ -22,10 +22,16 @@ async function Page() {
         </div>
         <div className="w-full mt-6">
           <h2 className="font-display text-center text-2xl font-bold text-brand-alt">Recent Recipes</h2>
-          <div className="w-full p-4 flex justify-center flex-wrap md:flex-nowrap align-stretch">
+          <div className="w-full p-4 flex justify-center flex-wrap align-stretch">
             {recent.map((recipe: SupaRecipe, i) => (
-              <div key={recipe.id} className={classNames('px-4 shrink-0 grow-0 md:w-1/5 w-1/2 mb-4 md:mb-0 self-stretch', i === recent.length - 1 && 'md:hidden')}>
-                <Link prefetch={false} href={`/recipe/?url=${recipe.url}`} className="md:hover:ring-brand transition ring-2 ring-transparent rounded block p-3 -mx-3 h-full">
+              <div
+                key={recipe.id}
+                className={classNames(
+                  'md:p-2 shrink-0 grow-0 2xl:w-[12.5%] lg:w-[16.667%] sm:w-1/4 w-1/2 self-stretch',
+                  i > 5 && 'hidden sm:block lg:hidden 2xl:block',
+                )}
+              >
+                <Link prefetch={false} href={`/recipe/?url=${recipe.url}`} className="md:hover:ring-brand transition ring-2 ring-transparent rounded block p-3 -mx-1.5 h-full">
                   <Image alt={recipe.name} src={recipe.image_url} width="100" height="100" className="w-full rounded aspect-square mb-3" style={{ objectFit: 'cover' }} />
                   <p className="text-sm line-clamp-2">{recipe.name}</p>
                 </Link>
