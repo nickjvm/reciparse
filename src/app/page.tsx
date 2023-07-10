@@ -8,7 +8,7 @@ import { serverRequest } from "@/lib/api"
 import { SupaRecipe } from "@/types"
 import withHeader from "@/components/withHeader"
 
-export async function Page() {
+async function Page() {
   const recent: SupaRecipe[] = await serverRequest('/api/recipes/recent')
 
   return (

@@ -26,11 +26,11 @@ async function request(supabase: SupabaseClient, resource: string, options: Requ
     }
   }).catch(e => ({ error: true, message: e.message }))
 }
+
 export async function clientRequest(url: string, options?: RequestInit) {
   const supabase = createClientComponentClient<Database>()
 
   return request(supabase, url, options)
-
 }
 
 export async function serverRequest(url: string, options: RequestInit = {}) {
