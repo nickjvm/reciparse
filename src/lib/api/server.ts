@@ -8,5 +8,6 @@ import request from './';
 export default async function serverRequest(url: string, options: RequestInit = {}) {
   const supabase = createServerComponentClient<Database>({ cookies });
 
+  console.log('SERVER REQUEST', url);
   return request(supabase, url, options);
 }
