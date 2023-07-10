@@ -1,11 +1,8 @@
-import classNames from "classnames"
-import Image from "next/image"
-import Link from "next/link"
-
 import Header from "@/components/Header"
 
 import { serverRequest } from "@/lib/api"
 import { SupaRecipe } from "@/types"
+
 import FavoritesList from "./List"
 
 export default async function Page() {
