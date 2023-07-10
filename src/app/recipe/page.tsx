@@ -55,13 +55,17 @@ export async function Page({ searchParams }: Props) {
 
   const parseYield = (recipeYield: string | string[]): string => {
     if (Array.isArray(recipeYield)) {
-      return Array.from(new Set(recipeYield.map(parseYield))).join(', ')
+      return Array.from(new Set(recipeYield.map(parseYield).filter(v => v))).join(', ')
     } else {
       const recipeYieldNum = Number(recipeYield)
-      if (recipeYieldNum) {
-        return `${recipeYieldNum} serving${recipeYieldNum !== 1 ? 's' : ''}`
+
+      if (!isNaN(recipeYieldNum)) {
+        if (recipeYieldNum > 0) {
+          return `${recipeYieldNum} serving${recipeYieldNum !== 1 ? 's' : ''}`
+        }
+        return ''
       } else {
-        return recipeYield
+        return recipeYield.replace(/^0/, '').trim()
       }
     }
   }

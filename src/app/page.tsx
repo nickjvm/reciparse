@@ -23,7 +23,7 @@ export async function Page() {
           <div className="w-full p-4 flex justify-center flex-wrap md:flex-nowrap align-stretch">
             {recent.map((recipe: SupaRecipe, i) => (
               <div key={recipe.id} className={classNames('px-4 shrink-0 grow-0 md:w-1/5 w-1/2 mb-4 md:mb-0 self-stretch', i === recent.length - 1 && 'md:hidden')}>
-                <Link href={`/recipe/?url=${recipe.url}`} className="md:hover:ring-brand transition ring-2 ring-transparent rounded block p-3 -mx-3 h-full">
+                <Link prefetch={false} href={`/recipe/?url=${recipe.url}`} className="md:hover:ring-brand transition ring-2 ring-transparent rounded block p-3 -mx-3 h-full">
                   <Image alt={recipe.name} src={recipe.image_url} width="100" height="100" className="w-full rounded aspect-square mb-3" style={{ objectFit: 'cover' }} />
                   <p className="text-sm line-clamp-2">{recipe.name}</p>
                 </Link>
