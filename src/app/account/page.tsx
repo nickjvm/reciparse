@@ -5,7 +5,7 @@ import { Database } from '@/types/database.types'
 import withHeader from '@/components/withHeader'
 import { FormEvent, useEffect, useState } from 'react'
 
-export function Page() {
+function Page() {
   const supabase = createClientComponentClient<Database>()
 
   const [password, setPassword] = useState('')
