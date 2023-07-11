@@ -10,6 +10,7 @@ import serverRequest from '@/lib/api/server'
 import SaveRecipe from '@/components/SaveRecipe'
 import withHeader from '@/components/withHeader'
 import RecipeError from '@/components/RecipeError'
+import { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
 interface Props {
@@ -17,6 +18,15 @@ interface Props {
   searchParams: {
     url: string | undefined
     ref?: string
+  }
+}
+
+
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const recipe: Recipe = await serverRequest(`/api/recipes/parse?url=${searchParams.url}&ref=${searchParams.ref || 'direct'}`, { method: 'POST' })
+
+  return {
+    title: `${recipe.name} | Reciparse`
   }
 }
 

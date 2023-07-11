@@ -1,6 +1,7 @@
 import classNames from 'classnames'
 import Image from 'next/image'
 import Link from 'next/link'
+import { Metadata } from 'next'
 
 import QuickSearch from '@/components/QuickSearch'
 
@@ -9,6 +10,10 @@ import { SupaRecipe } from '@/types'
 import withHeader from '@/components/withHeader'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: 'Parse a Recipe | Reciparse'
+}
 
 async function Page() {
   const recent: SupaRecipe[] = await serverRequest('/api/recipes/recent')

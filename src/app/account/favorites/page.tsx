@@ -4,8 +4,13 @@ import serverRequest from '@/lib/api/server'
 import { SupaRecipe } from '@/types'
 
 import FavoritesList from './List'
+import { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: 'My Favorites | Reciparse'
+}
 
 export default async function Page() {
   const favorites: SupaRecipe[] = await serverRequest('/api/recipes/favorites')

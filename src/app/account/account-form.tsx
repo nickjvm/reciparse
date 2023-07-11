@@ -1,141 +1,89 @@
 'use client'
-import { useEffect, useState } from 'react'
+
+import { createClientComponentClient} from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/types/database.types'
-import { Session, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { useRouter } from 'next/navigation'
-// import supabase from '@/lib/supabaseClient'
+import { FormEvent, useEffect, useState } from 'react'
 
-export default function AccountForm({ session }: { session: Session | null }) {
-  const router = useRouter()
+export default function MyAccount() {
   const supabase = createClientComponentClient<Database>()
-  const [loading, setLoading] = useState(true)
-  const [fullname, setFullname] = useState<string | null>(null)
-  const [username, setUsername] = useState<string | null>(null)
-  const [website, setWebsite] = useState<string | null>(null)
-  // const [avatar_url, setAvatarUrl] = useState<string | null>(null)
-  const user = session?.user
 
-  console.log(session)
-  // const getProfile = useCallback(async () => {
-  //   try {
-  //     setLoading(true)
+  const [password, setPassword] = useState('')
+  const [email, setEmail] = useState('')
+  const [message, setMessage] = useState('')
 
-  //     const { data, error, status } = await supabase
-  //       .from('profiles')
-  //       .select(`full_name, username, website, avatar_url`)
-  //       .eq('id', user?.id)
-  //       .single()
-
-  //     if (error && status !== 406) {
-  //       throw error
-  //     }
-
-  //     if (data) {
-  //       setFullname(data.full_name)
-  //       setUsername(data.username)
-  //       setWebsite(data.website)
-  //       setAvatarUrl(data.avatar_url)
-  //     }
-  //   } catch (error) {
-  //     alert('Error loading user data!')
-  //     console.log(error)
-  //   } finally {
-  //     setLoading(false)
-  //   }
-  // }, [user, supabase])
-
-  const getUser = async () => {
-    const user = await supabase.auth.getUser()
-    console.log(user)
-  }
   useEffect(() => {
-    getUser()
+    const getSession = async function() {
+      const { data } = await supabase.auth.getSession()
+      console.log(data)
+      setEmail(data.session?.user.email || '')
+      return data
+    }
+
+    getSession()
   }, [])
 
-  async function updateProfile({
-    username,
-    website,
-    avatar_url,
-  }: {
-    username: string | null
-    fullname: string | null
-    website: string | null
-    avatar_url: string | null
-  }) {
-    try {
-      setLoading(true)
 
-      const { error } = await supabase.from('profiles').upsert({
-        id: user?.id as string,
-        full_name: fullname,
-        username,
-        website,
-        avatar_url,
-        updated_at: new Date().toISOString(),
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+    try {
+      const { data, error } = await supabase.auth.updateUser({
+        email,
+        password: password || undefined,
+      }, {
+        emailRedirectTo: `${location.origin}/auth/callback`,
       })
-      if (error) throw error
-      alert('Profile updated!')
-    } catch (error) {
-      alert('Error updating the data!')
-    } finally {
-      setLoading(false)
+      console.log(data, error)
+      if (error) {
+        throw error
+      } else {
+        setMessage('Profile updated!')
+      }
+    } catch (e) {
+      setMessage(e as string || 'Something went wrong. Please try again.')
     }
   }
-
-  const handleSignOut = async () => {
-    supabase.auth.signOut()
-    router.push('/')
-  }
-
   return (
-    <div className="form-widget">
+    <form className="max-w-md mx-auto px-4 md:px-0 py-5" onSubmit={handleSubmit}>
+      <h2 className="text-2xl font-display text-center mb-5 text-brand-alt">My Account</h2>
       <div>
-        <label htmlFor="email">Email</label>
-        <input id="email" type="text" value={session?.user.email} disabled />
+        <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+          Email Address
+        </label>
+        <div className="mt-2 mb-4">
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autoFocus
+            required
+            onChange={e => setEmail(e.target.value)}
+            value={email}
+            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-brand sm:text-sm sm:leading-6"
+            tabIndex={2}
+          />
+        </div>
       </div>
       <div>
-        <label htmlFor="fullName">Full Name</label>
-        <input
-          id="fullName"
-          type="text"
-          value={fullname || ''}
-          onChange={(e) => setFullname(e.target.value)}
-        />
+        <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
+          Change Password
+        </label>
+        <div className="mt-2 mb-4">
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autoFocus
+            onChange={e => setPassword(e.target.value)}
+            value={password}
+            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-brand sm:text-sm sm:leading-6"
+            tabIndex={2}
+          />
+        </div>
       </div>
-      <div>
-        <label htmlFor="username">Username</label>
-        <input
-          id="username"
-          type="text"
-          value={username || ''}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-      </div>
-      <div>
-        <label htmlFor="website">Website</label>
-        <input
-          id="website"
-          type="url"
-          value={website || ''}
-          onChange={(e) => setWebsite(e.target.value)}
-        />
-      </div>
-
-      <div>
-        <button
-          className="button primary block"
-          onClick={() => updateProfile({ fullname, username, website, avatar_url: '' })}
-          disabled={loading}
-        >
-          {loading ? 'Loading ...' : 'Update'}
-        </button>
-      </div>
-
-      <div>
-        <button className="button block" type="submit" onClick={handleSignOut}>
-            Sign out
-        </button>
-      </div>
-    </div>
+      <button type="submit" className="transition flex w-full justify-center rounded-md bg-brand-alt px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-alt">
+        Save changes
+      </button>
+      {message  && <div className="text-center mt-5">{message}</div>}
+    </form>
   )
 }
