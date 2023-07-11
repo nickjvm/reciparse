@@ -1,5 +1,5 @@
-import classnames from 'classnames';
-import Header from './Header';
+import classnames from 'classnames'
+import Header from './Header'
 
 interface DefaultProps {
   withSearch?: boolean
@@ -15,7 +15,7 @@ export default function withHeader(Component: JSX.ElementType, { withSearch, cla
         <Component {...props} />
       </div>
     </div>
-  );
+  )
 
-  return WithHeader;
+  return WithHeader
 }

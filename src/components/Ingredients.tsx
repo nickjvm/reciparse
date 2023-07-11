@@ -1,9 +1,9 @@
-'use client';
-import { decode } from 'html-entities';
-import { Disclosure } from '@headlessui/react';
-import { ChevronDownIcon } from '@heroicons/react/24/outline';
+'use client'
+import { decode } from 'html-entities'
+import { Disclosure } from '@headlessui/react'
+import { ChevronDownIcon } from '@heroicons/react/24/outline'
 
-import classnames from 'classnames';
+import classnames from 'classnames'
 
 interface Props {
   ingredients: string[]
@@ -39,5 +39,5 @@ export default function IngredientsList({ ingredients }: Props) {
         )}
       </Disclosure>
     </div>
-  );
+  )
 }

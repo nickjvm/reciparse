@@ -1,13 +1,12 @@
-import { createServerComponentClient} from '@supabase/auth-helpers-nextjs';
-import { Database } from '@/types/database.types';
+import { createServerComponentClient} from '@supabase/auth-helpers-nextjs'
+import { Database } from '@/types/database.types'
 
-import { cookies } from 'next/headers';
+import { cookies } from 'next/headers'
 
-import request from './';
+import request from './'
 
 export default async function serverRequest(url: string, options: RequestInit = {}) {
-  const supabase = createServerComponentClient<Database>({ cookies });
+  const supabase = createServerComponentClient<Database>({ cookies })
 
-  console.log('SERVER REQUEST', url);
-  return request(supabase, url, options);
+  return request(supabase, url, options)
 }

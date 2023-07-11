@@ -1,17 +1,17 @@
-import classNames from 'classnames';
-import Image from 'next/image';
-import Link from 'next/link';
+import classNames from 'classnames'
+import Image from 'next/image'
+import Link from 'next/link'
 
-import QuickSearch from '@/components/QuickSearch';
+import QuickSearch from '@/components/QuickSearch'
 
-import serverRequest from '@/lib/api/server';
-import { SupaRecipe } from '@/types';
-import withHeader from '@/components/withHeader';
+import serverRequest from '@/lib/api/server'
+import { SupaRecipe } from '@/types'
+import withHeader from '@/components/withHeader'
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'
 
 async function Page() {
-  const recent: SupaRecipe[] = await serverRequest('/api/recipes/recent');
+  const recent: SupaRecipe[] = await serverRequest('/api/recipes/recent')
 
   return (
     <div className="flex flex-col h-full pt-8">
@@ -41,7 +41,7 @@ async function Page() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default withHeader(Page, { withSearch: false });
+export default withHeader(Page, { withSearch: false })

@@ -7,7 +7,7 @@ const nextConfig = {
         source: '/api/:path*',
         destination: `${process.env.NEXT_PUBLIC_API_URL}/:path*`, // Proxy to Backend
       },
-    ];
+    ]
   },
   images: {
     remotePatterns: [
@@ -17,6 +17,6 @@ const nextConfig = {
       },
     ],
   },
-};
+}
 
-module.exports = nextConfig;
+module.exports = nextConfig

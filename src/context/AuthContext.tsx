@@ -1,7 +1,7 @@
-'use client';
-import { Database } from '@/types/database.types';
-import { User, createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { createContext, useState, useEffect, useContext, ReactNode } from 'react';
+'use client'
+import { Database } from '@/types/database.types'
+import { User, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createContext, useState, useEffect, useContext, ReactNode } from 'react'
 
 interface Context {
   user: null | User
@@ -16,40 +16,40 @@ interface Props {
 const AuthContext = createContext<Context>({
   user: null,
   userLoading: true,
-});
+})
 
 export function AuthContextProvider({ children, user: serverUser}: Props) {
-  const supabase = createClientComponentClient<Database>();
-  const [user, setUser] = useState<User|null>(serverUser);
-  const [loading, setLoading] = useState(false);
+  const supabase = createClientComponentClient<Database>()
+  const [user, setUser] = useState<User|null>(serverUser)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     supabase.auth.onAuthStateChange(async (event, session) => {
       try {
         if (event === 'SIGNED_OUT') {
-          setUser(null);
+          setUser(null)
         } else {
           if (session) {
-            const { data: { user }, error } = await supabase.auth.getUser();
+            const { data: { user }, error } = await supabase.auth.getUser()
             if (user) {
-              setUser(user);
+              setUser(user)
             } else if (error) {
-              throw error;
+              throw error
             }
           }
         }
       } catch (e) {
-        console.error(e);
-        setUser(null);
+        console.error(e)
+        setUser(null)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    });
-  }, []);
+    })
+  }, [])
 
   return (
     <AuthContext.Provider value={{ user, userLoading: loading }}>{children}</AuthContext.Provider>
-  );
+  )
 }
 
-export const useAuthContext = () => useContext(AuthContext);
+export const useAuthContext = () => useContext(AuthContext)
