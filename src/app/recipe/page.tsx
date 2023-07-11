@@ -2,15 +2,18 @@ import { Fragment } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { decode } from 'html-entities'
-import IngredientsList from '@/components/Ingredients'
+import { Metadata } from 'next'
 import { Squares2X2Icon } from '@heroicons/react/24/outline'
-import Time from '@/components/Time'
-import { HowToSection, Recipe, RecipeInstruction, SupaRecipe } from '@/types'
+
+import { HowToSection, Recipe, RecipeInstruction } from '@/types'
 import serverRequest from '@/lib/api/server'
+
+import IngredientsList from '@/components/Ingredients'
+import Time from '@/components/Time'
 import SaveRecipe from '@/components/SaveRecipe'
 import withHeader from '@/components/withHeader'
 import RecipeError from '@/components/RecipeError'
-import { Metadata } from 'next'
+import CookMode from '@/components/CookMode'
 
 export const dynamic = 'force-dynamic'
 interface Props {
@@ -20,7 +23,6 @@ interface Props {
     ref?: string
   }
 }
-
 
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   try {
@@ -42,7 +44,6 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 async function Page({ searchParams }: Props) {
   try {
     const recipe: Recipe = await serverRequest(`/api/recipes/parse?url=${searchParams.url}&ref=${searchParams.ref || 'direct'}`, { method: 'POST' })
-    const favorites: SupaRecipe[] = await serverRequest('/api/recipes/favorites')
 
     if (recipe.error) {
       throw recipe.error
@@ -89,10 +90,7 @@ async function Page({ searchParams }: Props) {
     const renderInstructionSection = (section: HowToSection, i: number, instructions: HowToSection[]) => {
       if (instructions.length === 1 && !section.itemListElement.length) {
         return (
-          <>
-            <p className="mb-4">We couldn&apos;t find any directions in this recipe :(</p>
-            <p>Try viewing the recipe at the source: <Link className="text-blue-500 underline" href={recipe.meta.raw_source} target="_blank">{recipe.meta.raw_source}</Link></p>
-          </>
+          <RecipeError errorText="We couldn&apos;t find any directions in this recipe :(" actionText="View on the original site" actionUrl={recipe.meta.raw_source} />
         )
       }
       return (
@@ -132,7 +130,8 @@ async function Page({ searchParams }: Props) {
                   </span>
 
                   <Time prepTime={recipe.prepTime} cookTime={recipe.cookTime} totalTime={recipe.totalTime} />
-                  <SaveRecipe id={recipe.meta.id} saved={!!favorites.find(f => f.id === recipe.meta.id)} />
+                  <SaveRecipe id={recipe.meta.id} saved={!!recipe.meta.isFavorite} />
+                  <CookMode />
                 </div>
               </div>
             </header>
@@ -152,7 +151,7 @@ async function Page({ searchParams }: Props) {
       <RecipeError
         actionUrl={searchParams.url}
         errorText="We tried our best, but couldn't find a recipe to parse at the URL you entered."
-        actionText="Take me to the source!"
+        actionText="Take me to the original"
       />
     )
   }

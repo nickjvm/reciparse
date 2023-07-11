@@ -1,4 +1,4 @@
-export interface Recipe {
+declare interface Recipe {
   error?: boolean
   message?: string
   name: string
@@ -15,6 +15,7 @@ export interface Recipe {
     raw_source: string
     saved?: boolean
     id: number
+    isFavorite: boolean
   }
 }
 
