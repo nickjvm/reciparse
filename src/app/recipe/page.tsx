@@ -107,7 +107,7 @@ async function Page({ searchParams }: Props) {
   }
 
   return (
-    <main className="print:bg-white md:min-h-screen print:min-h-0 md:p-4 print:p-0">
+    <main className="print:bg-white md:min-h-screen print:min-h-0 md:p-4 md:pb-6 print:p-0">
       <div className="m-auto max-w-3xl p-4 md:p-8 print:p-0 md:rounded-md ring-brand-alt md:ring-2 print:ring-0 print:shadow-none shadow-lg bg-white">
         <div>
           <header className="grid auto-rows-auto md:grid-cols-12 print:grid-cols-12 gap-4 mb-4">

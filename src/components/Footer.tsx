@@ -9,7 +9,7 @@ export default function Footer() {
   return (
     <div className="text-white bg-gradient-to-br from-brand to-35% to-brand-alt p-3 mt-2">
       <div className="mx-auto grid grid-cols-12 max-w-5xl items-start p-4 print:hidden md:px-6 gap-2">
-        <div className="col-span-12 md:col-span-3 font-display text-3xl">
+        <div className="col-span-12 md:col-span-3 font-display text-3xl tracking-tight">
           reciparse
         </div>
         <div className="col-span-6 md:col-span-3 lg:col-span-2 md:col-start-7 lg:col-start-9 text-xs">

@@ -3,6 +3,8 @@ import { ChangeEvent, FormEvent, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowRightIcon } from '@heroicons/react/20/solid'
 import classNames from 'classnames'
+import Loading from './icons/Loading'
+import { OnNavigation } from './OnNavigation'
 
 interface Props {
   size?: 'sm'|'md'|'lg'
@@ -13,6 +15,8 @@ interface Props {
 export default function QuickSearch({ size = 'md', inputClassName, autoFocus }: Props) {
   const [url, setUrl] = useState('')
   const [error, setError] = useState(false)
+  const [loading, setLoading] = useState(false)
+
   const inputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
 
@@ -24,28 +28,36 @@ export default function QuickSearch({ size = 'md', inputClassName, autoFocus }: 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault()
 
+    if (loading) {
+      return
+    }
+
     setError(false)
     if (inputRef.current) {
       try {
         const recipeUrl = new URL(url)
+        setLoading(true)
         router.refresh()
         router.push(`/recipe?url=${recipeUrl.toString()}`)
         inputRef.current.blur()
       } catch (err) {
         setError(true)
         inputRef.current.focus()
+        setLoading(false)
       }
     }
   }
 
   return (
     <div className="w-full">
+      <OnNavigation callback={() => setLoading(false)}/>
       <label htmlFor="search" className="sr-only">
         Quick search
       </label>
       <div className="relative flex items-center">
         <form onSubmit={onSubmit} className="w-full">
           <input
+            readOnly={loading}
             ref={inputRef}
             type="text"
             name="search"
@@ -65,14 +77,26 @@ export default function QuickSearch({ size = 'md', inputClassName, autoFocus }: 
               })}
           />
           <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
-            <button type="submit" className="relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-1 py-2 text-sm font-semibold">
-              <ArrowRightIcon className={classNames({
-                'text-red-500': error,
-                'text-brand-alt': !error,
-                'w-4': size === 'sm',
-                'w-5': size === 'md',
-                'w-8': size === 'lg',
-              })}/>
+            <button type="submit" disabled={loading} className="relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-1 py-2 text-sm font-semibold">
+              {loading && (
+                <Loading
+                  animate
+                  className={classNames('text-brand-alt', {
+                    'w-4': size === 'sm',
+                    'w-5': size === 'md',
+                    'w-6': size === 'lg',
+                  })}
+                />
+              )}
+              {!loading && (
+                <ArrowRightIcon className={classNames({
+                  'text-red-500': error,
+                  'text-brand-alt': !error,
+                  'w-4': size === 'sm',
+                  'w-5': size === 'md',
+                  'w-8': size === 'lg',
+                })}/>
+              )}
             </button>
           </div>
         </form>
