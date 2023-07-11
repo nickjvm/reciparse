@@ -69,7 +69,7 @@ function Page() {
   return (
     <form className="max-w-md mx-auto py-5" onSubmit={handleSubmit}>
       <h2 className="text-2xl font-display text-center mb-5 text-brand-alt">Reset your password</h2>
-      <p className="text-center text-md mb-5">So you forgot your password - it happens to the best of us!</p>
+      <p className="text-center text-base mb-5">So you forgot your password - it happens to the best of us!</p>
       <div>
         <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
           New Password

@@ -11,7 +11,10 @@ import { useRouter } from 'next/navigation'
 import { AuthAction } from '@/types'
 import { AuthError } from '@supabase/supabase-js'
 
-function AuthBtn() {
+interface Props {
+  onClick?: () => void
+}
+function AuthBtn({ onClick }: Props) {
   const router = useRouter()
   const supabase = createClientComponentClient()
   const { user } = useAuthContext()
@@ -82,7 +85,10 @@ function AuthBtn() {
   if (!user) {
     return (
       <>
-        <button className="text-sm font-semibold leading-6 text-gray-900" onClick={() => setOpen(true)}>Log In</button>
+        <button className="text-sm font-semibold leading-6 text-gray-900" onClick={() => {
+          onClick?.()
+          setOpen(true)
+        }}>Log In</button>
         <Modal open={open} onClose={() => {
           setOpen(false)
           setAction('signin')
@@ -103,28 +109,44 @@ function AuthBtn() {
   } else {
     return (
       <>
-        <Popover className="relative">
-          <>
-            <Popover.Button className="text-sm font-semibold leading-6 text-gray-900">
+        <div className="hidden md:block">
+          <Popover className="relative">
+            <>
+              <Popover.Button className="text-sm font-semibold leading-6 text-gray-900">
               My Account
-            </Popover.Button>
+              </Popover.Button>
 
-            <Popover.Panel className="text-sm font-semibold leading-6 shadow absolute mt-2 bg-white right-0 rounded w-40 min-w-fit whitespace-nowrap">
-              <Link href="/account/favorites" className="block hover:bg-slate-100 px-3 py-2">
-                <HeartIcon className="w-5 inline-block mr-2" />
+              <Popover.Panel className="text-sm font-semibold leading-6 shadow absolute mt-2 bg-white right-0 rounded w-40 min-w-fit whitespace-nowrap">
+                <Link href="/account/favorites" className="block hover:bg-slate-100 px-3 py-2">
+                  <HeartIcon className="w-5 inline-block mr-2" />
                 My Favorites
-              </Link>
-              <Link href="/account" className="block hover:bg-slate-100 px-3 py-2">
-                <UserIcon className="w-5 inline-block mr-2"/>
+                </Link>
+                <Link href="/account" className="block hover:bg-slate-100 px-3 py-2">
+                  <UserIcon className="w-5 inline-block mr-2"/>
                 My Profile
-              </Link>
-              <button className="w-full text-left block hover:bg-slate-100 px-3 py-2" type="submit" onClick={handleSignOut}>
-                <ArrowLeftOnRectangleIcon className="w-5 inline-block mr-2"/>
+                </Link>
+                <button className="w-full text-left block hover:bg-slate-100 px-3 py-2" type="submit" onClick={handleSignOut}>
+                  <ArrowLeftOnRectangleIcon className="w-5 inline-block mr-2"/>
                 Sign out
-              </button>
-            </Popover.Panel>
-          </>
-        </Popover>
+                </button>
+              </Popover.Panel>
+            </>
+          </Popover>
+        </div>
+        <div className="md:hidden space-y-1">
+          <Link href="/account/favorites" className="block md:hover:bg-slate-100 py-2">
+            <HeartIcon className="w-5 inline-block mr-2" />
+            My Favorites
+          </Link>
+          <Link href="/account" className="block md:hover:bg-slate-100 py-2">
+            <UserIcon className="w-5 inline-block mr-2"/>
+            My Profile
+          </Link>
+          <button className="w-full text-left block md:hover:bg-slate-100 py-2" type="submit" onClick={handleSignOut}>
+            <ArrowLeftOnRectangleIcon className="w-5 inline-block mr-2"/>
+            Sign out
+          </button>
+        </div>
       </>
     )
   }

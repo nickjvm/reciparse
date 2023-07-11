@@ -14,7 +14,7 @@ export default function RecipeError({ actionUrl, actionText, errorText }: Props)
           <h2 className="text-brand-alt font-display text-4xl mb-4">Shoot.</h2>
           <p className="text-xl">{errorText || 'We tried our best, but couldn\'t find what you were looking for.'}</p>
           {actionUrl && actionText && (
-            <Link className="font-semibold inline-block mt-5 py-3 px-4 text-md bg-brand-alt hover:bg-brand focus-visible:bg-brand text-white transition rounded " href={actionUrl}>{actionText}</Link>
+            <Link className="font-semibold inline-block mt-5 py-3 px-4 text-base bg-brand-alt hover:bg-brand focus-visible:bg-brand text-white transition rounded " href={actionUrl}>{actionText}</Link>
           )}
         </div>
         <div className="col-span-4 col-start-9">
