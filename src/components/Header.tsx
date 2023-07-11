@@ -43,7 +43,9 @@ export default function Header({
           </button>
         </div>
         <div className="hidden md:flex md:flex-1 md:justify-end col-start-12 col-span-1 print:hidden">
-          <AuthBtn />
+          <div className="text-sm font-semibold leading-6 text-gray-900">
+            <AuthBtn />
+          </div>
         </div>
       </nav>
       <Dialog as="div" className="md:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
@@ -64,7 +66,9 @@ export default function Header({
               <div className="space-y-2 py-6">
                 <QuickSearch size="lg" />
               </div>
-              <AuthBtn onSuccess={() => setMobileMenuOpen(false)}/>
+              <div className="text-sm font-semibold leading-6 text-gray-900">
+                <AuthBtn onSuccess={() => setMobileMenuOpen(false)}/>
+              </div>
             </div>
           </div>
         </Dialog.Panel>

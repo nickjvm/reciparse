@@ -88,7 +88,7 @@ function AuthBtn({ onSuccess }: Props) {
   if (!user) {
     return (
       <>
-        <button className="text-sm font-semibold leading-6 text-gray-900" onClick={() => {setOpen(true)}}>Log In</button>
+        <button onClick={() => {setOpen(true)}}>Log In</button>
         <Modal open={open} onClose={() => {
           setOpen(false)
           setAction('signin')
