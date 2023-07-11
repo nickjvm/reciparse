@@ -36,6 +36,7 @@ export default async function RootLayout({ children }: {
   const { data: { session } } = await supabase.auth.getSession()
   return (
     <html lang="en" className={classNames(openSans.className, openSans.variable, yesevaOne.variable)}>
+      <link rel="icon" type="image/png" href="/favicon.png" />
       <body>
         <AuthContextProvider user={session?.user || null}>
           {children}
