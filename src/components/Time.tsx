@@ -46,9 +46,9 @@ export default function Time(props: Props) {
       <Popover className="relative">
         {({ open }) => (
           <>
-            <Popover.Button className={classnames('inline-flex ring-2 ring-brand-alt focus-visible:outline-0 gap-1 items-center px-2 py-1 rounded', { 'bg-slate-100': open })}>
+            <Popover.Button className={classnames('h-full inline-flex text-sm md:text-base ring-2 ring-brand-alt focus-visible:outline-0 gap-1 items-center px-2 py-1 rounded', { 'bg-slate-100': open })}>
               <ClockIcon className="w-5"/>
-              {toHoursAndMinutes(totalTime)}
+              <p className="max-w-[200px] truncate">{toHoursAndMinutes(totalTime)}</p>
             </Popover.Button>
 
             <Popover.Panel className="shadow-sm absolute z-10 bg-slate-100 px-3 py-2 mt-2 rounded w-16 min-w-fit whitespace-nowrap">

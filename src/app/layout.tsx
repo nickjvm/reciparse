@@ -8,6 +8,7 @@ import { AuthContextProvider } from '@/context/AuthContext'
 import './globals.css'
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/types/database.types'
+import Footer from '@/components/Footer'
 
 const openSans = Open_Sans({
   subsets: ['latin'],
@@ -38,6 +39,7 @@ export default async function RootLayout({ children }: {
       <body>
         <AuthContextProvider user={session?.user || null}>
           {children}
+          <Footer />
         </AuthContextProvider>
       </body>
     </html>

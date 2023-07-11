@@ -1,5 +1,6 @@
 import { Fragment, ReactNode } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
+import { XMarkIcon } from '@heroicons/react/24/outline'
 
 interface Props {
   children: ReactNode
@@ -25,7 +26,7 @@ export default function Modal({ title, children, open = false, onClose }: Props)
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 overflow-y-auto">
-          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+          <div className="relative flex min-h-full items-center justify-center p-4 text-center sm:items-center sm:p-0">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -43,6 +44,10 @@ export default function Modal({ title, children, open = false, onClose }: Props)
                     </Dialog.Title>
                   </div>
                 )}
+                <button className="absolute p-2 top-0 right-0" onClick={() => onClose?.(false)}>
+                  <XMarkIcon className="h-6 w-6" />
+                  <div className="sr-only">Close modal</div>
+                </button>
                 {children}
               </Dialog.Panel>
             </Transition.Child>

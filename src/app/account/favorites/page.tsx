@@ -16,7 +16,7 @@ export default async function Page() {
   const favorites: SupaRecipe[] = await serverRequest('/api/recipes/favorites')
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col min-h-screen">
       <Header withBorder withSearch />
       <div className="grow flex flex-col">
         <div className="max-w-5xl w-full mx-auto mt-6">

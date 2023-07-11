@@ -12,9 +12,9 @@ import { AuthAction } from '@/types'
 import { AuthError } from '@supabase/supabase-js'
 
 interface Props {
-  onClick?: () => void
+  onSuccess?: () => void
 }
-function AuthBtn({ onClick }: Props) {
+function AuthBtn({ onSuccess }: Props) {
   const router = useRouter()
   const supabase = createClientComponentClient()
   const { user } = useAuthContext()
@@ -37,6 +37,7 @@ function AuthBtn({ onClick }: Props) {
         setError(error)
       } else {
         setOpen(false)
+        onSuccess?.()
         router.refresh()
         // @TODO: notification toaster?
       }
@@ -55,6 +56,7 @@ function AuthBtn({ onClick }: Props) {
         if (data.user?.identities?.length) {
           setOpen(false)
           router.refresh()
+          onSuccess?.()
         } else {
           setError(new AuthError('Account already exists for this email address.', 401))
         }
@@ -76,6 +78,7 @@ function AuthBtn({ onClick }: Props) {
   const handleSignOut = async () => {
     supabase.auth.signOut()
     router.push('/')
+    setOpen(false)
   }
 
   const handleChange = () => {
@@ -85,10 +88,7 @@ function AuthBtn({ onClick }: Props) {
   if (!user) {
     return (
       <>
-        <button className="text-sm font-semibold leading-6 text-gray-900" onClick={() => {
-          onClick?.()
-          setOpen(true)
-        }}>Log In</button>
+        <button className="text-sm font-semibold leading-6 text-gray-900" onClick={() => {setOpen(true)}}>Log In</button>
         <Modal open={open} onClose={() => {
           setOpen(false)
           setAction('signin')
@@ -109,7 +109,7 @@ function AuthBtn({ onClick }: Props) {
   } else {
     return (
       <>
-        <div className="hidden md:block">
+        <div className="hidden whitespace-nowrap md:block">
           <Popover className="relative">
             <>
               <Popover.Button className="text-sm font-semibold leading-6 text-gray-900">

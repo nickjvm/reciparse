@@ -119,10 +119,10 @@ async function Page({ searchParams }: Props) {
                 <h2 className="font-display text-brand-alt text-3xl font-bold">{recipe.name}</h2>
                 <p className="text-slate-500 text-sm">from <Link target="_blank" href={recipe.meta.raw_source}>{recipe.meta.source}</Link></p>
               </div>
-              <div className="flex gap-4">
-                <span className="inline-flex ring-2 ring-brand-alt focus-visible:outline-0 gap-1 items-center px-2 py-1 rounded">
+              <div className="flex gap-4 flex-wrap">
+                <span className="inline-flex text-sm md:text-base ring-2 ring-brand-alt focus-visible:outline-0 gap-1 items-center px-2 py-1 rounded">
                   <Squares2X2Icon className="w-5"/>
-                  <h4 className="max-w-[200px] truncate" title={parseYield(recipe.recipeYield)}>{parseYield(recipe.recipeYield)}</h4>
+                  <p className="max-w-[200px] truncate" title={parseYield(recipe.recipeYield)}>{parseYield(recipe.recipeYield)}</p>
                 </span>
 
                 <Time prepTime={recipe.prepTime} cookTime={recipe.cookTime} totalTime={recipe.totalTime} />
@@ -130,7 +130,7 @@ async function Page({ searchParams }: Props) {
               </div>
             </div>
           </header>
-          <div className="grid grid-cols-8 gap-8 pb-8 sm:pb-4 md:pb-0">
+          <div className="pt-3 md:pt-0 md:grid grid-cols-8 gap-8 pb-8 sm:pb-4 md:pb-0">
             <IngredientsList ingredients={recipe.recipeIngredient} />
             <div className="col-span-8 md:col-span-5 print:col-span-5">
               <h3 className="text-xl font-bold mb-2">Directions</h3>
