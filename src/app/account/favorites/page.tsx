@@ -1,3 +1,8 @@
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { Database } from '@/types/database.types'
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
+
 import Header from '@/components/Header'
 
 import serverRequest from '@/lib/api/server'
@@ -13,6 +18,13 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
+  const supabase = createServerComponentClient<Database>({ cookies })
+  const { data: { session } } = await supabase.auth.getSession()
+
+  if (!session) {
+    redirect('/')
+  }
+
   const favorites: SupaRecipe[] = await serverRequest('/api/recipes/favorites')
 
   return (

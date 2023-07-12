@@ -19,7 +19,6 @@ export async function GET(request: NextRequest) {
     redirectURL.searchParams.set('code', code)
   }
 
-
   // URL to redirect to after sign in process completes
   return NextResponse.redirect(redirectURL)
 }
