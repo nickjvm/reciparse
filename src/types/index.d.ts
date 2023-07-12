@@ -32,7 +32,7 @@ export interface RecipeImage {
   '@type': 'ImageObject'
 }
 
-export type RecipeInstruction = HowToStep | HowToSection
+export type RecipeInstruction = HowToSection
 
 export interface HowToStep {
   '@type': 'HowToStep'

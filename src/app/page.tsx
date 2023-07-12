@@ -1,6 +1,4 @@
 import classNames from 'classnames'
-import Image from 'next/image'
-import Link from 'next/link'
 import { Metadata } from 'next'
 
 import QuickSearch from '@/components/QuickSearch'
@@ -8,6 +6,7 @@ import QuickSearch from '@/components/QuickSearch'
 import serverRequest from '@/lib/api/server'
 import { SupaRecipe } from '@/types'
 import withHeader from '@/components/withHeader'
+import RecipeCard from '@/components/RecipeCard'
 
 export const dynamic = 'force-dynamic'
 
@@ -30,19 +29,10 @@ async function Page() {
             <h2 className="font-display text-center text-2xl font-bold text-brand-alt">Discover Recipes</h2>
             <div className="w-full p-4 flex justify-center flex-wrap align-stretch">
               {recent.map((recipe: SupaRecipe, i) => (
-                <div
-                  key={recipe.id}
-                  className={classNames(
-                    'md:p-2 shrink-0 grow-0 2xl:w-[12.5%] lg:w-[16.667%] sm:w-1/4 w-1/2 self-stretch',
-                    i > 5 && 'hidden sm:block lg:hidden 2xl:block',
-                  )}
-                >
-                  <Link prefetch={false} href={`/recipe/?url=${recipe.url}`} className="flex flex-col md:hover:ring-brand transition ring-2 ring-transparent rounded block p-3 -mx-1.5 h-full">
-                    <Image alt={recipe.name} src={recipe.image_url} width="100" height="100" className="w-full rounded aspect-square mb-3" style={{ objectFit: 'cover' }} />
-                    <p className="leading-tight text-sm line-clamp-2 mb-1">{recipe.name}</p>
-                    <p className="mt-auto text-xs text-slate-500 truncate">from {new URL(recipe.url).hostname.replace('www.', '')}</p>
-                  </Link>
-                </div>
+                <RecipeCard key={i} recipe={recipe} className={classNames(
+                  'md:p-2 shrink-0 grow-0 2xl:w-[12.5%] lg:w-[16.667%] sm:w-1/4 w-1/2',
+                  i > 5 && 'hidden sm:block lg:hidden 2xl:block'
+                )} />
               ))}
             </div>
           </div>

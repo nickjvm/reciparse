@@ -24,7 +24,7 @@ export default function CookMode({ checked }: Props) {
     }
   }
 
-  if (window && !('wakeLock' in window.navigator)) {
+  if (global.window && !('wakeLock' in window.navigator)) {
     return null
   }
 
