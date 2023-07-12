@@ -15,6 +15,7 @@ import SaveRecipe from '@/components/SaveRecipe'
 import withHeader from '@/components/withHeader'
 import RecipeError from '@/components/RecipeError'
 import CookMode from '@/components/CookMode'
+import Print from '@/components/Print'
 
 export const dynamic = 'force-dynamic'
 interface Props {
@@ -122,6 +123,7 @@ async function Page({ searchParams }: Props) {
 
                     <Time prepTime={recipe.prepTime} cookTime={recipe.cookTime} totalTime={recipe.totalTime} />
                     <SaveRecipe id={recipe.meta.id} saved={!!recipe.meta.isFavorite} />
+                    <Print />
                     <CookMode />
                   </div>
                 </div>

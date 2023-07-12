@@ -33,9 +33,13 @@ export default function SaveRecipe({ id, saved: _saved }: Props) {
     return null
   }
   return (
-    <button className="inline-flex ring-2 ring-brand-alt focus-visible:outline-0 gap-1 items-center px-2 py-1 rounded" onClick={handleClick}>
-      {!saved && <HeartIcon className="w-5 md:w-6 stroke-brand" />}
-      {saved && <HeartIconFilled className="w-5 md:w-6 fill-brand-alt" />}
+    <button className="inline-flex ring-2 ring-brand-alt focus-visible:outline-0 gap-1 items-center px-2 py-1 rounded hover:bg-slate-100 focus-visible:bg-slate-100" onClick={handleClick}>
+      <span className="sr-only">
+        {saved ? 'unsave this' : 'save this'}
+      </span>
+      {saved
+        ? <HeartIconFilled className="w-5 md:w-6 fill-brand-alt" />
+        : <HeartIcon className="w-5 md:w-6 stroke-brand" />}
     </button>
   )
 }
