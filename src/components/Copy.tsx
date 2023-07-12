@@ -34,7 +34,7 @@ export default function Copy({ text, preventBubble }: Props) {
 
   return (
     <>
-      <button disabled={copied} onClick={onClick} className="disabled:pointer-events-none rounded-md px-1 py-0.5 border-slate-200 text-slate-500 border font-normal text-xs group hover:bg-slate-100 hover:text-slate-800 hover:border-slate-400 transition">
+      <button disabled={copied} onClick={onClick} className="print:hidden disabled:pointer-events-none rounded-md px-1 py-0.5 border-slate-200 text-slate-500 border font-normal text-xs group hover:bg-slate-100 hover:text-slate-800 hover:border-slate-400 transition">
         {!copied && (
           <span className="flex gap-1">
             <ClipboardDocumentListIcon className="transition w-4 group-hover:text-brand group-hover:fill-white" />

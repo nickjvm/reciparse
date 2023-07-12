@@ -29,7 +29,7 @@ export default function CookMode({ checked }: Props) {
   }
 
   return (
-    <div className="flex gap-2 items-center">
+    <div className="print:hidden flex gap-2 items-center">
       <div>
         <Switch
           checked={checked}
