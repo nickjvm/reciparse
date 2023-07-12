@@ -1,7 +1,7 @@
 'use client'
 
 import { CheckCircleIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outline'
-import { KeyboardEvent, KeyboardEventHandler, MouseEvent, useEffect, useState } from 'react'
+import { KeyboardEvent, MouseEvent, useEffect, useState } from 'react'
 
 interface Props {
   text: string
