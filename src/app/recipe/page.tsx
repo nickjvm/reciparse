@@ -164,7 +164,7 @@ function Page() {
             </header>
             <div className="pt-3 md:pt-0 md:grid grid-cols-8 gap-8 pb-8 sm:pb-4 md:pb-0">
               <IngredientsList ingredients={recipe.recipeIngredient} />
-              <div className="col-span-8 md:col-span-5 print:col-span-5 print:mt-2">
+              <div className="col-span-8 md:col-span-5 print:col-span-5 print:mt-2" id="directions">
                 {recipe.recipeInstructions.map(renderInstructionSection)}
               </div>
             </div>

@@ -17,7 +17,7 @@ export default function IngredientsList({ ingredients }: Props) {
           Ingredients
           <Copy text={ingredients.join('\n')} />
         </h3>
-        <ul>
+        <ul id="ingredients">
           {ingredients.map((ingredient: string, i: number)=> (
             <li key={i} className="border-b print:border-b-0 print:pb-1 print:mb-1 last:border-b-0 border-b-slate-200 pb-2 mb-2">{decode(ingredient.replace(/\s([^\s]+)$/, '&nbsp;$1'))}</li>
           ))}
