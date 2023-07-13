@@ -11,7 +11,7 @@ interface Props {
 }
 export default function IngredientsList({ ingredients }: Props) {
   return (
-    <div className="col-span-3 fixed md:static bottom-0">
+    <div className="col-span-3 fixed md:static print:static bottom-0">
       <div className="hidden md:block print:block">
         <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
           Ingredients
