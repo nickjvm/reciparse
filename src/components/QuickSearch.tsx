@@ -73,7 +73,7 @@ export default function QuickSearch({ size = 'md', inputClassName, autoFocus }: 
             className={classNames(
               error && 'ring-red-300 focus:ring-red-600',
               !error && 'ring-gray-300 focus:ring-brand-alt',
-              'block transition w-full rounded-md border-0 py-1.5 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-inset',
+              'block transition w-full rounded-md border-0 py-1.5 pr-12 md:pr-8 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-inset',
               `sm:text-${size}`,
               inputClassName, {
                 'py-3 sm:leading-8 sm:text-lg': size === 'lg',
