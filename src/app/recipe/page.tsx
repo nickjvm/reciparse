@@ -65,19 +65,22 @@ function Page() {
     }
   }
 
-  const renderInstructionSection = (section: HowToSection, i: number, instructions: RecipeInstruction[]) => {
-    if (instructions.length === 1 && !section.itemListElement.length) {
-      return (
-        <RecipeError errorText="We couldn&apos;t find any directions in this recipe :(" actionText="View on the original site" actionUrl={searchParams.get('url')} />
-      )
-    }
+  const renderInstructionSection = (section: HowToSection, i: number) => {
     return (
       <Fragment key={i}>
         {section.name && <h2 className="text-xl font-bold mb-2">{section.name}</h2>}
-        {!!section.itemListElement.length && (
+        {section.itemListElement.length === 1 && (
+          <div key={i} className="mb-2 grid grid-cols-12">
+            <span className="flex-grow col-span-11">
+              {section.itemListElement[0].name && section.itemListElement[0].name !== section.itemListElement[0].text && <span className="block font-bold">{decode(section.itemListElement[0].name)}</span>}
+              <span dangerouslySetInnerHTML={{ __html: section.itemListElement[0].text }} />
+            </span>
+          </div>
+        )}
+        {section.itemListElement.length > 1 && (
           <ol className="[counter-reset: step]">
             {section.itemListElement.map((step, i) => (
-              <li key={i} className="mb-2 before:text-brand-alt grid grid-cols-12 before:content-[counter(step)] before:font-bold before:text-xl" style={{ counterIncrement: 'step' }}>
+              <li key={i} className="mb-2 before:text-brand-alt grid grid-cols-12 before:content-[counter(step)] before:font-bold before:text-xl [counter-increment:step]">
                 <span className="flex-grow col-span-11">
                   {step.name && step.name !== step.text && <span className="block font-bold">{decode(step.name)}</span>}
                   <span dangerouslySetInnerHTML={{ __html: step.text }} />
