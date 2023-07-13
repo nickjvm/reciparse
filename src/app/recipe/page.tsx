@@ -117,7 +117,7 @@ async function Page({ searchParams }: Props) {
         {section.itemListElement.length === 1 && (
           <div key={i} className="mb-2 grid grid-cols-12">
             <span className="flex-grow col-span-11">
-              {section.itemListElement[0].name && section.itemListElement[0].name !== section.itemListElement[0].text && <span className="block font-bold">{decode(section.itemListElement[0].name)}</span>}
+              {section.itemListElement[0].name && decode(section.itemListElement[0].name) !== section.itemListElement[0].text && <span className="block font-bold">{decode(section.itemListElement[0].name)}</span>}
               <span dangerouslySetInnerHTML={{ __html: section.itemListElement[0].text }} />
             </span>
           </div>
@@ -127,7 +127,7 @@ async function Page({ searchParams }: Props) {
             {section.itemListElement.map((step, i) => (
               <li key={i} className="mb-2 before:text-brand-alt grid grid-cols-12 before:content-[counter(step)] before:font-bold before:text-xl [counter-increment:step]">
                 <span className="flex-grow col-span-11">
-                  {step.name && step.name !== step.text && <span className="block font-bold">{decode(step.name)}</span>}
+                  {step.name && decode(step.name) !== step.text && <span className="block font-bold">{decode(step.name)}</span>}
                   <span dangerouslySetInnerHTML={{ __html: step.text }} />
                 </span>
               </li>
