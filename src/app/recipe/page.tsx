@@ -6,7 +6,7 @@ import Script from 'next/script'
 import { decode } from 'html-entities'
 import { Squares2X2Icon } from '@heroicons/react/24/outline'
 
-import { HowToSection, Recipe, RecipeInstruction } from '@/types'
+import { HowToSection, Recipe } from '@/types'
 import clientRequest from '@/lib/api/client'
 
 import IngredientsList from '@/components/Ingredients'
