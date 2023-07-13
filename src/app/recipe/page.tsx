@@ -170,7 +170,7 @@ async function Page({ searchParams }: Props) {
               </div>
               <div className="md:col-span-9 print:col-span-8">
                 <div className="mb-4">
-                  <h2 className="font-display text-brand-alt text-3xl font-bold">{recipe.name}</h2>
+                  <h2 className="font-display text-brand-alt text-3xl font-bold">{decode(recipe.name)}</h2>
                   <p className="text-slate-500 text-sm print:hidden">from <Link target="_blank" href={recipe.meta.raw_source}>{recipe.meta.source}</Link></p>
                   <p className="text-slate-500 text-sm hidden print:block">{searchParams.url}</p>
                 </div>
