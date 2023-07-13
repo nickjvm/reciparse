@@ -17,6 +17,9 @@ import RecipeError from '@/components/RecipeError'
 import CookMode from '@/components/CookMode'
 import Print from '@/components/Print'
 import getUrl from '@/lib/api/getUrl'
+import { Metadata } from 'next'
+import { OpenGraph } from 'next/dist/lib/metadata/types/opengraph-types'
+import Head from 'next/head'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,8 +28,48 @@ interface Props {
     url: string
   }
 }
+
+async function getRecipe(url: string): Promise<Recipe> {
+  return await serverRequest(`/api/recipes/parse?url=${url}`, { method: 'POST' })
+}
+
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const openGraph: OpenGraph = {
+    type: 'article',
+    siteName: 'Reciparse',
+    url: `recipe?url=${searchParams.url}`,
+  }
+
+  try {
+    const recipe: Recipe = await getRecipe(searchParams.url)
+    if (recipe.error) {
+      throw recipe.error
+    }
+
+    return {
+      title: `${recipe.name} | Reciparse`,
+      metadataBase: new URL(getUrl()),
+      openGraph: {
+        ...openGraph,
+        title: recipe.name,
+        images: recipe.image
+      }
+
+    }
+  } catch (e) {
+    return {
+      title: 'Recipe not found | Reciparse',
+      openGraph: {
+        ...openGraph,
+        title: 'Recipe not found',
+        images: 'logo.png'
+      }
+    }
+  }
+}
+
 async function Page({ searchParams }: Props) {
-  const recipe: Recipe = await serverRequest(`/api/recipes/parse?url=${searchParams.url}`, { method: 'POST' })
+  const recipe: Recipe = await getRecipe(searchParams.url)
 
   if (recipe.error) {
     return (
@@ -35,7 +78,7 @@ async function Page({ searchParams }: Props) {
         <RecipeError
           actionUrl={searchParams.url}
           errorText="We tried our best, but couldn't find a recipe to parse at the URL you entered."
-          actionText="Take me to the original"
+          actionText="Vew on the original site"
         />
       </>
     )
@@ -102,14 +145,8 @@ async function Page({ searchParams }: Props) {
 
   return (
     <>
-      <title>{`${recipe.name} | Reciparse`}</title>
       <link rel="canonical" href={getUrl(`recipe?url=${searchParams.url}`)} />
-      <meta property="og:type" content="article" />
-      <meta property="og:title" content={recipe.name} />
-      <meta property="og:url" content={getUrl(`recipe?url=${searchParams.url}`)} />
-      <meta property="og:site_name" content="Reciparse" />
-      <meta property="og:image" content={recipe.image} />
-      <Script
+      <script
         id="recipe-schema"
         type="application/ld+json"
         dangerouslySetInnerHTML={{
