@@ -1,7 +1,6 @@
 import { Fragment } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import Script from 'next/script'
 import { decode } from 'html-entities'
 import { Squares2X2Icon } from '@heroicons/react/24/outline'
 
@@ -19,7 +18,6 @@ import Print from '@/components/Print'
 import getUrl from '@/lib/api/getUrl'
 import { Metadata } from 'next'
 import { OpenGraph } from 'next/dist/lib/metadata/types/opengraph-types'
-import Head from 'next/head'
 
 export const dynamic = 'force-dynamic'
 
