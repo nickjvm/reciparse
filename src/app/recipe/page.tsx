@@ -18,6 +18,7 @@ import CookMode from '@/components/CookMode'
 import Print from '@/components/Print'
 import Skeleton from './Skeleton'
 import { useSearchParams } from 'next/navigation'
+import useScript from '@/hooks/useScript'
 
 export const dynamic = 'force-dynamic'
 
@@ -96,6 +97,25 @@ function Page() {
   const schema: Partial<Recipe> = {...recipe}
   delete schema?.meta
 
+  useScript({
+    id: 'recipe-schema',
+    type: 'application/ld+json',
+    innerText: JSON.stringify({
+      '@context':'https://schema.org',
+      '@graph':[
+        schema,
+        {
+          '@type': 'ImageObject',
+          'inLanguage': 'en-US',
+          '@id': `${getUrl('recipe/#primaryimage')}`,
+          'url': recipe?.image,
+          'contentUrl': recipe?.image,
+          'caption': recipe?.name
+        }
+      ]
+    })
+  })
+
   if (loading) {
     return (
       <>
@@ -136,23 +156,6 @@ function Page() {
       <meta property="og:url" content={getUrl(`recipe?url=${searchParams.get('url')}`)} />
       <meta property="og:site_name" content="Reciparse" />
       <meta property="og:image" content={recipe.image} />
-      <script
-        id="recipe-schema"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({'@context':'https://schema.org','@graph':[
-            schema,
-            {
-              '@type': 'ImageObject',
-              'inLanguage': 'en-US',
-              '@id': `${getUrl('recipe/#primaryimage')}`,
-              'url': recipe.image,
-              'contentUrl': recipe.image,
-              'caption': recipe.name
-            }
-          ]})
-        }}
-      />
 
       <main className="print:bg-white print:min-h-0 md:p-4 md:pb-6 print:p-0">
         <div className="m-auto max-w-3xl p-4 md:p-8 print:p-0 md:rounded-md ring-brand-alt md:ring-2 print:ring-0 print:shadow-none shadow-lg bg-white">
