@@ -19,7 +19,12 @@ import Print from '@/components/Print'
 
 export const dynamic = 'force-dynamic'
 
-async function Page({ searchParams }) {
+interface Props {
+  searchParams: {
+    url: string
+  }
+}
+async function Page({ searchParams }: Props) {
   const recipe: Recipe = await serverRequest(`/api/recipes/parse?url=${searchParams.url}`, { method: 'POST' })
 
   if (recipe.error) {
