@@ -39,8 +39,12 @@ export default async function RootLayout({ children }: {
       <link rel="icon" type="image/png" href="/favicon.png" />
       <body>
         <AuthContextProvider user={session?.user || null}>
-          {children}
-          <Footer />
+          <div className="min-h-screen flex flex-col">
+            <div className="flex-grow flex flex-col ">
+              {children}
+            </div>
+            <Footer />
+          </div>
         </AuthContextProvider>
       </body>
     </html>

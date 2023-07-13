@@ -12,7 +12,6 @@ export function OnNavigation({ callback }: Props) {
 
   useEffect(() => {
     const url = `${pathname}?${searchParams}`
-    console.log(url)
     callback(url)
   }, [pathname, searchParams])
 

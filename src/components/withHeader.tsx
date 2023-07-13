@@ -1,4 +1,4 @@
-import classnames from 'classnames'
+import classNames from 'classnames'
 import Header from './Header'
 
 interface DefaultProps {
@@ -9,7 +9,7 @@ interface DefaultProps {
 export default function withHeader(Component: JSX.ElementType, { withSearch, className }: DefaultProps) {
 
   const WithHeader = (props: object) => (
-    <div className={classnames('flex flex-col min-h-screen', className)}>
+    <div className={classNames('flex-grow', className)}>
       <Header withBorder withSearch={withSearch} />
       <div className="pt-2 grow">
         <Component {...props} />

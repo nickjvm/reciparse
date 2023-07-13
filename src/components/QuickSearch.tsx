@@ -1,6 +1,6 @@
 'use client'
 import { ChangeEvent, FormEvent, useRef, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { ArrowRightIcon } from '@heroicons/react/20/solid'
 import classNames from 'classnames'
 import Loading from './icons/Loading'
@@ -13,12 +13,15 @@ interface Props {
 }
 
 export default function QuickSearch({ size = 'md', inputClassName, autoFocus }: Props) {
-  const [url, setUrl] = useState('')
+  const searchParams = useSearchParams()
+  const pathname = usePathname()
+  const router = useRouter()
+
+  const [url, setUrl] = useState(pathname === '/recipe' ? searchParams.get('url') || '' : '')
   const [error, setError] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const inputRef = useRef<HTMLInputElement>(null)
-  const router = useRouter()
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     setError(false)

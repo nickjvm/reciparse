@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 interface Props {
-  actionUrl?: string
+  actionUrl?: string | null
   actionText?: string
   errorText?: string
 }
