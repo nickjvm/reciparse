@@ -146,7 +146,8 @@ function Page() {
               <div className="md:col-span-9 print:col-span-8">
                 <div className="mb-4">
                   <h2 className="font-display text-brand-alt text-3xl font-bold">{recipe.name}</h2>
-                  <p className="text-slate-500 text-sm">from <Link target="_blank" href={recipe.meta.raw_source}>{recipe.meta.source}</Link></p>
+                  <p className="text-slate-500 text-sm print:hidden">from <Link target="_blank" href={recipe.meta.raw_source}>{recipe.meta.source}</Link></p>
+                  <p className="text-slate-500 text-sm hidden print:block">{searchParams.get('url')}</p>
                 </div>
                 <div className="flex gap-4 flex-wrap">
                   <span className="inline-flex text-sm md:text-base ring-2 ring-brand-alt focus-visible:outline-0 gap-1 items-center px-2 py-1 rounded">
