@@ -93,14 +93,14 @@ async function Page({ searchParams }: Props) {
     )
   }
 
-  const parseYield = (recipeYield: string | string[]): string => {
+  const parseYield = (recipeYield: string | string[], i?: number, recipeYields?: string[]): string => {
     if (Array.isArray(recipeYield)) {
       return Array.from(new Set(recipeYield.map(parseYield).filter(v => v))).join(', ')
     } else {
       const recipeYieldNum = Number(recipeYield)
 
       if (!isNaN(recipeYieldNum)) {
-        if (recipeYieldNum > 0) {
+        if (recipeYieldNum > 0 && !recipeYields?.find(y => y.startsWith(`${recipeYieldNum} `))) {
           return `${recipeYieldNum} serving${recipeYieldNum !== 1 ? 's' : ''}`
         }
         return ''

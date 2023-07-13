@@ -22,7 +22,7 @@ export default function Header({
   return (
     <header className={classnames('relative isolate bg-white', withBorder && 'border-b-slate-100 print:shadow-none shadow-sm print:border-none border-b')}>
       <OnNavigation callback={() => setMobileMenuOpen(false)} />
-      <nav className="mx-auto grid grid-cols-12 max-w-5xl items-center justify-between p-4 print:px-0 md:px-6 gap-2" aria-label="Global">
+      <nav className="mx-auto grid grid-cols-12 max-w-5xl items-center justify-between p-4 print:p-0 md:px-6 gap-2" aria-label="Global">
         <div className="flex md:flex-1 col-span-6 md:col-span-3 lg:col-span-2">
           <Link href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Reciparse</span>
