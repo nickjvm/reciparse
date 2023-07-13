@@ -2,12 +2,12 @@
 import { Fragment, useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import Script from 'next/script'
 import { decode } from 'html-entities'
 import { Squares2X2Icon } from '@heroicons/react/24/outline'
 
 import { HowToSection, Recipe } from '@/types'
 import clientRequest from '@/lib/api/client'
+import getUrl from '@/lib/api/getUrl'
 
 import IngredientsList from '@/components/Ingredients'
 import Time from '@/components/Time'
@@ -129,13 +129,31 @@ function Page() {
   return (
     <>
       <title>{`${recipe.name} | Reciparse`}</title>
-      <Script
+      <title>{`${recipe.name} | Reciparse`}</title>
+      <link rel="canonical" href={getUrl(`recipe?url=${searchParams.get('url')}`)} />
+      <meta property="og:type" content="article" />
+      <meta property="og:title" content={recipe.name} />
+      <meta property="og:url" content={getUrl(`recipe?url=${searchParams.get('url')}`)} />
+      <meta property="og:site_name" content="Reciparse" />
+      <meta property="og:image" content={recipe.image} />
+      <script
         id="recipe-schema"
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(schema)
+          __html: JSON.stringify({'@context':'https://schema.org','@graph':[
+            schema,
+            {
+              '@type': 'ImageObject',
+              'inLanguage': 'en-US',
+              '@id': `${getUrl('recipe/#primaryimage')}`,
+              'url': recipe.image,
+              'contentUrl': recipe.image,
+              'caption': recipe.name
+            }
+          ]})
         }}
       />
+
       <main className="print:bg-white print:min-h-0 md:p-4 md:pb-6 print:p-0">
         <div className="m-auto max-w-3xl p-4 md:p-8 print:p-0 md:rounded-md ring-brand-alt md:ring-2 print:ring-0 print:shadow-none shadow-lg bg-white">
           <div>
