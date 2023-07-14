@@ -18,6 +18,7 @@ export default function SaveRecipe({ id, saved: _saved }: Props) {
   useEffect(() => {
     setSaved(_saved)
   }, [_saved])
+
   const handleClick = async (e: MouseEvent) => {
     e.preventDefault()
     try {

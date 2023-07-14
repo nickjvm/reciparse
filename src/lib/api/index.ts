@@ -18,7 +18,9 @@ export default async function request(supabase: SupabaseClient, resource: string
     finalResource = `${getUrl()}${resource.substring(1)}`
   }
 
-  console.log('REQUEST', finalResource)
+  if (process.env.NODE_ENV === 'development') {
+    console.log('REQUEST', finalResource)
+  }
 
   return fetch(finalResource, options).then(r => {
     if (r.ok) {
