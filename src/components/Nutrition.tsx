@@ -1,4 +1,5 @@
 'use client'
+import { useAuthContext } from '@/context/AuthContext'
 import clientRequest from '@/lib/api/client'
 import { EdamamResponse, Nutrition } from '@/types'
 import Image from 'next/image'
@@ -28,6 +29,7 @@ const getServingSize = (recipeYield: string|string[]): number|null => {
 }
 
 export default function NutritionInfo({ data: _data, ingredientsList, recipeYield, source }: Props) {
+  const { user } = useAuthContext()
   const [data, setData] = useState<Nutrition|undefined|null>(_data)
   const [loading, setLoading] = useState(false)
   const [servings, setServings] = useState(getServingSize(recipeYield))
@@ -60,10 +62,9 @@ export default function NutritionInfo({ data: _data, ingredientsList, recipeYiel
     }
   }
 
-
   const note = <div className="text-xs mb-3">Note: The information shown below is {showEdamam ? 'Edamam\'s' : 'an'} estimate based on available ingredients and preparation. It should not be considered a substitute for a professional advice.</div>
 
-  if (!data) {
+  if (!data && user) {
     return (
       <div className="print:hidden">
         <h2 className="text-xl font-bold mb-2">Nutrition</h2>
