@@ -2,6 +2,9 @@ import { Fragment } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { decode } from 'html-entities'
+import { Metadata } from 'next'
+import { OpenGraph } from 'next/dist/lib/metadata/types/opengraph-types'
+
 import { Squares2X2Icon } from '@heroicons/react/24/outline'
 
 import { HowToSection, Recipe } from '@/types'
@@ -15,9 +18,9 @@ import withHeader from '@/components/withHeader'
 import RecipeError from '@/components/RecipeError'
 import CookMode from '@/components/CookMode'
 import Print from '@/components/Print'
+import Nutrition from '@/components/Nutrition'
+
 import getUrl from '@/lib/api/getUrl'
-import { Metadata } from 'next'
-import { OpenGraph } from 'next/dist/lib/metadata/types/opengraph-types'
 
 export const dynamic = 'force-dynamic'
 
@@ -49,8 +52,8 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
       metadataBase: new URL(getUrl()),
       openGraph: {
         ...openGraph,
-        title: recipe.name,
-        images: recipe.image
+        title: decode(recipe.name),
+        images: [recipe.meta.image]
       }
 
     }
@@ -191,6 +194,14 @@ async function Page({ searchParams }: Props) {
               <IngredientsList ingredients={recipe.recipeIngredient} />
               <div className="col-span-8 md:col-span-5 print:col-span-5 print:mt-2">
                 {recipe.recipeInstructions.map(renderInstructionSection)}
+                <div className="mt-4">
+                  <Nutrition
+                    data={recipe.nutrition}
+                    ingredientsList={recipe.recipeIngredient}
+                    recipeYield={recipe.recipeYield}
+                    source={recipe.meta.source}
+                  />
+                </div>
               </div>
             </div>
           </div>

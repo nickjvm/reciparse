@@ -52,12 +52,10 @@ export function AuthContextProvider({ children, user: serverUser}: Props) {
   // force refresh the token every 10 minutes
   useEffect(() => {
     const handle = setInterval(async () => {
-      console.log('refreshing session.')
       const { data: { session },  error } = await supabase.auth.refreshSession()
       if (error) {
         router.push('/')
       } else {
-        console.log('setting session!')
         await supabase.auth.setSession({
           access_token: session?.access_token || '',
           refresh_token: session?.refresh_token || '',

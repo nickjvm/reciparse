@@ -38,10 +38,10 @@ function Page() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     try {
-      const { data, error } = await supabase.auth.updateUser({
+      const { error } = await supabase.auth.updateUser({
         password
       })
-      console.log(data, error)
+
       if (error) {
         throw error
       } else {
