@@ -9,6 +9,7 @@ import './globals.css'
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/types/database.types'
 import Footer from '@/components/Footer'
+import getUrl from '@/lib/api/getUrl'
 
 const openSans = Open_Sans({
   subsets: ['latin'],
@@ -24,6 +25,9 @@ const yesevaOne = Yeseva_One({
 export const metadata = {
   title: 'Reciparse.com',
   description: 'Ditch the endless scrolling, stories, ads and videos. Get exactly what you need: the recipe.',
+  openGraph: {
+    images: 'og-image.png'
+  }
 }
 
 export const dynamic = 'force-dynamic'
