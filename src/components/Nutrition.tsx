@@ -95,6 +95,10 @@ export default function NutritionInfo({ data: _data, ingredientsList, recipeYiel
     )
   }
 
+  if (!data) {
+    return null
+  }
+
   return (
     <>
       <h2 className="text-xl font-bold mb-2">Nutrition {data && `(${servings} serving${servings !== 1 && 's'})`}</h2>
