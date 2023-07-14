@@ -52,8 +52,8 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
       metadataBase: new URL(getUrl()),
       openGraph: {
         ...openGraph,
-        title: recipe.name,
-        images: recipe.image
+        title: decode(recipe.name),
+        images: [recipe.meta.image]
       }
 
     }
