@@ -27,7 +27,7 @@ export interface Recipe {
 
 export interface Nutrition {
   '@type': 'NutritionInformation'
-  calories: number|null
+  calories: number|string|null
   unsaturatedFatContent: string|null
   carbohydrateContent: sring|null
   cholesterolContent: string|null,

@@ -101,11 +101,18 @@ export default function NutritionInfo({ data: _data, ingredientsList, recipeYiel
 
   return (
     <>
-      <h2 className="text-xl font-bold mb-2">Nutrition {data && `(${servings} serving${servings !== 1 && 's'})`}</h2>
+      <h2 className="text-xl font-bold mb-2">Nutrition {data && servings && servings > 1 && `(${servings} servings)`}</h2>
       {note}
+      <h3 className="text-md font-bold mb-2">
+        {servings && servings > 1 && 'Per serving: '}
+        {!servings || servings === 1 && 'Per recipe: '}
+        {data.calories && <span className="font-bold">
+          {typeof data.calories === 'number' && `${data.calories} kcal`}
+          {typeof data.calories === 'string' && data.calories.includes('cal') ? data.calories : `${data.calories} kcal`}
+        </span>}
+      </h3>
       <div className="grid grid-cols-12">
         <div className="col-span-12 sm:col-span-6 print:col-span-6">
-          {data.calories && <div className="font-bold">{data.calories} calories</div>}
           {data.fatContent && <div className="text-sm">
             <span className="font-medium">Total fat: </span>
             {renderNutritionValue(data.fatContent)}
