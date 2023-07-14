@@ -105,7 +105,7 @@ async function Page({ searchParams }: Props) {
         }
         return ''
       } else {
-        return recipeYield.replace(/^0/, '').trim()
+        return recipeYield.replace(/^0/, '').replace(/\.$/, '').trim()
       }
     }
   }
