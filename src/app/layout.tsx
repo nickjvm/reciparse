@@ -9,7 +9,6 @@ import './globals.css'
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/types/database.types'
 import Footer from '@/components/Footer'
-import getUrl from '@/lib/api/getUrl'
 
 const openSans = Open_Sans({
   subsets: ['latin'],
