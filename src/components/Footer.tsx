@@ -32,10 +32,13 @@ export default function Footer() {
           <h4 className="font-semibold text-xs mt-2 mb-4">Other Info</h4>
           <ul className="space-y-2">
             <li>
-              <Link href="#">Privacy policy</Link>
+              <Link href="/info/privacy">Privacy policy</Link>
             </li>
             <li>
-              <Link target="_blank" href="https://github.com/nickjvm/reciparse">An open source project</Link>
+              <Link href="/info/cookies">Cookie policy</Link>
+            </li>
+            <li>
+              <Link href="/info/terms">Terms of use</Link>
             </li>
           </ul>
         </div>
