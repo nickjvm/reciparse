@@ -14,9 +14,13 @@ export async function GET(request: NextRequest) {
   const redirectURL = new URL(requestUrl.origin + dest)
 
   if (code) {
-    const supabase = createRouteHandlerClient<Database>({ cookies })
-    await supabase.auth.exchangeCodeForSession(code)
-    redirectURL.searchParams.set('code', code)
+    try {
+      const supabase = createRouteHandlerClient<Database>({ cookies })
+      await supabase.auth.exchangeCodeForSession(code)
+      redirectURL.searchParams.set('code', code)
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   // URL to redirect to after sign in process completes

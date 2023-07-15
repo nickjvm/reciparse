@@ -1,112 +1,30 @@
 'use client'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { useState, FormEvent } from 'react'
-import Modal from './Modal'
-import SignIn from './SignIn'
+
 import Link from 'next/link'
-import { useAuthContext } from '@/context/AuthContext'
 import { Popover } from '@headlessui/react'
 import { HeartIcon, UserIcon, ArrowLeftOnRectangleIcon} from '@heroicons/react/20/solid'
-import { useRouter } from 'next/navigation'
-import { AuthAction } from '@/types'
-import { AuthError } from '@supabase/supabase-js'
 import { ChevronDownIcon } from '@heroicons/react/24/solid'
 import classNames from 'classnames'
 
+import { useAuthContext } from '@/context/AuthContext'
+
 interface Props {
-  onSuccess?: () => void
+  onClick?: () => void
 }
-function AuthBtn({ onSuccess }: Props) {
-  const router = useRouter()
-  const supabase = createClientComponentClient()
-  const { user } = useAuthContext()
-  const [open, setOpen] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [action, setAction] = useState<AuthAction>('signin')
-  const [error, setError] = useState<AuthError|null>()
+function AuthBtn({ onClick }: Props) {
+  const { user, setAuthType, actions } = useAuthContext()
 
-  const handleSubmit = async (values: { email: string, password: string, action: AuthAction}, e: FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    if (values.action === 'signin') {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: values.email,
-        password: values.password,
-      })
-
-      setLoading(false)
-      if (error) {
-        setError(error)
-      } else {
-        setOpen(false)
-        onSuccess?.()
-        router.refresh()
-        // @TODO: notification toaster?
-      }
-    } else if (values.action === 'signup') {
-      const { data, error } = await supabase.auth.signUp({
-        email: values.email,
-        password: values.password,
-        options: {
-          emailRedirectTo: `${location.origin}/auth/callback`,
-        }
-      })
-      setLoading(false)
-      if (error) {
-        setError(error)
-      } else {
-        if (data.user?.identities?.length) {
-          setOpen(false)
-          router.refresh()
-          onSuccess?.()
-        } else {
-          setError(new AuthError('Account already exists for this email address.', 401))
-        }
-        // @TODO: notification toaster?
-      }
-    } else if (values.action === 'reset') {
-      const { error } = await supabase.auth.resetPasswordForEmail(values.email, {
-        redirectTo: `${location.origin}/auth/callback?dest=/update-password`,
-      })
-      setLoading(false)
-      if (error) {
-        setError(error)
-      } else {
-        setAction('reset_sent')
-      }
-    }
+  const handleClick = (authType: string) => () => {
+    console.log('here')
+    onClick?.()
+    setAuthType(authType)
   }
-
-  const handleSignOut = async () => {
-    supabase.auth.signOut()
-    router.push('/')
-    setOpen(false)
-  }
-
-  const handleChange = () => {
-    setError(null)
-  }
-
   if (!user) {
     return (
-      <>
-        <button onClick={() => {setOpen(true)}}>Log In</button>
-        <Modal open={open} onClose={() => {
-          setOpen(false)
-          setAction('signin')
-          setError(null)
-          setLoading(false)
-        }}>
-          <SignIn
-            action={action}
-            disabled={loading}
-            onSubmit={handleSubmit}
-            error={error}
-            onChange={handleChange}
-            onActionChange={() => setError(null)}
-          />
-        </Modal>
-      </>
+      <div className="flex gap-3 items-center whitespace-nowrap">
+        <button className="w-[50%] md:w-auto bg-white semibold px-3 ring-1 ring-gray-200 md:ring-transparent py-1.5 ring-gray-200 rounded hover:ring-1 hover:bg-gray-100 focus-visible:bg-gray-100 focus-visible:ring-1 transition" onClick={handleClick('signin')}>Sign In</button>
+        <button className="w-[50%] md:w-auto bg-brand-alt text-white semibold px-3 py-1.5 rounded hover:bg-brand focus-visible:bg-brand transition"  onClick={handleClick('signup')}>Sign Up</button>
+      </div>
     )
   } else {
     return (
@@ -137,7 +55,7 @@ function AuthBtn({ onSuccess }: Props) {
                     <UserIcon className="w-5 inline-block mr-2"/>
                     My Profile
                   </Link>
-                  <button className="transition w-full text-left block hover:bg-slate-50 px-3 py-2" type="submit" onClick={handleSignOut}>
+                  <button className="transition w-full text-left block hover:bg-slate-50 px-3 py-2" type="submit" onClick={actions.signOut}>
                     <ArrowLeftOnRectangleIcon className="w-5 inline-block mr-2"/>
                     Sign out
                   </button>
@@ -155,7 +73,7 @@ function AuthBtn({ onSuccess }: Props) {
             <UserIcon className="w-5 inline-block mr-2"/>
             My Profile
           </Link>
-          <button className="w-full text-left block md:hover:bg-slate-100 py-2" type="submit" onClick={handleSignOut}>
+          <button className="w-full text-left block md:hover:bg-slate-100 py-2" type="submit" onClick={actions.signOut}>
             <ArrowLeftOnRectangleIcon className="w-5 inline-block mr-2"/>
             Sign out
           </button>

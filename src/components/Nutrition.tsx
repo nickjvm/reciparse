@@ -18,14 +18,14 @@ const renderNutritionValue = (value: string) => {
 
 const getServingSize = (recipeYield: string|string[]): number|null => {
   if (typeof recipeYield === 'string') {
-    const servingsMatch = recipeYield.match(/\d+/)
+    const servingsMatch = recipeYield.match(/[1-9]+/)
     if (servingsMatch) {
       return parseInt(servingsMatch[0], 10) || 1
     }
     return null
   }
 
-  return getServingSize(recipeYield.find((y) => y.match(/\d+/)) || '1')
+  return getServingSize(recipeYield.find((y) => y.match(/[1-9]+/)) || '1')
 }
 
 export default function NutritionInfo({ data: _data, ingredientsList, recipeYield, source }: Props) {
@@ -108,7 +108,7 @@ export default function NutritionInfo({ data: _data, ingredientsList, recipeYiel
         {!servings || servings === 1 && 'Per recipe: '}
         {data.calories && <span className="font-bold">
           {typeof data.calories === 'number' && `${data.calories} kcal`}
-          {typeof data.calories === 'string' && data.calories.includes('cal') ? data.calories : `${data.calories} kcal`}
+          {typeof data.calories === 'string' && (data.calories.includes('cal') ? data.calories : `${data.calories} kcal`)}
         </span>}
       </h3>
       <div className="grid grid-cols-12">

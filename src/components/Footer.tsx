@@ -2,10 +2,9 @@
 
 import { useAuthContext } from '@/context/AuthContext'
 import Link from 'next/link'
-import AuthBtn from './AuthBtn'
 
 export default function Footer() {
-  const { user } = useAuthContext()
+  const { user, setAuthType } = useAuthContext()
   return (
     <div className="print:hidden text-white bg-gradient-to-br from-brand to-35% to-brand-alt p-3">
       <div className="mx-auto grid grid-cols-12 max-w-5xl items-start p-4 print:hidden md:px-6 gap-2">
@@ -15,7 +14,12 @@ export default function Footer() {
         <div className="col-span-6 md:col-span-3 lg:col-span-2 md:col-start-7 lg:col-start-9 text-xs">
           <h4 className="font-semibold text-xs mt-2 mb-4">My Account</h4>
           <ul className="space-y-2">
-            {!user && <li><AuthBtn /></li>}
+            {!user && (
+              <>
+                <li><button onClick={() => setAuthType('signin')}>Sign In</button></li>
+                <li><button onClick={() => setAuthType('signup')}>Sign Up</button></li>
+              </>
+            )}
             {user && (
               <>
                 <li>

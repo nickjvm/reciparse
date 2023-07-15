@@ -44,7 +44,7 @@ export default function Header({
             <Bars3Icon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
-        <div className="hidden md:flex md:flex-1 md:justify-end col-start-12 col-span-1 print:hidden">
+        <div className="hidden md:flex md:flex-2 md:justify-end col-start-12 col-span-1 print:hidden">
           <div className="text-sm font-semibold leading-6 text-gray-900">
             <AuthBtn />
           </div>
@@ -69,7 +69,7 @@ export default function Header({
                 <QuickSearch size="lg" />
               </div>
               <div className="text-sm font-semibold leading-6 text-gray-900">
-                <AuthBtn onSuccess={() => setMobileMenuOpen(false)}/>
+                <AuthBtn onClick={() => setMobileMenuOpen(false)}/>
               </div>
             </div>
           </div>

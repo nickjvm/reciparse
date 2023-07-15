@@ -28,7 +28,7 @@ async function Page() {
 
   return (
     <div className="max-w-5xl w-full mx-auto mt-6">
-      <h2 className="font-display text-center text-2xl font-bold text-brand-alt">My Favorites</h2>
+      {!!favorites.length && <h2 className="font-display text-center text-2xl font-bold text-brand-alt">My Favorites</h2>}
       <FavoritesList data={favorites} />
     </div>
   )

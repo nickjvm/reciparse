@@ -3,10 +3,15 @@ import { Database } from '@/types/database.types'
 import { User, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import { createContext, useState, useEffect, useContext, ReactNode } from 'react'
+import { signIn, signOut, signUp, reset, AuthActions} from '@/lib/auth'
+import AuthModal from '@/components/AuthModal'
 
 interface Context {
   user: null | User
   userLoading: boolean
+  actions: AuthActions
+  authType?: string|null
+  setAuthType: (type?: string|null) => void
 }
 
 interface Props {
@@ -17,12 +22,22 @@ interface Props {
 const AuthContext = createContext<Context>({
   user: null,
   userLoading: true,
+  actions: {
+    signIn,
+    signUp,
+    signOut,
+    reset,
+  },
+  setAuthType: (type: string|null|undefined) => {
+    console.log('noop', type)
+  }
 })
 
 export function AuthContextProvider({ children, user: serverUser}: Props) {
   const supabase = createClientComponentClient<Database>()
   const [user, setUser] = useState<User|null>(serverUser)
   const [loading, setLoading] = useState(false)
+  const [authType, setAuthType] = useState<string|null|undefined>(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -31,6 +46,7 @@ export function AuthContextProvider({ children, user: serverUser}: Props) {
         if (event === 'SIGNED_OUT') {
           setUser(null)
           router.push('/')
+          router.refresh()
         } else {
           if (session) {
             const { data: { user }, error } = await supabase.auth.getUser()
@@ -52,7 +68,22 @@ export function AuthContextProvider({ children, user: serverUser}: Props) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, userLoading: loading }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider
+      value={{
+        user,
+        userLoading: loading,
+        actions: {
+          signIn,
+          signUp,
+          signOut,
+          reset,
+        },
+        authType,
+        setAuthType,
+      }}>
+      {children}
+      <AuthModal />
+    </AuthContext.Provider>
   )
 }
 
