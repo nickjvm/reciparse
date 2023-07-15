@@ -30,6 +30,7 @@ export function AuthContextProvider({ children, user: serverUser}: Props) {
       try {
         if (event === 'SIGNED_OUT') {
           setUser(null)
+          router.push('/')
         } else {
           if (session) {
             const { data: { user }, error } = await supabase.auth.getUser()
@@ -43,28 +44,11 @@ export function AuthContextProvider({ children, user: serverUser}: Props) {
       } catch (e) {
         console.error(e)
         setUser(null)
+        router.push('/')
       } finally {
         setLoading(false)
       }
     })
-  }, [])
-
-  // force refresh the token every 10 minutes
-  useEffect(() => {
-    const handle = setInterval(async () => {
-      const { data: { session },  error } = await supabase.auth.refreshSession()
-      if (error) {
-        router.push('/')
-      } else {
-        await supabase.auth.setSession({
-          access_token: session?.access_token || '',
-          refresh_token: session?.refresh_token || '',
-        })
-      }
-    }, 10 * 60 * 1000)
-
-    // clean up setInterval
-    return () => clearInterval(handle)
   }, [])
 
   return (
