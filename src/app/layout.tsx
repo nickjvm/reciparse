@@ -8,6 +8,8 @@ import { AuthContextProvider } from '@/context/AuthContext'
 import './globals.css'
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/types/database.types'
+
+import CookieBanner from '@/components/CookieBanner'
 import Footer from '@/components/Footer'
 
 const openSans = Open_Sans({
@@ -37,6 +39,7 @@ export default async function RootLayout({ children }: {
   const supabase = createServerComponentClient<Database>({ cookies })
 
   const { data: { session } } = await supabase.auth.getSession()
+
   return (
     <html lang="en" className={classNames(openSans.className, openSans.variable, yesevaOne.variable)}>
       <link rel="icon" type="image/png" href="/favicon.png" />
@@ -47,6 +50,7 @@ export default async function RootLayout({ children }: {
               {children}
             </div>
             <Footer />
+            {!cookies().get('cookie_consent') && <CookieBanner />}
           </div>
         </AuthContextProvider>
       </body>
