@@ -66,13 +66,13 @@ export default function FavoritesList({ count: initialCount, error: countError }
     } else {
       params.delete('q')
     }
-    if (page || debouncedValue) {
-      router.replace(`${pathname}?${params}`)
-    }
 
     setLoading(true)
     setError(null)
     clientRequest(`/api/recipes/favorites?page=${page}&q=${debouncedValue}&perPage=${itemsPerPage}`).then((response: FavoritesResponse) => {
+      if (page || debouncedValue) {
+        router.push(`${pathname}?${params}`)
+      }
       if (response.error) {
         setError(response.message || 'Something went wrong.')
         setCount(0)
@@ -81,9 +81,7 @@ export default function FavoritesList({ count: initialCount, error: countError }
         setCount(response.count)
       }
       setInitted(true)
-      setTimeout(() => {
-        setLoading(false)
-      }, 150)
+      setLoading(false)
     })
     // Triggers when "debouncedValue" changes
   }, [debouncedValue, page])
@@ -124,7 +122,7 @@ export default function FavoritesList({ count: initialCount, error: countError }
               <ChevronLeftIcon className="w-5" />
             </button>
             <div className="text-xs text-gray-500">{page} of {maxPageCount}</div>
-            <button className="disabled:opacity-25 disabled:text-black text-brand-alt" disabled={page * 15 >= count} onClick={() => setPage(page + 1)}>
+            <button className="disabled:opacity-25 disabled:text-black text-brand-alt" disabled={page * itemsPerPage >= count} onClick={() => setPage(page + 1)}>
               <ChevronRightIcon className="w-5"/>
             </button>
           </div>
