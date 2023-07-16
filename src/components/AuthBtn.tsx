@@ -15,7 +15,6 @@ function AuthBtn({ onClick }: Props) {
   const { user, setAuthType, actions } = useAuthContext()
 
   const handleClick = (authType: string) => () => {
-    console.log('here')
     onClick?.()
     setAuthType(authType)
   }
@@ -34,11 +33,11 @@ function AuthBtn({ onClick }: Props) {
             {({ open }) => (
               <>
                 <Popover.Button className={classNames(
-                  'transition flex items-center text-sm font-semibold leading-6 text-gray-900 hover:bg-slate-50 hover:ring-slate-200 hover:ring-1 focus-visible:bg-slate-50 py-1.5 px-2 -py-1.5 rounded',
+                  'transition flex items-center text-sm font-semibold leading-6 text-gray-900 hover:bg-slate-50 hover:ring-slate-200 hover:ring-1 focus-visible:outline-0 focus-visible:bg-slate-50 py-1.5 px-2 -py-1.5 rounded',
                   open && 'ring-1 bg-slate-50, ring-slate-200'
                 )}>
                   <span className="sr-only">My Account</span>
-                  <span className="inline-block h-7 w-7 overflow-hidden rounded-full bg-gray-100">
+                  <span className="inline-block h-6 w-6 overflow-hidden rounded-full bg-gray-100">
                     <svg className="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
                     </svg>

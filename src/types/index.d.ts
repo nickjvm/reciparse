@@ -72,3 +72,9 @@ export interface EdamamResponse {
   servings: number,
   error?: Error
 }
+
+
+export interface ReciparseRequestError {
+  error: boolean
+  message: string
+}

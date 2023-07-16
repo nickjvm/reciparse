@@ -1,14 +1,14 @@
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
-import { Database } from '@/types/database.types'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-
-import serverRequest from '@/lib/api/server'
-import { SupaRecipe } from '@/types'
-
-import FavoritesList from './List'
 import { Metadata } from 'next'
+
+import { Database } from '@/types/database.types'
+
 import withHeader from '@/components/withHeader'
+import FavoritesList from './List'
+import serverRequest from '@/lib/api/server'
+import RecipeError from '@/components/RecipeError'
 
 export const dynamic = 'force-dynamic'
 
@@ -24,14 +24,30 @@ async function Page() {
     redirect('/')
   }
 
-  const favorites: SupaRecipe[] = await serverRequest('/api/recipes/favorites')
+  let count = 0
+  let error = false
+  try {
+    const response = await serverRequest('/api/recipes/favorites?count=true')
+    count = response.count
 
-  return (
-    <div className="max-w-5xl w-full mx-auto mt-6">
-      {!!favorites.length && <h2 className="font-display text-center text-2xl font-bold text-brand-alt">My Favorites</h2>}
-      <FavoritesList data={favorites} />
-    </div>
-  )
+    if (response.error) {
+      throw response.error
+    }
+  } catch (e) {
+    error = true
+  }
+
+  if (error) {
+    return <RecipeError image="/404.svg" errorText="Something went wrong. Try again later." className="mb-6" />
+  } else if (!count) {
+    return <RecipeError errorTitle="Start saving!" image="/favorite.svg" errorText="Looks like you haven't saved any recipes yet." className="mb-6" />
+  } else {
+    return (
+      <div className="max-w-5xl w-full mx-auto mt-6">
+        <FavoritesList count={count} error={error} />
+      </div>
+    )
+  }
 }
 
 export default withHeader(Page, { withSearch: true })
