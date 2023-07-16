@@ -3,6 +3,8 @@ import { ChangeEvent, FormEvent, useRef, useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { ArrowRightIcon } from '@heroicons/react/20/solid'
 import classNames from 'classnames'
+
+import gtag from '@/lib/gtag'
 import Loading from './icons/Loading'
 import { OnNavigation } from './OnNavigation'
 
@@ -42,6 +44,7 @@ export default function QuickSearch({ size = 'md', inputClassName, autoFocus }: 
         setLoading(true)
         router.refresh()
         router.push(`/recipe?url=${recipeUrl.toString()}`)
+        gtag('search_recipe', { url: recipeUrl.toString() })
         inputRef.current.blur()
       } catch (err) {
         setError(true)

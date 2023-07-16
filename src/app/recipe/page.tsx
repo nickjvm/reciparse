@@ -19,6 +19,7 @@ import RecipeError from '@/components/RecipeError'
 import CookMode from '@/components/CookMode'
 import Print from '@/components/Print'
 import Nutrition from '@/components/Nutrition'
+import GA4Event from '@/components/GA4Event'
 
 import getUrl from '@/lib/api/getUrl'
 
@@ -76,6 +77,7 @@ async function Page({ searchParams }: Props) {
     return (
       <>
         <title>Something went wrong | Reciparse</title>
+        <GA4Event name="recipe_error" properties={{ url: searchParams.url, type: 'missing structured data' }} />
         <RecipeError
           actionUrl={searchParams.url}
           errorText="We tried our best, but couldn't find a recipe to parse at the URL you entered."
@@ -87,6 +89,7 @@ async function Page({ searchParams }: Props) {
     return (
       <>
         <title>Something went wrong | Reciparse</title>
+        <GA4Event name="recipe_error" properties={{ url: searchParams.url, type: 'missing instructions' }} />
         <RecipeError
           errorText="We couldn&apos;t find any directions in this recipe :("
           actionText="View on the original site"
@@ -146,6 +149,8 @@ async function Page({ searchParams }: Props) {
 
   return (
     <>
+      <GA4Event name="view_recipe" properties={{ url: searchParams.url }} />
+
       <link rel="canonical" href={getUrl(`recipe?url=${searchParams.url}`)} />
       <script
         id="recipe-schema"

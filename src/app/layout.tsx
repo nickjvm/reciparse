@@ -12,6 +12,7 @@ import { Database } from '@/types/database.types'
 import CookieBanner from '@/components/CookieBanner'
 import Footer from '@/components/Footer'
 import NotificationProvider from '@/context/NotificationContext'
+import GA4 from '@/components/GA4'
 
 const openSans = Open_Sans({
   subsets: ['latin'],
@@ -44,6 +45,7 @@ export default async function RootLayout({ children }: {
   return (
     <html lang="en" className={classNames(openSans.className, openSans.variable, yesevaOne.variable)}>
       <link rel="icon" type="image/png" href="/favicon.png" />
+      <GA4 />
       <body>
         <NotificationProvider>
           <AuthContextProvider user={session?.user || null}>
