@@ -30,6 +30,7 @@ export default function Footer() {
                 </li>
               </>
             )}
+            <li><Link href="/info/bookmarklet">Bookmarklet</Link></li>
           </ul>
         </div>
         <div className="col-span-6 md:col-span-3 lg:col-span-2 text-xs">
