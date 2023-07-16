@@ -1,5 +1,6 @@
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs'
 import getUrl from './getUrl'
+import env from '../getEnv'
 
 export default async function request(supabase: SupabaseClient, resource: string, options: RequestInit = {}) {
   const { data: { session } } = await supabase.auth.getSession()
@@ -18,7 +19,7 @@ export default async function request(supabase: SupabaseClient, resource: string
     finalResource = `${getUrl()}${resource.substring(1)}`
   }
 
-  if (process.env.NODE_ENV === 'development') {
+  if (env === 'local') {
     console.log('REQUEST', finalResource)
   }
 

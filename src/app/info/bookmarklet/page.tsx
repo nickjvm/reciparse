@@ -1,8 +1,11 @@
 'use client'
-import withHeader from '@/components/withHeader'
-import getUrl from '@/lib/api/getUrl'
-import { BookmarkIcon } from '@heroicons/react/24/outline'
 import { useEffect, useRef } from 'react'
+import { BookmarkIcon } from '@heroicons/react/24/outline'
+
+import getUrl from '@/lib/api/getUrl'
+import env from '@/lib/getEnv'
+
+import withHeader from '@/components/withHeader'
 
 function Page() {
   const anchorRef = useRef<HTMLAnchorElement>(null)
@@ -17,8 +20,8 @@ function Page() {
       <a ref={anchorRef} className="bg-brand-alt hover:bg-brand p-4 text-white rounded transition font-semibold inline-flex group focus-visible:ring-2 focus-visible:ring-offset-2">
         <BookmarkIcon className="group-hover:fill-white transition w-5 mr-2 fill-transparent" />
         Parse recipe
-        {process.env.NODE_ENV !== 'production' && (
-          ` (${process.env.NODE_ENV})`
+        {env !== 'production' && (
+          ` (${env})`
         )}
       </a>
     </div>
