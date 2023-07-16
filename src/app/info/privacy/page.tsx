@@ -1,4 +1,9 @@
+import { Metadata } from 'next'
 import withHeader from '@/components/withHeader'
+
+export const metadata: Metadata = {
+  title: 'Privacy Policy | Reciparse'
+}
 
 function Page() {
   return (

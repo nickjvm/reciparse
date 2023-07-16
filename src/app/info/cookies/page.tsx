@@ -1,4 +1,9 @@
 import withHeader from '@/components/withHeader'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Cookie Policy | Reciparse'
+}
 
 function Page() {
   return (

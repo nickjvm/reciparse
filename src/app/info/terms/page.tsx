@@ -1,5 +1,10 @@
-import withHeader from '@/components/withHeader'
+import { Metadata } from 'next'
 import Link from 'next/link'
+import withHeader from '@/components/withHeader'
+
+export const metadata: Metadata = {
+  title: 'Terms & Conditions | Reciparse'
+}
 
 function Page() {
   return (
