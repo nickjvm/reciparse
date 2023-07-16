@@ -16,13 +16,15 @@ const renderNutritionValue = (value: string) => {
   return value.replace('milli', 'm').replace(/grams?/, 'g')
 }
 
-const getServingSize = (recipeYield: string|string[]): number|null => {
+const getServingSize = (recipeYield: number|string|string[]): number|null => {
   if (typeof recipeYield === 'string') {
     const servingsMatch = recipeYield.match(/[1-9][0-9]*/)
     if (servingsMatch) {
       return parseInt(servingsMatch[0], 10) || 1
     }
     return null
+  } else if (typeof recipeYield === 'number') {
+    return recipeYield
   }
 
   return getServingSize(recipeYield.find((y) => y.match(/[1-9]+/)) || '1')

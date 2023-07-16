@@ -19,6 +19,7 @@ import RecipeError from '@/components/RecipeError'
 import CookMode from '@/components/CookMode'
 import Print from '@/components/Print'
 import Nutrition from '@/components/Nutrition'
+import RecipeNotes from '@/components/RecipeNotes'
 import GA4Event from '@/components/GA4Event'
 
 import getUrl from '@/lib/api/getUrl'
@@ -131,7 +132,7 @@ async function Page({ searchParams }: Props) {
         {section.itemListElement.length > 1 && (
           <ol className="[counter-reset: step]">
             {section.itemListElement.map((step, i) => (
-              <li key={i} className="mb-2 before:text-brand-alt grid grid-cols-12 before:content-[counter(step)] before:font-bold before:text-xl [counter-increment:step]">
+              <li key={i} className="mb-2 before:text-brand-alt grid grid-cols-12 before:content-[counter(step)] before:font-bold before:text-xl print:before:text-right print:before:pr-3 [counter-increment:step]">
                 <span className="flex-grow col-span-11">
                   {step.name && decode(step.name) !== step.text && <span className="block font-bold">{decode(step.name)}</span>}
                   <span dangerouslySetInnerHTML={{ __html: step.text }} />
@@ -199,6 +200,7 @@ async function Page({ searchParams }: Props) {
               <IngredientsList ingredients={recipe.recipeIngredient} />
               <div className="col-span-8 md:col-span-5 print:col-span-5 print:mt-2">
                 {recipe.recipeInstructions.map(renderInstructionSection)}
+                {recipe.meta.isFavorite && <RecipeNotes id={recipe.meta.id} value={recipe.meta.notes} />}
                 <div className="mt-4">
                   <Nutrition
                     data={recipe.nutrition}

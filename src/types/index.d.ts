@@ -17,6 +17,7 @@ export interface Recipe {
     saved?: boolean
     id: number
     isFavorite: boolean
+    notes: string|null
     image: {
       url: string
       width: number
