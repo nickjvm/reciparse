@@ -72,7 +72,7 @@ function AuthBtn({ onClick }: Props) {
             <UserIcon className="w-5 inline-block mr-2"/>
             My Profile
           </Link>
-          <button className="w-full text-left block md:hover:bg-slate-100 py-2" type="submit" onClick={actions.signOut}>
+          <button className="w-full text-left block md:hover:bg-slate-100 py-2" onClick={actions.signOut}>
             <ArrowLeftOnRectangleIcon className="w-5 inline-block mr-2"/>
             Sign out
           </button>

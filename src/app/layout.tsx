@@ -11,6 +11,7 @@ import { Database } from '@/types/database.types'
 
 import CookieBanner from '@/components/CookieBanner'
 import Footer from '@/components/Footer'
+import NotificationProvider from '@/context/NotificationContext'
 
 const openSans = Open_Sans({
   subsets: ['latin'],
@@ -44,15 +45,17 @@ export default async function RootLayout({ children }: {
     <html lang="en" className={classNames(openSans.className, openSans.variable, yesevaOne.variable)}>
       <link rel="icon" type="image/png" href="/favicon.png" />
       <body>
-        <AuthContextProvider user={session?.user || null}>
-          <div className="min-h-screen flex flex-col">
-            <div className="flex-grow flex flex-col ">
-              {children}
+        <NotificationProvider>
+          <AuthContextProvider user={session?.user || null}>
+            <div className="min-h-screen flex flex-col">
+              <div className="flex-grow flex flex-col ">
+                {children}
+              </div>
+              <Footer />
+              {!cookies().get('cookie_consent') && <CookieBanner />}
             </div>
-            <Footer />
-            {!cookies().get('cookie_consent') && <CookieBanner />}
-          </div>
-        </AuthContextProvider>
+          </AuthContextProvider>
+        </NotificationProvider>
       </body>
     </html>
   )

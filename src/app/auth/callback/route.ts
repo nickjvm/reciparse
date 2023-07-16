@@ -11,6 +11,7 @@ export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
   const dest = requestUrl.searchParams.get('dest') || ''
+  const action = requestUrl.searchParams.get('action')
   const redirectURL = new URL(requestUrl.origin + dest)
 
   if (code) {
@@ -18,6 +19,9 @@ export async function GET(request: NextRequest) {
       const supabase = createRouteHandlerClient<Database>({ cookies })
       await supabase.auth.exchangeCodeForSession(code)
       redirectURL.searchParams.set('code', code)
+      if (action) {
+        cookies().set('notify', action)
+      }
     } catch (e) {
       console.log(e)
     }

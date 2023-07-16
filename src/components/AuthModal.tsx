@@ -3,6 +3,7 @@ import Modal from './Modal'
 import Image from 'next/image'
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import { AuthError } from '@supabase/supabase-js'
+import { useNotificationContext } from '@/context/NotificationContext'
 
 interface Props {
   authType?: string|null
@@ -10,7 +11,7 @@ interface Props {
 
 export default function AuthModal({ authType: defaultAuthType }: Props) {
   const { user, authType, setAuthType, actions } = useAuthContext()
-
+  const { showNotification } = useNotificationContext()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<AuthError|null>(null)
@@ -42,16 +43,11 @@ export default function AuthModal({ authType: defaultAuthType }: Props) {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     let action
-    let next = null
     setLoading(true)
 
     switch (authType) {
       case 'signin': {
         action = await actions.signIn({ email, password })
-        break
-      }
-      case 'signout': {
-        action = await actions.signOut()
         break
       }
       case 'signup': {
@@ -60,9 +56,6 @@ export default function AuthModal({ authType: defaultAuthType }: Props) {
       }
       case 'reset': {
         action = await actions.reset(email)
-        if (!action.error) {
-          next = 'reset_sent'
-        }
         break
       }
       default: {
@@ -71,15 +64,24 @@ export default function AuthModal({ authType: defaultAuthType }: Props) {
     }
 
     setLoading(false)
-    console.log(action)
     const { error } = action
 
     if (error) {
       setError(error)
     } else {
-      setAuthType?.(next)
+      if (authType === 'signup') {
+        showNotification({
+          title: 'Verify your email address.',
+          message: 'We just sent you an email. Click the link verify your email address and finish creating your account.'
+        })
+      } else if (authType === 'reset') {
+        showNotification({
+          title: 'Check your email.',
+          message: 'Click the link in the email we just sent to finish resetting your password.'
+        })
+      }
+      setAuthType?.(null)
     }
-
   }
 
   if (user) {

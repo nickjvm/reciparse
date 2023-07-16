@@ -37,7 +37,7 @@ export const signUp = async ({ email, password }: Payload) => {
     email,
     password,
     options: {
-      emailRedirectTo: `${location.origin}/auth/callback`,
+      emailRedirectTo: `${location.origin}/auth/callback?action=signup`,
     }
   })
 

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createContext, useState, useEffect, useContext, ReactNode } from 'react'
 import { signIn, signOut, signUp, reset, AuthActions} from '@/lib/auth'
 import AuthModal from '@/components/AuthModal'
+import { useNotificationContext } from './NotificationContext'
 
 interface Context {
   user: null | User
@@ -39,14 +40,20 @@ export function AuthContextProvider({ children, user: serverUser}: Props) {
   const [loading, setLoading] = useState(false)
   const [authType, setAuthType] = useState<string|null|undefined>(null)
   const router = useRouter()
+  const { showNotification } = useNotificationContext()
 
   useEffect(() => {
     supabase.auth.onAuthStateChange(async (event, session) => {
       try {
         if (event === 'SIGNED_OUT') {
-          setUser(null)
           router.push('/')
+          setUser(null)
           router.refresh()
+          showNotification({
+            title: 'See ya later!',
+            message: 'You have been signed out.',
+            timeout: 5000
+          })
         } else {
           if (session) {
             const { data: { user }, error } = await supabase.auth.getUser()

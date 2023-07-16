@@ -1,12 +1,12 @@
 'use client'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/types/database.types'
-import withHeader from '@/components/withHeader'
 import { FormEvent, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { useNotificationContext } from '@/context/NotificationContext'
 
-function Page() {
+export default function UpdatePassword() {
   const supabase = createClientComponentClient<Database>()
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(true)
@@ -14,6 +14,7 @@ function Page() {
   const router = useRouter()
   const params = useSearchParams()
 
+  const { showNotification } = useNotificationContext()
 
   useEffect(() => {
     const hashQuery = window.location.hash.substring(1)
@@ -46,6 +47,12 @@ function Page() {
         throw error
       } else {
         router.push('/account')
+        showNotification({
+          title: 'Password changed.',
+          message: 'Your password has been changed succesfully.',
+          variant: 'success',
+          timeout: 5000
+        })
       }
     } catch (e) {
       setError(e as string || 'Something went wrong. Please try again.')
@@ -94,5 +101,3 @@ function Page() {
     </form>
   )
 }
-
-export default withHeader(Page, { withSearch: false })

@@ -7,7 +7,11 @@ import { getCookie, setCookie } from 'cookies-next'
 export default function CookieBanner() {
   const [accept, setAccept] = useState(getCookie('cookie_consent'))
   const onClick = () => {
-    setCookie('cookie_consent', 1)
+    const expires = new Date()
+    expires.setFullYear(expires.getFullYear() + 1)
+    setCookie('cookie_consent', 1, {
+      expires
+    })
     setAccept('1')
   }
 

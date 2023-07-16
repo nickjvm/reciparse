@@ -118,7 +118,7 @@ export default function FavoritesList({ count: initialCount, error: countError }
             <RecipeCard key={recipe.id} recipe={recipe} className="px-2" />
           ))}
         </div>
-        {!loading && maxPageCount > 1 && (
+        {!!results.length && maxPageCount > 1 && (
           <div className="flex items-center gap-4 justify-center mb-8">
             <button className="disabled:opacity-25 disabled:text-black text-brand-alt" disabled={page === 1} onClick={() => setPage(page - 1)}>
               <ChevronLeftIcon className="w-5" />

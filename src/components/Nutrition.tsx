@@ -18,7 +18,7 @@ const renderNutritionValue = (value: string) => {
 
 const getServingSize = (recipeYield: string|string[]): number|null => {
   if (typeof recipeYield === 'string') {
-    const servingsMatch = recipeYield.match(/[1-9]+/)
+    const servingsMatch = recipeYield.match(/[1-9][0-9]*/)
     if (servingsMatch) {
       return parseInt(servingsMatch[0], 10) || 1
     }
@@ -111,47 +111,43 @@ export default function NutritionInfo({ data: _data, ingredientsList, recipeYiel
           {typeof data.calories === 'string' && (data.calories.includes('cal') ? data.calories : `${data.calories} kcal`)}
         </span>}
       </h3>
-      <div className="grid grid-cols-12">
-        <div className="col-span-12 sm:col-span-6 print:col-span-6">
-          {data.fatContent && <div className="text-sm">
-            <span className="font-medium">Total fat: </span>
-            {renderNutritionValue(data.fatContent)}
-          </div>}
-          {data.saturatedFatContent && <div className="text-sm">
-            <span className="font-medium">Saturated fat: </span>
-            {renderNutritionValue(data.saturatedFatContent)}
-          </div>}
-          {data.unsaturatedFatContent && <div className="text-sm">
-            <span className="font-medium">Unsaturated fat: </span>
-            {renderNutritionValue(data.unsaturatedFatContent)}
-          </div>}
-          {data.transFatContent && <div className="text-sm">
-            <span className="font-medium">Trans fat: </span>
-            {renderNutritionValue(data.transFatContent)}
-          </div>}
-        </div>
-        <div className="col-span-12 col-span-6 print:col-span-6">
-          {data.sodiumContent && <div className="text-sm">
-            <span className="font-medium">Sodium: </span>
-            {renderNutritionValue(data.sodiumContent)}
-          </div>}
-          {data.carbohydrateContent && <div className="text-sm">
-            <span className="font-medium">Total carbs: </span>
-            {renderNutritionValue(data.carbohydrateContent)}
-          </div>}
-          {data.fiberContent && <div className="text-sm">
-            <span className="font-medium">Fiber: </span>
-            {renderNutritionValue(data.fiberContent)}
-          </div>}
-          {data.sugarContent && <div className="text-sm">
-            <span className="font-medium">Sugar: </span>
-            {renderNutritionValue(data.sugarContent)}
-          </div>}
-          {data.proteinContent && <div className="text-sm">
-            <span className="font-medium">Protein: </span>
-            {renderNutritionValue(data.proteinContent)}
-          </div>}
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2">
+        {data.fatContent && <div className="text-sm">
+          <span className="font-medium">Total fat: </span>
+          {renderNutritionValue(data.fatContent)}
+        </div>}
+        {data.saturatedFatContent && <div className="text-sm">
+          <span className="font-medium">Saturated fat: </span>
+          {renderNutritionValue(data.saturatedFatContent)}
+        </div>}
+        {data.unsaturatedFatContent && <div className="text-sm">
+          <span className="font-medium">Unsaturated fat: </span>
+          {renderNutritionValue(data.unsaturatedFatContent)}
+        </div>}
+        {data.transFatContent && <div className="text-sm">
+          <span className="font-medium">Trans fat: </span>
+          {renderNutritionValue(data.transFatContent)}
+        </div>}
+        {data.sodiumContent && <div className="text-sm">
+          <span className="font-medium">Sodium: </span>
+          {renderNutritionValue(data.sodiumContent)}
+        </div>}
+        {data.carbohydrateContent && <div className="text-sm">
+          <span className="font-medium">Total carbs: </span>
+          {renderNutritionValue(data.carbohydrateContent)}
+        </div>}
+        {data.fiberContent && <div className="text-sm">
+          <span className="font-medium">Fiber: </span>
+          {renderNutritionValue(data.fiberContent)}
+        </div>}
+        {data.sugarContent && <div className="text-sm">
+          <span className="font-medium">Sugar: </span>
+          {renderNutritionValue(data.sugarContent)}
+        </div>}
+        {data.proteinContent && <div className="text-sm">
+          <span className="font-medium">Protein: </span>
+          {renderNutritionValue(data.proteinContent)}
+        </div>}
       </div>
       {showEdamam && <Image width="100" height="100" className="w-48 mt-2 -ml-2" src="/edamam-badge.svg" alt="Powered by Edamam" />}
       {!showEdamam && source && <div className="mt-2 text-sm">Provided by {source}</div>}
