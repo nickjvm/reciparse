@@ -9,8 +9,8 @@ import clientRequest from '@/lib/api/client'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useDidUpdateEffect } from '@/hooks/useDidUpdateEffect'
 
-import RecipeCard from '@/components/RecipeCard'
-import RecipeError from '@/components/RecipeError'
+import RecipeCard from '@/components/atoms/RecipeCard'
+import RecipeError from '@/components/molecules/RecipeError'
 
 interface Props {
   count: number

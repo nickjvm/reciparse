@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import withHeader from '@/components/withHeader'
+import withHeader from '@/components/hoc/withHeader'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy | Reciparse'
@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 
 function Page() {
   return (
-    <div className="m-auto max-w-3xl p-4 md:p-8">
+    <>
       <h1 className="mb-2 text-2xl font-bold">Privacy Policy</h1>
       <p className="mb-2">Last updated: July 15, 2023</p>
       <p className="mb-2">This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your information when You use the Service and tells You about Your privacy rights and how the law protects You.</p>
@@ -178,7 +178,7 @@ function Page() {
       <p className="mb-2">You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.</p>
       <h1 className="mb-2 text-xl font-bold">Contact Us</h1>
       <p className="mb-2">If you have any questions about this Privacy Policy, You can contact us at privacy@reciparse.com</p>
-    </div>
+    </>
   )
 }
 

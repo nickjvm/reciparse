@@ -9,10 +9,10 @@ import './globals.css'
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/types/database.types'
 
-import CookieBanner from '@/components/CookieBanner'
-import Footer from '@/components/Footer'
+import CookieBanner from '@/components/molecules/CookieBanner'
+import Footer from '@/components/partials/Footer'
 import NotificationProvider from '@/context/NotificationContext'
-import GA4 from '@/components/GA4'
+import GA4 from '@/components/atoms/GA4'
 
 const openSans = Open_Sans({
   subsets: ['latin'],

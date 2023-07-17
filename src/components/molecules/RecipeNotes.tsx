@@ -1,13 +1,14 @@
 'use client'
 import { useRef, useState } from 'react'
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/solid'
+import classNames from 'classnames'
 
 import clientRequest from '@/lib/api/client'
 
 import { useDebounce } from '@/hooks/useDebounce'
 import { useDidUpdateEffect } from '@/hooks/useDidUpdateEffect'
-import Loading from './icons/Loading'
-import classNames from 'classnames'
+
+import Loading from '@/components/icons/Loading'
 
 interface Props {
   id: number

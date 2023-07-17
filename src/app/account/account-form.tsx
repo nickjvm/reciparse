@@ -70,7 +70,7 @@ export default function MyAccount() {
   }
 
   return (
-    <form className="max-w-md mx-auto px-4 md:px-0 py-5" onSubmit={handleSubmit}>
+    <form className="max-w-md mx-auto" onSubmit={handleSubmit}>
       <h2 className="text-2xl font-display text-center mb-5 text-brand-alt">My Account</h2>
       <div>
         <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">

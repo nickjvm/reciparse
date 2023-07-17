@@ -1,4 +1,4 @@
-import withHeader from '@/components/withHeader'
+import withHeader from '@/components/hoc/withHeader'
 import UpdatePassword from './UpdatePassword'
 import { Metadata } from 'next'
 

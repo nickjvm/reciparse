@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { SupaRecipe } from '@/types'
 import clientRequest from '@/lib/api/client'
 
-import RecipeCard from './RecipeCard'
+import RecipeCard from '../atoms/RecipeCard'
 
 interface Props {
   count?: number

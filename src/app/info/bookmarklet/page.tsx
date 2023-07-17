@@ -5,7 +5,7 @@ import { BookmarkIcon } from '@heroicons/react/24/outline'
 import getUrl from '@/lib/api/getUrl'
 import env from '@/lib/getEnv'
 
-import withHeader from '@/components/withHeader'
+import withHeader from '@/components/hoc/withHeader'
 
 function Page() {
   const anchorRef = useRef<HTMLAnchorElement>(null)
@@ -14,7 +14,7 @@ function Page() {
   }, [])
 
   return (
-    <div className="m-auto max-w-3xl p-4 md:p-8">
+    <>
       <title>Bookmarklet | Reciparse</title>
       <h1 className="font-display text-3xl mb-3 text-brand-alt">Bookmarklet</h1>
       <p className="mb-4">Drag and drop the link below into your bookmarks bar. When viewing a recipe anywhere on the web, click the bookmark and you&apos;ll magically be redirected to the Recipars-ed version of the recipe!</p>
@@ -26,7 +26,7 @@ function Page() {
         )}
       </a>
       <p className="text-gray-500 text-sm mt-3">Drag the button above into your bookmark bar</p>
-    </div>
+    </>
   )
 }
 

@@ -5,8 +5,9 @@ import { ArrowRightIcon } from '@heroicons/react/20/solid'
 import classNames from 'classnames'
 
 import gtag from '@/lib/gtag'
-import Loading from './icons/Loading'
-import { OnNavigation } from './OnNavigation'
+
+import Loading from '@/components/icons/Loading'
+import { OnNavigation } from '@/components/utils/OnNavigation'
 
 interface Props {
   size?: 'sm'|'md'|'lg'

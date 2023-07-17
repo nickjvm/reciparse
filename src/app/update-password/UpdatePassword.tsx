@@ -64,7 +64,7 @@ export default function UpdatePassword() {
   }
   if (error) {
     return (
-      <div className="max-w-xl mx-auto py-5">
+      <div className="max-w-xl mx-auto">
         <h2 className="text-lg font-bold mb-4 text-center">{error}</h2>
         <div className="text-center">
           <Link href="/" className="transition inline-block py-1.5 mx-auto justify-center rounded-md bg-brand-alt px-8 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-alt">Return home</Link>
@@ -74,7 +74,7 @@ export default function UpdatePassword() {
   }
 
   return (
-    <form className="max-w-md mx-auto py-5" onSubmit={handleSubmit}>
+    <form className="max-w-md mx-auto" onSubmit={handleSubmit}>
       <h2 className="text-2xl font-display text-center mb-5 text-brand-alt">Reset your password</h2>
       <p className="text-center text-base mb-5">So you forgot your password - it happens to the best of us!</p>
       <div>

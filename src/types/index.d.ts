@@ -48,7 +48,7 @@ export interface SupaRecipe {
   image_url: string,
 }
 
-export type AuthAction = 'signup'|'signin'|'reset'|'reset_sent'
+export type AuthAction = 'signup'|'signin'|'reset'
 export interface RecipeImage {
   url: string
   '@type': 'ImageObject'

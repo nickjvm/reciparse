@@ -6,9 +6,9 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Dialog } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
-import QuickSearch from './QuickSearch'
-import AuthBtn from './AuthBtn'
-import { OnNavigation } from './OnNavigation'
+import QuickSearch from '@/components/molecules/QuickSearch'
+import AuthBtn from '@/components/molecules/AuthBtn'
+import { OnNavigation } from '@/components/utils/OnNavigation'
 
 interface Props {
   withSearch?: boolean

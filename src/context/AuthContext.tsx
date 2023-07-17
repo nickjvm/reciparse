@@ -4,7 +4,7 @@ import { User, createClientComponentClient } from '@supabase/auth-helpers-nextjs
 import { useRouter } from 'next/navigation'
 import { createContext, useState, useEffect, useContext, ReactNode } from 'react'
 import { signIn, signOut, signUp, reset, AuthActions} from '@/lib/auth'
-import AuthModal from '@/components/AuthModal'
+import AuthModal from '@/components/molecules/AuthModal'
 import { useNotificationContext } from './NotificationContext'
 
 interface Context {

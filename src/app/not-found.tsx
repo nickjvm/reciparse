@@ -1,5 +1,5 @@
-import RecipeError from '@/components/RecipeError'
-import withHeader from '@/components/withHeader'
+import RecipeError from '@/components/molecules/RecipeError'
+import withHeader from '@/components/hoc/withHeader'
 
 // infinite loop is only in development env :shrug:
 // https://github.com/vercel/next.js/discussions/50429

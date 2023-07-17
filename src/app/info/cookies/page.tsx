@@ -1,4 +1,4 @@
-import withHeader from '@/components/withHeader'
+import withHeader from '@/components/hoc/withHeader'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 
 function Page() {
   return (
-    <div className="m-auto max-w-3xl p-4 md:p-8">
+    <>
       <h1 className="text-2xl font-bold">Cookie Policy</h1>
 
       <p className="mb-2">This is the Cookie Policy for Reciparse, accessible from www.reciparse.com</p>
@@ -69,7 +69,7 @@ function Page() {
 
       <p className="mb-2">However if you are still looking for more information then you can contact us at cookies@reciparse.com.</p>
 
-    </div>
+    </>
   )
 }
 

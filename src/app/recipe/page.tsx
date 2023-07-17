@@ -11,16 +11,16 @@ import { HowToSection, Recipe } from '@/types'
 
 import serverRequest from '@/lib/api/server'
 
-import IngredientsList from '@/components/Ingredients'
-import Time from '@/components/Time'
-import SaveRecipe from '@/components/SaveRecipe'
-import withHeader from '@/components/withHeader'
-import RecipeError from '@/components/RecipeError'
-import CookMode from '@/components/CookMode'
-import Print from '@/components/Print'
-import Nutrition from '@/components/Nutrition'
-import RecipeNotes from '@/components/RecipeNotes'
-import GA4Event from '@/components/GA4Event'
+import withHeader from '@/components/hoc/withHeader'
+import IngredientsList from '@/components/molecules/Ingredients'
+import Time from '@/components/molecules/Time'
+import RecipeError from '@/components/molecules/RecipeError'
+import CookMode from '@/components/molecules/CookMode'
+import Nutrition from '@/components/molecules/Nutrition'
+import RecipeNotes from '@/components/molecules/RecipeNotes'
+import SaveRecipe from '@/components/atoms/SaveRecipe'
+import Print from '@/components/atoms/Print'
+import GA4Event from '@/components/atoms/GA4Event'
 
 import getUrl from '@/lib/api/getUrl'
 
@@ -218,4 +218,4 @@ async function Page({ searchParams }: Props) {
   )
 }
 
-export default withHeader(Page, { withSearch: true, className: 'bg-stone-100' })
+export default withHeader(Page, { withSearch: true, className: 'bg-stone-100', fullWidth: true })

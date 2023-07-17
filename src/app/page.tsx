@@ -1,8 +1,8 @@
 import { Metadata } from 'next'
 
-import QuickSearch from '@/components/QuickSearch'
-import RandomRecipes from '@/components/RandomRecipes'
-import withHeader from '@/components/withHeader'
+import QuickSearch from '@/components/molecules/QuickSearch'
+import RandomRecipes from '@/components/molecules/RandomRecipes'
+import withHeader from '@/components/hoc/withHeader'
 
 export const dynamic = 'force-dynamic'
 
@@ -24,4 +24,4 @@ function Page() {
   )
 }
 
-export default withHeader(Page, { withSearch: false })
+export default withHeader(Page, { withSearch: false, fullWidth: true })

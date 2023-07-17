@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
-import withHeader from '@/components/withHeader'
+import withHeader from '@/components/hoc/withHeader'
 
 export const metadata: Metadata = {
   title: 'Terms & Conditions | Reciparse'
@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 function Page() {
   return (
-    <div className="m-auto max-w-3xl p-4 md:p-8">
+    <>
       <h1 className="text-2xl font-bold mb-2"><strong>Terms and Conditions</strong></h1>
 
       <p className="mb-2">Welcome to Reciparse.com!</p>
@@ -131,7 +131,7 @@ function Page() {
       <p className="mb-2">As long as the website and the information and services on the website are provided free of charge, we will not be liable for any loss or damage of any nature.</p>
       <h3 className="mb-2 text-xl"><strong>Contact</strong></h3>
       <p className="mb-2">For any qustions regarding this website or the terms and conditions outlined above, you may email contact@reciparse.com.</p>
-    </div>
+    </>
   )
 }
 

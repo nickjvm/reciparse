@@ -4,11 +4,12 @@ import { redirect } from 'next/navigation'
 import { Metadata } from 'next'
 
 import { Database } from '@/types/database.types'
-
-import withHeader from '@/components/withHeader'
-import FavoritesList from './List'
 import serverRequest from '@/lib/api/server'
-import RecipeError from '@/components/RecipeError'
+
+import withHeader from '@/components/hoc/withHeader'
+import RecipeError from '@/components/molecules/RecipeError'
+
+import FavoritesList from './List'
 
 export const dynamic = 'force-dynamic'
 
@@ -42,11 +43,7 @@ async function Page() {
   } else if (!count) {
     return <RecipeError errorTitle="Start saving!" image="/favorite.svg" errorText="Looks like you haven't saved any recipes yet." className="mb-6" />
   } else {
-    return (
-      <div className="max-w-5xl w-full mx-auto mt-6">
-        <FavoritesList count={count} error={error} />
-      </div>
-    )
+    return <FavoritesList count={count} error={error} />
   }
 }
 

@@ -12,7 +12,7 @@ export default function Footer() {
           reciparse
         </div>
         <div className="col-span-6 md:col-span-3 lg:col-span-2 md:col-start-7 lg:col-start-9 text-xs">
-          <h4 className="font-semibold text-xs mt-2 mb-4">My Account</h4>
+          <h4 className="font-semibold text-xs mt-2 mb-4">Account</h4>
           <ul className="space-y-2">
             {!user && (
               <>
@@ -34,7 +34,7 @@ export default function Footer() {
           </ul>
         </div>
         <div className="col-span-6 md:col-span-3 lg:col-span-2 text-xs">
-          <h4 className="font-semibold text-xs mt-2 mb-4">Other Info</h4>
+          <h4 className="font-semibold text-xs mt-2 mb-4">Other Links</h4>
           <ul className="space-y-2">
             <li>
               <Link href="/info/privacy">Privacy policy</Link>

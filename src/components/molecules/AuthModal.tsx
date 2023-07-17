@@ -114,87 +114,82 @@ export default function AuthModal({ authType: defaultAuthType }: Props) {
             </h2>
           </div>
 
-          {authType === 'reset_sent' && (
-            <p className="text-sm mt-2">If an account exists for the provided email address, we sent you a link to reset your password.</p>
-          )}
-          {authType !== 'reset_sent' && (
-            <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-              <form className="space-y-6" onSubmit={handleSubmit}>
+          <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">Email address</label>
+                <div className="mt-2">
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    onChange={onChange}
+                    value={email}
+                    tabIndex={1}
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-brand sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
+
+              {authType !== 'reset' && (
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">Email address</label>
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">Password</label>
+                    <div className="text-sm">
+                      {authType === 'signin' && (
+                        <button
+                          type="button"
+                          onClick={() => setAuthType?.('reset')}
+                          tabIndex={3}
+                          className="font-semibold text-brand-alt hover:text-brand"
+                        >
+                            Forgot password?
+                        </button>
+                      )}
+                    </div>
+                  </div>
                   <div className="mt-2">
                     <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      autoComplete="email"
+                      id="password"
+                      name="password"
+                      type="password"
+                      autoComplete="current-password"
                       required
                       onChange={onChange}
-                      value={email}
-                      tabIndex={1}
+                      value={password}
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-brand sm:text-sm sm:leading-6"
+                      tabIndex={2}
                     />
                   </div>
                 </div>
-
-                {authType !== 'reset' && (
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">Password</label>
-                      <div className="text-sm">
-                        {authType === 'signin' && (
-                          <button
-                            type="button"
-                            onClick={() => setAuthType?.('reset')}
-                            tabIndex={3}
-                            className="font-semibold text-brand-alt hover:text-brand"
-                          >
-                            Forgot password?
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                    <div className="mt-2">
-                      <input
-                        id="password"
-                        name="password"
-                        type="password"
-                        autoComplete="current-password"
-                        required
-                        onChange={onChange}
-                        value={password}
-                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-brand sm:text-sm sm:leading-6"
-                        tabIndex={2}
-                      />
-                    </div>
-                  </div>
-                )}
-                <div>
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="transition flex w-full justify-center rounded-md bg-brand-alt px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-alt"
-                    tabIndex={3}
-                  >
-                    {authType === 'signin' && 'Sign in'}
-                    {authType === 'signup' && 'Sign up'}
-                    {authType === 'reset' && 'Send reset email'}
-                  </button>
-
-                  {error && <p className="text-center text-sm mt-4 font-semibold text-red-800">{error.message}</p>}
-                </div>
-              </form>
-
-              <p className="mt-10 text-center text-sm text-gray-500">
-                {authType === 'signin' && 'Don\'t have an account? '}
-                {authType === 'signup' && 'Already have an account? '}
-                {authType === 'reset' && 'Remembered your password? '}
-                <button onClick={() => setAuthType?.(authType === 'signin' ? 'signup' : 'signin')} className="font-semibold leading-6 text-brand-alt hover:text-brand">
-                  {authType === 'signin' ? 'Sign up for free.' : 'Sign in.'}
+              )}
+              <div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="transition flex w-full justify-center rounded-md bg-brand-alt px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-alt"
+                  tabIndex={3}
+                >
+                  {authType === 'signin' && 'Sign in'}
+                  {authType === 'signup' && 'Sign up'}
+                  {authType === 'reset' && 'Send reset email'}
                 </button>
-              </p>
-            </div>
-          )}
+
+                {error && <p className="text-center text-sm mt-4 font-semibold text-red-800">{error.message}</p>}
+              </div>
+            </form>
+
+            <p className="mt-10 text-center text-sm text-gray-500">
+              {authType === 'signin' && 'Don\'t have an account? '}
+              {authType === 'signup' && 'Already have an account? '}
+              {authType === 'reset' && 'Remembered your password? '}
+              <button onClick={() => setAuthType?.(authType === 'signin' ? 'signup' : 'signin')} className="font-semibold leading-6 text-brand-alt hover:text-brand">
+                {authType === 'signin' ? 'Sign up for free.' : 'Sign in.'}
+              </button>
+            </p>
+          </div>
         </div>
       </>
     </Modal>
