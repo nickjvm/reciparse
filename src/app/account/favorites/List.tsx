@@ -95,39 +95,37 @@ export default function FavoritesList({ count: initialCount, error: countError }
   return (
     <>
       <h1 className="font-display text-center text-3xl font-bold text-brand-alt mb-3">My Favorites</h1>
-      <>
-        <div className="w-full px-4 md:px-8 py-4">
-          <div className="flex items-center gap-4">
-            <input
-              autoFocus
-              className="ring-gray-300 text-base md:text-base focus:ring-brand-alt block transition w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset"
-              placeholder="Search your saved recipes"
-              type="text"
-              value={value}
-              onChange={onChange}
-            />
-            <div className="whitespace-nowrap font-semibold w-1/2 max-w-[150px] text-center text-sm md:text-base">
-              {count} recipe{count !== 1 && 's'}
-            </div>
+      <div className="w-full px-0 md:px-8 py-4">
+        <div className="flex flex-col-reverse justify-center md:flex-row md:items-center gap-4 ">
+          <input
+            autoFocus
+            className="ring-gray-300 text-base md:text-base focus:ring-brand-alt block transition w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset"
+            placeholder="Search your saved recipes"
+            type="text"
+            value={value}
+            onChange={onChange}
+          />
+          <div className="whitespace-nowrap font-semibold md:w-1/2 md:max-w-[150px] text-center text-sm md:text-base">
+            {count} recipe{count !== 1 && 's'}
           </div>
         </div>
-        <div className={classNames('w-full p-2 md:p-4 grid grid-cols-2 gap-3 md:grid-cols-5 justify-start', maxPageCount ===1 && 'mb-8')}>
-          {results.map((recipe: SupaRecipe) => (
-            <RecipeCard key={recipe.id} recipe={recipe} className="px-2" />
-          ))}
+      </div>
+      <div className={classNames('w-full pt-4 md:p-4 grid grid-cols-2 gap-3 gap-y-6 md:gap-0 md:gap-y-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 justify-start', maxPageCount ===1 && 'mb-8')}>
+        {results.map((recipe: SupaRecipe) => (
+          <RecipeCard key={recipe.id} recipe={recipe} className="md:px-2" />
+        ))}
+      </div>
+      {!!results.length && maxPageCount > 1 && (
+        <div className="flex items-center gap-4 justify-center mb-8">
+          <button className="disabled:opacity-25 disabled:text-black text-brand-alt" disabled={page === 1} onClick={() => setPage(page - 1)}>
+            <ChevronLeftIcon className="w-5" />
+          </button>
+          <div className="text-xs text-gray-500">{page} of {maxPageCount}</div>
+          <button className="disabled:opacity-25 disabled:text-black text-brand-alt" disabled={page * itemsPerPage >= count} onClick={() => setPage(page + 1)}>
+            <ChevronRightIcon className="w-5"/>
+          </button>
         </div>
-        {!!results.length && maxPageCount > 1 && (
-          <div className="flex items-center gap-4 justify-center mb-8">
-            <button className="disabled:opacity-25 disabled:text-black text-brand-alt" disabled={page === 1} onClick={() => setPage(page - 1)}>
-              <ChevronLeftIcon className="w-5" />
-            </button>
-            <div className="text-xs text-gray-500">{page} of {maxPageCount}</div>
-            <button className="disabled:opacity-25 disabled:text-black text-brand-alt" disabled={page * itemsPerPage >= count} onClick={() => setPage(page + 1)}>
-              <ChevronRightIcon className="w-5"/>
-            </button>
-          </div>
-        )}
-      </>
+      )}
       {!count && !!debouncedValue && (
         <div className="px-4">
           {!!debouncedValue && <RecipeError errorText="We couldn't find any favorited recipes that matched your search." />}
