@@ -105,14 +105,18 @@ async function Page({ searchParams }: Props) {
       return Array.from(new Set(recipeYield.map(parseYield).filter(v => v))).join(', ')
     } else {
       const recipeYieldNum = Number(recipeYield)
-
       if (!isNaN(recipeYieldNum)) {
         if (recipeYieldNum > 0 && !recipeYields?.find(y => y.startsWith(`${recipeYieldNum} `))) {
           return `${recipeYieldNum} serving${recipeYieldNum !== 1 ? 's' : ''}`
         }
         return ''
       } else {
-        return recipeYield.replace(/^0/, '').replace(/\.$/, '').trim()
+        let finalYield = recipeYield.replace(/^0/, '').replace(/\.$/, '').trim()
+        const dozenMatch = finalYield.match(/([0-9.]+) dozen/)
+        if (dozenMatch) {
+          finalYield = `${Number(dozenMatch[1]) * 12} servings`
+        }
+        return finalYield
       }
     }
   }
@@ -205,7 +209,7 @@ async function Page({ searchParams }: Props) {
                   <Nutrition
                     data={recipe.nutrition}
                     ingredientsList={recipe.recipeIngredient}
-                    recipeYield={recipe.recipeYield}
+                    recipeYield={parseYield(recipe.recipeYield)}
                     source={recipe.meta.source}
                   />
                 </div>

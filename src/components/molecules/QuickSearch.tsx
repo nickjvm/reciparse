@@ -13,9 +13,10 @@ interface Props {
   size?: 'sm'|'md'|'lg'
   inputClassName?: string
   autoFocus?: boolean
+  placeholder?: string
 }
 
-export default function QuickSearch({ size = 'md', inputClassName, autoFocus }: Props) {
+export default function QuickSearch({ size = 'md', inputClassName, autoFocus, placeholder }: Props) {
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const router = useRouter()
@@ -69,7 +70,7 @@ export default function QuickSearch({ size = 'md', inputClassName, autoFocus }: 
             type="text"
             name="search"
             id="search"
-            placeholder="Paste a recipe URL"
+            placeholder={placeholder || 'Paste a recipe URL'}
             autoFocus={!!autoFocus}
             required
             value={url}

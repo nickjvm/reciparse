@@ -12,9 +12,7 @@ export default function withHeader(Component: JSX.ElementType, { withSearch, cla
   const container = (props: object) => {
     if (fullWidth) {
       return (
-        <div className="py-4 md:py-8">
-          <Component {...props} />
-        </div>
+        <Component {...props} />
       )
     } else {
       return (
@@ -28,7 +26,7 @@ export default function withHeader(Component: JSX.ElementType, { withSearch, cla
   const WithHeader = (props: object) => (
     <div className={classNames('flex-grow', className)}>
       <Header withBorder withSearch={withSearch} />
-      <div className="pt-2 grow">
+      <div className="grow">
         {container(props)}
       </div>
     </div>

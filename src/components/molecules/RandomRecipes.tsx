@@ -24,8 +24,8 @@ export default function RandomRecipes({ count = 8}: Props) {
 
   if (recipes && recipes.length) {
     return (
-      <div className="w-full mt-6">
-        <h2 className="font-display text-center text-2xl font-bold text-brand-alt">Discover Recipes</h2>
+      <div className="w-full mt-6 md:mt-9 md:mb-9">
+        <h2 className="font-display text-center text-2xl md:text-4xl font-bold text-brand-alt">Discover Recipes</h2>
         <div className="w-full mx-auto max-w-screen-2xl p-4 grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-4 xl:gap-5 justify-center flex-wrap align-stretch mb-4">
           {recipes.map((recipe: SupaRecipe|number, i) => (
             <RecipeCard loading={loading}
