@@ -6,9 +6,9 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Dialog } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
-import QuickSearch from './QuickSearch'
-import AuthBtn from './AuthBtn'
-import { OnNavigation } from './OnNavigation'
+import QuickSearch from '@/components/molecules/QuickSearch'
+import AuthBtn from '@/components/molecules/AuthBtn'
+import { OnNavigation } from '@/components/utils/OnNavigation'
 
 interface Props {
   withSearch?: boolean
@@ -22,7 +22,7 @@ export default function Header({
   return (
     <header className={classnames('relative isolate bg-white', withBorder && 'border-b-slate-100 print:shadow-none shadow-sm print:border-none border-b')}>
       <OnNavigation callback={() => setMobileMenuOpen(false)} />
-      <nav className="mx-auto grid grid-cols-12 max-w-5xl items-center justify-between p-4 print:px-0 md:px-6 gap-2" aria-label="Global">
+      <nav className="mx-auto grid grid-cols-12 max-w-5xl items-center justify-between p-4 print:p-0 md:px-6 gap-2" aria-label="Global">
         <div className="flex md:flex-1 col-span-6 md:col-span-3 lg:col-span-2">
           <Link href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Reciparse</span>
@@ -44,7 +44,7 @@ export default function Header({
             <Bars3Icon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
-        <div className="hidden md:flex md:flex-1 md:justify-end col-start-12 col-span-1 print:hidden">
+        <div className="hidden md:flex md:flex-2 md:justify-end col-start-12 col-span-1 print:hidden">
           <div className="text-sm font-semibold leading-6 text-gray-900">
             <AuthBtn />
           </div>
@@ -69,7 +69,7 @@ export default function Header({
                 <QuickSearch size="lg" />
               </div>
               <div className="text-sm font-semibold leading-6 text-gray-900">
-                <AuthBtn onSuccess={() => setMobileMenuOpen(false)}/>
+                <AuthBtn onClick={() => setMobileMenuOpen(false)}/>
               </div>
             </div>
           </div>

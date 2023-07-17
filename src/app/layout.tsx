@@ -8,7 +8,11 @@ import { AuthContextProvider } from '@/context/AuthContext'
 import './globals.css'
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/types/database.types'
-import Footer from '@/components/Footer'
+
+import CookieBanner from '@/components/molecules/CookieBanner'
+import Footer from '@/components/partials/Footer'
+import NotificationProvider from '@/context/NotificationContext'
+import GA4 from '@/components/atoms/GA4'
 
 const openSans = Open_Sans({
   subsets: ['latin'],
@@ -24,6 +28,9 @@ const yesevaOne = Yeseva_One({
 export const metadata = {
   title: 'Reciparse.com',
   description: 'Ditch the endless scrolling, stories, ads and videos. Get exactly what you need: the recipe.',
+  openGraph: {
+    images: 'og-image.png'
+  }
 }
 
 export const dynamic = 'force-dynamic'
@@ -34,18 +41,23 @@ export default async function RootLayout({ children }: {
   const supabase = createServerComponentClient<Database>({ cookies })
 
   const { data: { session } } = await supabase.auth.getSession()
+
   return (
     <html lang="en" className={classNames(openSans.className, openSans.variable, yesevaOne.variable)}>
       <link rel="icon" type="image/png" href="/favicon.png" />
+      <GA4 />
       <body>
-        <AuthContextProvider user={session?.user || null}>
-          <div className="min-h-screen flex flex-col">
-            <div className="flex-grow flex flex-col ">
-              {children}
+        <NotificationProvider>
+          <AuthContextProvider user={session?.user || null}>
+            <div className="min-h-screen flex flex-col">
+              <div className="flex-grow flex flex-col ">
+                {children}
+              </div>
+              <Footer />
+              {!cookies().get('cookie_consent') && <CookieBanner />}
             </div>
-            <Footer />
-          </div>
-        </AuthContextProvider>
+          </AuthContextProvider>
+        </NotificationProvider>
       </body>
     </html>
   )

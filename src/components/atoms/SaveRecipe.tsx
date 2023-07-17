@@ -1,10 +1,13 @@
 'use client'
 import { MouseEvent, useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { HeartIcon } from '@heroicons/react/24/outline'
 import { HeartIcon as HeartIconFilled } from '@heroicons/react/24/solid'
+
 import clientRequest from '@/lib/api/client'
+import gtag from '@/lib/gtag'
+
 import { useAuthContext } from '@/context/AuthContext'
-import { useRouter } from 'next/navigation'
 
 interface Props {
   id: number
@@ -18,10 +21,14 @@ export default function SaveRecipe({ id, saved: _saved }: Props) {
   useEffect(() => {
     setSaved(_saved)
   }, [_saved])
+
   const handleClick = async (e: MouseEvent) => {
     e.preventDefault()
     try {
       await clientRequest('/api/recipes/save', { method: 'POST', body: JSON.stringify({ id, save: !saved })})
+      if (!saved) {
+        gtag('save_recipe', { id })
+      }
       setSaved(!saved)
 
       router.refresh()

@@ -11,6 +11,7 @@
     "jsx-quotes": ["error", "prefer-double"],
     "indent": ["error", 2, { "SwitchCase": 1 }],
     "react-hooks/exhaustive-deps": "off",
-    "@typescript-eslint/no-unused-vars": "error"
+    "@typescript-eslint/no-unused-vars": "error",
+    "@typescript-eslint/ban-types": "off"
   }
 }

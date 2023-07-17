@@ -1,4 +1,4 @@
-declare interface Recipe {
+export interface Recipe {
   error?: boolean
   message?: string
   name: string
@@ -10,29 +10,51 @@ declare interface Recipe {
   prepTime?: string
   totalTime?: string
   cookTime?: string
+  nutrition?: Nutrition|null
   meta: {
     source: string
     raw_source: string
     saved?: boolean
     id: number
     isFavorite: boolean
+    notes: string|null
+    image: {
+      url: string
+      width: number
+      height: number
+    }
   }
 }
 
-interface SupaRecipe {
+export interface Nutrition {
+  '@type': 'NutritionInformation'
+  calories: number|string|null
+  unsaturatedFatContent: string|null
+  carbohydrateContent: sring|null
+  cholesterolContent: string|null,
+  fatContent:  string|null
+  fiberContent:  string|null
+  proteinContent:  string|null
+  saturatedFatContent:  string|null
+  sodiumContent:  string|null
+  sugarContent:  string|null
+  transFatContent: string|null
+}
+
+export interface SupaRecipe {
   id: number,
   name: string,
   url: string,
   image_url: string,
 }
 
-type AuthAction = 'signup'|'signin'|'reset'|'reset_sent'
+export type AuthAction = 'signup'|'signin'|'reset'
 export interface RecipeImage {
   url: string
   '@type': 'ImageObject'
 }
 
-export type RecipeInstruction = HowToSection
+type RecipeInstruction = HowToSection
 
 export interface HowToStep {
   '@type': 'HowToStep'
@@ -45,7 +67,15 @@ export interface HowToSection {
   name?: string,
   itemListElement: HowToStep[]
 }
-export interface IngredientGroup {
-  heading?: string
-  items: string[]
+
+export interface EdamamResponse {
+  nutrition: Nutrition,
+  servings: number,
+  error?: Error
+}
+
+
+export interface ReciparseRequestError {
+  error: boolean
+  message: string
 }

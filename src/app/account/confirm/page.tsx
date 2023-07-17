@@ -1,4 +1,5 @@
 'use client'
+import { useNotificationContext } from '@/context/NotificationContext'
 import { Database } from '@/types/database.types'
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
@@ -8,7 +9,7 @@ import { useEffect, useState } from 'react'
 export default function ConfirmEmail() {
   const [error, setError] = useState<string|undefined>()
   const router = useRouter()
-
+  const { showNotification } = useNotificationContext()
   const supabase = createClientComponentClient<Database>()
 
   useEffect(() => {
@@ -26,7 +27,11 @@ export default function ConfirmEmail() {
           throw error
         }
 
-        // TODO: notification of success
+        showNotification({
+          title: 'Success!',
+          message: 'Your email address has been changed successfully.',
+          variant: 'success'
+        })
         router.push('/account')
       } catch (e) {
         setError((e as Error).message || 'something went wrong.')

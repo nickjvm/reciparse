@@ -2,10 +2,9 @@
 
 import { useAuthContext } from '@/context/AuthContext'
 import Link from 'next/link'
-import AuthBtn from './AuthBtn'
 
 export default function Footer() {
-  const { user } = useAuthContext()
+  const { user, setAuthType } = useAuthContext()
   return (
     <div className="print:hidden text-white bg-gradient-to-br from-brand to-35% to-brand-alt p-3">
       <div className="mx-auto grid grid-cols-12 max-w-5xl items-start p-4 print:hidden md:px-6 gap-2">
@@ -13,9 +12,14 @@ export default function Footer() {
           reciparse
         </div>
         <div className="col-span-6 md:col-span-3 lg:col-span-2 md:col-start-7 lg:col-start-9 text-xs">
-          <h4 className="font-semibold text-xs mt-2 mb-4">My Account</h4>
+          <h4 className="font-semibold text-xs mt-2 mb-4">Account</h4>
           <ul className="space-y-2">
-            {!user && <li><AuthBtn /></li>}
+            {!user && (
+              <>
+                <li><button onClick={() => setAuthType('signin')}>Sign In</button></li>
+                <li><button onClick={() => setAuthType('signup')}>Sign Up</button></li>
+              </>
+            )}
             {user && (
               <>
                 <li>
@@ -26,16 +30,23 @@ export default function Footer() {
                 </li>
               </>
             )}
+            <li><Link href="/info/bookmarklet">Bookmarklet</Link></li>
           </ul>
         </div>
         <div className="col-span-6 md:col-span-3 lg:col-span-2 text-xs">
-          <h4 className="font-semibold text-xs mt-2 mb-4">Other Info</h4>
+          <h4 className="font-semibold text-xs mt-2 mb-4">Other Links</h4>
           <ul className="space-y-2">
             <li>
-              <Link href="#">Privacy policy</Link>
+              <Link href="/info/privacy">Privacy policy</Link>
             </li>
             <li>
-              <Link target="_blank" href="https://github.com/nickjvm/reciparse">An open source project</Link>
+              <Link href="/info/cookies">Cookie policy</Link>
+            </li>
+            <li>
+              <Link href="/info/terms">Terms of use</Link>
+            </li>
+            <li>
+              <Link href="/info/support">Support the developer</Link>
             </li>
           </ul>
         </div>

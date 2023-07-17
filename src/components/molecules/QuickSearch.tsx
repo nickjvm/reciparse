@@ -3,8 +3,11 @@ import { ChangeEvent, FormEvent, useRef, useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { ArrowRightIcon } from '@heroicons/react/20/solid'
 import classNames from 'classnames'
-import Loading from './icons/Loading'
-import { OnNavigation } from './OnNavigation'
+
+import gtag from '@/lib/gtag'
+
+import Loading from '@/components/icons/Loading'
+import { OnNavigation } from '@/components/utils/OnNavigation'
 
 interface Props {
   size?: 'sm'|'md'|'lg'
@@ -42,6 +45,7 @@ export default function QuickSearch({ size = 'md', inputClassName, autoFocus }: 
         setLoading(true)
         router.refresh()
         router.push(`/recipe?url=${recipeUrl.toString()}`)
+        gtag('search_recipe', { url: recipeUrl.toString() })
         inputRef.current.blur()
       } catch (err) {
         setError(true)
@@ -73,10 +77,11 @@ export default function QuickSearch({ size = 'md', inputClassName, autoFocus }: 
             className={classNames(
               error && 'ring-red-300 focus:ring-red-600',
               !error && 'ring-gray-300 focus:ring-brand-alt',
-              'block transition w-full rounded-md border-0 py-1.5 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-inset',
-              `sm:text-${size}`,
+              'block transition w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 text-base placeholder:text-gray-400 focus:ring-2 focus:ring-inset',
               inputClassName, {
-                'py-3 sm:leading-8 sm:text-lg': size === 'lg',
+                'py-3 sm:leading-8 sm:text-lg pr-12': size === 'lg',
+                'pr-9': size === 'md',
+                'pr-8': size === 'sm'
               })}
           />
           <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">

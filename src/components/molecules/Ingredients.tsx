@@ -2,7 +2,7 @@
 import { decode } from 'html-entities'
 import { Disclosure } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
-import classnames from 'classnames'
+import classNames from 'classnames'
 
 import Copy from './Copy'
 
@@ -11,21 +11,21 @@ interface Props {
 }
 export default function IngredientsList({ ingredients }: Props) {
   return (
-    <div className="col-span-3 fixed md:static print:static bottom-0">
+    <div className="col-span-3 fixed left-0 right-0 bottom-0 md:static print:static">
       <div className="hidden md:block print:block">
         <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
           Ingredients
           <Copy text={ingredients.join('\n')} />
         </h3>
-        <ul id="ingredients">
+        <ul className={classNames(ingredients.length > 8 && 'print:columns-2', 'print:mb-4')}>
           {ingredients.map((ingredient: string, i: number)=> (
-            <li key={i} className="border-b print:border-b-0 print:pb-1 print:mb-1 last:border-b-0 border-b-slate-200 pb-2 mb-2">{decode(ingredient.replace(/\s([^\s]+)$/, '&nbsp;$1'))}</li>
+            <li key={i} className="border-b print:border-b-0 print:pb-0 print:mb-0 last:border-b-0 border-b-slate-200 pb-2 mb-2">{decode(ingredient.replace(/\s([^\s]+)$/, '&nbsp;$1'))}</li>
           ))}
         </ul>
       </div>
       <Disclosure>
         {({ open }) => (
-          <div className={classnames('fixed block print:hidden md:hidden bottom-0 left-0 right-0 z-10 border-t-2 transition bg-white border-brand')}>
+          <div className={classNames('block print:hidden md:hidden border-t-2 transition bg-white border-brand')}>
             <Disclosure.Button className={open ? 'py-2 mb-2 w-full text-left' : 'py-2 w-full text-left'}>
               <h3 className="px-5 text-lg font-bold flex justify-between">
                 <div className="flex items-center gap-2">

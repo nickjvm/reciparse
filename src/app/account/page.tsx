@@ -4,7 +4,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { Metadata } from 'next'
 
-import withHeader from '@/components/withHeader'
+import withHeader from '@/components/hoc/withHeader'
 
 import MyAccount from './account-form'
 

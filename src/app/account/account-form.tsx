@@ -4,9 +4,11 @@ import { Session, createClientComponentClient} from '@supabase/auth-helpers-next
 import { Database } from '@/types/database.types'
 import { FormEvent, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useNotificationContext } from '@/context/NotificationContext'
 
 export default function MyAccount() {
   const supabase = createClientComponentClient<Database>()
+  const { showNotification } = useNotificationContext()
   const router = useRouter()
   const [password, setPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
@@ -53,7 +55,10 @@ export default function MyAccount() {
           throw updateError
         }
         if (session?.user.email !== email) {
-          setMessage('Check your email to confirm and complete your address change')
+          showNotification({
+            title: 'Verify your new email address.',
+            message: 'We just sent you an email. Click the link verify your new email address and finish updating your profile.'
+          })
         } else {
           setMessage('Profile updated!')
         }
@@ -65,7 +70,7 @@ export default function MyAccount() {
   }
 
   return (
-    <form className="max-w-md mx-auto px-4 md:px-0 py-5" onSubmit={handleSubmit}>
+    <form className="max-w-md mx-auto" onSubmit={handleSubmit}>
       <h2 className="text-2xl font-display text-center mb-5 text-brand-alt">My Account</h2>
       <div>
         <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">

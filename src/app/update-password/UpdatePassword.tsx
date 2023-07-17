@@ -1,12 +1,12 @@
 'use client'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/types/database.types'
-import withHeader from '@/components/withHeader'
 import { FormEvent, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { useNotificationContext } from '@/context/NotificationContext'
 
-function Page() {
+export default function UpdatePassword() {
   const supabase = createClientComponentClient<Database>()
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(true)
@@ -14,6 +14,7 @@ function Page() {
   const router = useRouter()
   const params = useSearchParams()
 
+  const { showNotification } = useNotificationContext()
 
   useEffect(() => {
     const hashQuery = window.location.hash.substring(1)
@@ -38,14 +39,20 @@ function Page() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     try {
-      const { data, error } = await supabase.auth.updateUser({
+      const { error } = await supabase.auth.updateUser({
         password
       })
-      console.log(data, error)
+
       if (error) {
         throw error
       } else {
         router.push('/account')
+        showNotification({
+          title: 'Password changed.',
+          message: 'Your password has been changed succesfully.',
+          variant: 'success',
+          timeout: 5000
+        })
       }
     } catch (e) {
       setError(e as string || 'Something went wrong. Please try again.')
@@ -57,7 +64,7 @@ function Page() {
   }
   if (error) {
     return (
-      <div className="max-w-xl mx-auto py-5">
+      <div className="max-w-xl mx-auto">
         <h2 className="text-lg font-bold mb-4 text-center">{error}</h2>
         <div className="text-center">
           <Link href="/" className="transition inline-block py-1.5 mx-auto justify-center rounded-md bg-brand-alt px-8 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-alt">Return home</Link>
@@ -67,7 +74,7 @@ function Page() {
   }
 
   return (
-    <form className="max-w-md mx-auto py-5" onSubmit={handleSubmit}>
+    <form className="max-w-md mx-auto" onSubmit={handleSubmit}>
       <h2 className="text-2xl font-display text-center mb-5 text-brand-alt">Reset your password</h2>
       <p className="text-center text-base mb-5">So you forgot your password - it happens to the best of us!</p>
       <div>
@@ -94,5 +101,3 @@ function Page() {
     </form>
   )
 }
-
-export default withHeader(Page, { withSearch: false })

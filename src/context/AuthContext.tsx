@@ -3,10 +3,16 @@ import { Database } from '@/types/database.types'
 import { User, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import { createContext, useState, useEffect, useContext, ReactNode } from 'react'
+import { signIn, signOut, signUp, reset, AuthActions} from '@/lib/auth'
+import AuthModal from '@/components/molecules/AuthModal'
+import { useNotificationContext } from './NotificationContext'
 
 interface Context {
   user: null | User
   userLoading: boolean
+  actions: AuthActions
+  authType?: string|null
+  setAuthType: (type?: string|null) => void
 }
 
 interface Props {
@@ -17,19 +23,37 @@ interface Props {
 const AuthContext = createContext<Context>({
   user: null,
   userLoading: true,
+  actions: {
+    signIn,
+    signUp,
+    signOut,
+    reset,
+  },
+  setAuthType: (type: string|null|undefined) => {
+    console.log('noop', type)
+  }
 })
 
 export function AuthContextProvider({ children, user: serverUser}: Props) {
   const supabase = createClientComponentClient<Database>()
   const [user, setUser] = useState<User|null>(serverUser)
   const [loading, setLoading] = useState(false)
+  const [authType, setAuthType] = useState<string|null|undefined>(null)
   const router = useRouter()
+  const { showNotification } = useNotificationContext()
 
   useEffect(() => {
     supabase.auth.onAuthStateChange(async (event, session) => {
       try {
         if (event === 'SIGNED_OUT') {
+          router.push('/')
           setUser(null)
+          router.refresh()
+          showNotification({
+            title: 'See ya later!',
+            message: 'You have been signed out.',
+            timeout: 5000
+          })
         } else {
           if (session) {
             const { data: { user }, error } = await supabase.auth.getUser()
@@ -43,34 +67,30 @@ export function AuthContextProvider({ children, user: serverUser}: Props) {
       } catch (e) {
         console.error(e)
         setUser(null)
+        router.push('/')
       } finally {
         setLoading(false)
       }
     })
   }, [])
 
-  // force refresh the token every 10 minutes
-  useEffect(() => {
-    const handle = setInterval(async () => {
-      console.log('refreshing session.')
-      const { data: { session },  error } = await supabase.auth.refreshSession()
-      if (error) {
-        router.push('/')
-      } else {
-        console.log('setting session!')
-        await supabase.auth.setSession({
-          access_token: session?.access_token || '',
-          refresh_token: session?.refresh_token || '',
-        })
-      }
-    }, 10 * 60 * 1000)
-
-    // clean up setInterval
-    return () => clearInterval(handle)
-  }, [])
-
   return (
-    <AuthContext.Provider value={{ user, userLoading: loading }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider
+      value={{
+        user,
+        userLoading: loading,
+        actions: {
+          signIn,
+          signUp,
+          signOut,
+          reset,
+        },
+        authType,
+        setAuthType,
+      }}>
+      {children}
+      <AuthModal />
+    </AuthContext.Provider>
   )
 }
 
