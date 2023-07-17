@@ -27,7 +27,7 @@ function Page() {
       </p>
       <p className="mb-4">
         If you like what you see and maybe I saved you a couple of minutes preparing dinner, I&apos;d appreciate your support — shoot me an email me at{' '}
-        <Link className={linkClasses} href="mailto:nick@reciparse.com">nick@reciparse.com</Link> and let me know what you think. If you&apos;re feeling charitable, you can <Link className={linkClasses} href="#">fund my pantry here</Link>.
+        <Link className={linkClasses} href="mailto:nick@reciparse.com">nick@reciparse.com</Link> and let me know what you think. If you&apos;re feeling charitable, you can <Link className={linkClasses} href="https://bmc.link/nickvanmeter" target="_blank">fund my pantry here</Link>.
       </p>
     </div>
   )
