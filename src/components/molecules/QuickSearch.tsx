@@ -71,7 +71,7 @@ export default function QuickSearch({ size = 'md', inputClassName, autoFocus, pl
             name="search"
             id="search"
             placeholder={placeholder || 'Paste a recipe URL'}
-            autoFocus={!!autoFocus}
+            autoFocus={!!autoFocus && (global.window.innerWidth > 768 && !('ontouchstart' in window))}
             required
             value={url}
             onChange={onChange}
