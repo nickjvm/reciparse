@@ -29,8 +29,8 @@ function Page() {
           <Link className={linkClasses} href="https://nextjs.org/" target="_blank">Next.js</Link>,{' '}
           <Link className={linkClasses} href="https://nodejs.org/en" target="_blank">Node</Link>/
           <Link className={linkClasses} href="https://expressjs.com/" target="_blank">Express</Link>,{' '}
-          <Link className={linkClasses} href="https://tailwindcss.com/" target="_blank">Tailwind</Link>,{' '}
-          <Link className={linkClasses} href="https://supabase.com/" target="_blank">Supabase</Link>{' & '}
+          <Link className={linkClasses} href="https://tailwindcss.com/" target="_blank">Tailwind</Link>,{' & '}
+          <Link className={linkClasses} href="https://supabase.com/" target="_blank">Supabase</Link>{', '}
            and served to you via{' '}
           <Link className={linkClasses} href="https://vercel.com/" target="_blank">Vercel</Link>. The front end is open source and can be viewed on{' '}
           <Link className={linkClasses} href="https://github.com/nickjvm/reciparse" target="_blank">Github</Link>. Issues and pull requests from the community are welcome!
