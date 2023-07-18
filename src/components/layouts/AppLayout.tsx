@@ -36,15 +36,11 @@ export default function AppLayout({
     }
   }
 
-  if (userLoading) {
-    return null
-  }
-
   const unauthorized = isPrivate && !userLoading && !user && !sessionStorage.getItem('authdelay')
   return (
     <>
-      <Header withBorder withSearch={withSearch} />
-      <div className={classNames('grow', className)}>
+      <Header withBorder withSearch={withSearch} className={classNames(userLoading && 'invisible')} />
+      <div className={classNames('grow', userLoading && 'invisible', className)}>
         {unauthorized
           ? <RecipeError
             errorTitle="Unauthorized"
@@ -56,7 +52,7 @@ export default function AppLayout({
           : renderChildren()
         }
       </div>
-      <Footer />
+      <Footer className={classNames(userLoading && 'invisible')} />
     </>
   )
 }

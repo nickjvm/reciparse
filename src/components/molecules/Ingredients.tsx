@@ -9,6 +9,7 @@ import Copy from './Copy'
 interface Props {
   ingredients: string[]
 }
+
 export default function IngredientsList({ ingredients }: Props) {
   return (
     <div className="z-10 md:z-auto col-span-3 fixed left-0 right-0 bottom-0 md:static print:static">

@@ -1,12 +1,16 @@
 'use client'
 
 import { useAuthContext } from '@/context/AuthContext'
+import classNames from 'classnames'
 import Link from 'next/link'
 
-export default function Footer() {
+interface Props {
+  className?: string
+}
+export default function Footer({ className }: Props) {
   const { user, setAuthType } = useAuthContext()
   return (
-    <div className="print:hidden text-white bg-gradient-to-br from-brand to-35% to-brand-alt p-3">
+    <div className={classNames('print:hidden text-white bg-gradient-to-br from-brand to-35% to-brand-alt p-3', className)}>
       <div className="mx-auto grid grid-cols-12 max-w-5xl items-start p-4 print:hidden md:px-6 gap-2">
         <div className="col-span-12 md:col-span-3 font-display text-3xl tracking-tight">
           reciparse
