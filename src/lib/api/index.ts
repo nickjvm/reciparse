@@ -58,12 +58,6 @@ export const getAccessToken = async () => {
     accessToken = session?.access_token
   }
 
-  if (!accessToken && global.window) {
-    debug('Refreshing session');
-    ({ data: { session } } = await supabase.auth.refreshSession())
-    accessToken = session?.access_token
-  }
-
   if (accessToken) {
     localStorage.setItem('access_token', `${accessToken}`)
     localStorage.setItem('expires_at', `${session?.expires_at || expiresAt}`)
