@@ -12,12 +12,17 @@ interface Props {
   onClick?: () => void
 }
 function AuthBtn({ onClick }: Props) {
-  const { user, setAuthType, actions } = useAuthContext()
+  const { user, userLoading, setAuthType, actions } = useAuthContext()
 
   const handleClick = (authType: string) => () => {
     onClick?.()
     setAuthType(authType)
   }
+
+  if (userLoading) {
+    return null
+  }
+
   if (!user) {
     return (
       <div className="flex gap-3 items-center whitespace-nowrap">

@@ -1,14 +1,14 @@
-import withHeader from '@/components/hoc/withHeader'
+import AppLayout from '@/components/layouts/AppLayout'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Cookie Policy | Reciparse'
 }
 
-function Page() {
+export default function Page() {
   return (
-    <>
-      <h1 className="text-2xl font-bold">Cookie Policy</h1>
+    <AppLayout withSearch={false} className="py-4">
+      <h1 className="font-display text-3xl mb-3 text-brand-alt">Cookie Policy</h1>
 
       <p className="mb-2">This is the Cookie Policy for Reciparse, accessible from www.reciparse.com</p>
 
@@ -69,8 +69,6 @@ function Page() {
 
       <p className="mb-2">However if you are still looking for more information then you can contact us at cookies@reciparse.com.</p>
 
-    </>
+    </AppLayout>
   )
 }
-
-export default withHeader(Page, { withSearch: false })

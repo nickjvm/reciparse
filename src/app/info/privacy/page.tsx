@@ -1,14 +1,14 @@
 import { Metadata } from 'next'
-import withHeader from '@/components/hoc/withHeader'
+import AppLayout from '@/components/layouts/AppLayout'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy | Reciparse'
 }
 
-function Page() {
+export default function Page() {
   return (
-    <>
-      <h1 className="mb-2 text-2xl font-bold">Privacy Policy</h1>
+    <AppLayout withSearch={false} className="py-4">
+      <h1 className="font-display text-3xl mb-3 text-brand-alt">Privacy Policy</h1>
       <p className="mb-2">Last updated: July 15, 2023</p>
       <p className="mb-2">This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your information when You use the Service and tells You about Your privacy rights and how the law protects You.</p>
       <p className="mb-2">We use Your Personal data to provide and improve the Service. By using the Service, You agree to the collection and use of information in accordance with this Privacy Policy. This Privacy Policy has been created with the help of the <a href="https://www.freeprivacypolicy.com/free-privacy-policy-generator/" target="_blank">Free Privacy Policy Generator</a>.</p>
@@ -17,7 +17,7 @@ function Page() {
       <p className="mb-2">The words of which the initial letter is capitalized have meanings defined under the following conditions. The following definitions shall have the same meaning regardless of whether they appear in singular or in plural.</p>
       <h2 className="text-lg font-bold">Definitions</h2>
       <p className="mb-2">For the purposes of this Privacy Policy:</p>
-      <ul>
+      <ul className="list-disc pl-6 mb-2">
         <li>
           <p className="mb-2"><strong>Account</strong> means a unique account created for You to access our Service or parts of our Service.</p>
         </li>
@@ -59,7 +59,7 @@ function Page() {
       <h2 className="text-lg font-bold">Types of Data Collected</h2>
       <h3 className="font-bold mb-2">Personal Data</h3>
       <p className="mb-2">While using Our Service, We may ask You to provide Us with certain personally identifiable information that can be used to contact or identify You. Personally identifiable information may include, but is not limited to:</p>
-      <ul>
+      <ul className="list-disc pl-6 mb-2">
         <li>
           <p className="mb-2">Email address</p>
         </li>
@@ -74,13 +74,13 @@ function Page() {
       <p className="mb-2">We may also collect information that Your browser sends whenever You visit our Service or when You access the Service by or through a mobile device.</p>
       <h3 className="font-bold mb-2">Tracking Technologies and Cookies</h3>
       <p className="mb-2">We use Cookies and similar tracking technologies to track the activity on Our Service and store certain information. Tracking technologies used are beacons, tags, and scripts to collect and track information and to improve and analyze Our Service. The technologies We use may include:</p>
-      <ul>
+      <ul className="list-disc pl-6 mb-2">
         <li><strong>Cookies or Browser Cookies.</strong> A cookie is a small file placed on Your Device. You can instruct Your browser to refuse all Cookies or to indicate when a Cookie is being sent. However, if You do not accept Cookies, You may not be able to use some parts of our Service. Unless you have adjusted Your browser setting so that it will refuse Cookies, our Service may use Cookies.</li>
         <li><strong>Web Beacons.</strong> Certain sections of our Service and our emails may contain small electronic files known as web beacons (also referred to as clear gifs, pixel tags, and single-pixel gifs) that permit the Company, for example, to count users who have visited those pages or opened an email and for other related website statistics (for example, recording the popularity of a certain section and verifying system and server integrity).</li>
       </ul>
       <p className="mb-2">Cookies can be &quot;Persistent&quot; or &quot;Session&quot; Cookies. Persistent Cookies remain on Your personal computer or mobile device when You go offline, while Session Cookies are deleted as soon as You close Your web browser. Learn more about cookies on the <a href="https://www.freeprivacypolicy.com/blog/sample-privacy-policy-template/#Use_Of_Cookies_And_Tracking" target="_blank">Free Privacy Policy website</a> article.</p>
       <p className="mb-2">We use both Session and Persistent Cookies for the purposes set out below:</p>
-      <ul>
+      <ul className="list-disc pl-6 mb-2">
         <li>
           <p className="mb-2"><strong>Necessary / Essential Cookies</strong></p>
           <p className="mb-2">Type: Session Cookies</p>
@@ -103,7 +103,7 @@ function Page() {
       <p className="mb-2">For more information about the cookies we use and your choices regarding cookies, please visit our Cookies Policy or the Cookies section of our Privacy Policy.</p>
       <h2 className="text-lg font-bold">Use of Your Personal Data</h2>
       <p className="mb-2">The Company may use Personal Data for the following purposes:</p>
-      <ul>
+      <ul className="list-disc pl-6 mb-2">
         <li>
           <p className="mb-2"><strong>To provide and maintain our Service</strong>, including to monitor the usage of our Service.</p>
         </li>
@@ -130,7 +130,7 @@ function Page() {
         </li>
       </ul>
       <p className="mb-2">We may share Your personal information in the following situations:</p>
-      <ul>
+      <ul className="list-disc pl-6 mb-2">
         <li><strong>With Service Providers:</strong> We may share Your personal information with Service Providers to monitor and analyze the use of our Service,  to contact You.</li>
         <li><strong>For business transfers:</strong> We may share or transfer Your personal information in connection with, or during negotiations of, any merger, sale of Company assets, financing, or acquisition of all or a portion of Our business to another company.</li>
         <li><strong>With Affiliates:</strong> We may share Your information with Our affiliates, in which case we will require those affiliates to honor this Privacy Policy. Affiliates include Our parent company and any other subsidiaries, joint venture partners or other companies that We control or that are under common control with Us.</li>
@@ -157,7 +157,7 @@ function Page() {
       <p className="mb-2">Under certain circumstances, the Company may be required to disclose Your Personal Data if required to do so by law or in response to valid requests by public authorities (e.g. a court or a government agency).</p>
       <h3 className="font-bold mb-2">Other legal requirements</h3>
       <p className="mb-2">The Company may disclose Your Personal Data in the good faith belief that such action is necessary to:</p>
-      <ul>
+      <ul className="list-disc pl-6 mb-2">
         <li>Comply with a legal obligation</li>
         <li>Protect and defend the rights or property of the Company</li>
         <li>Prevent or investigate possible wrongdoing in connection with the Service</li>
@@ -174,12 +174,9 @@ function Page() {
       <p className="mb-2">We have no control over and assume no responsibility for the content, privacy policies or practices of any third party sites or services.</p>
       <h1 className="mb-2 text-xl font-bold">Changes to this Privacy Policy</h1>
       <p className="mb-2">We may update Our Privacy Policy from time to time. We will notify You of any changes by posting the new Privacy Policy on this page.</p>
-      <p className="mb-2">We will let You know via email and/or a prominent notice on Our Service, prior to the change becoming effective and update the &quot;Last updated&quot; date at the top of this Privacy Policy.</p>
       <p className="mb-2">You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.</p>
       <h1 className="mb-2 text-xl font-bold">Contact Us</h1>
       <p className="mb-2">If you have any questions about this Privacy Policy, You can contact us at privacy@reciparse.com</p>
-    </>
+    </AppLayout>
   )
 }
-
-export default withHeader(Page, { withSearch: false })

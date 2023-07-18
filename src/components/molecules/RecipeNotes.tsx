@@ -3,7 +3,8 @@ import { useRef, useState } from 'react'
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/solid'
 import classNames from 'classnames'
 
-import clientRequest from '@/lib/api/client'
+import request from '@/lib/api'
+import debug from '@/lib/debug'
 
 import { useDebounce } from '@/hooks/useDebounce'
 import { useDidUpdateEffect } from '@/hooks/useDidUpdateEffect'
@@ -26,12 +27,12 @@ export default function RecipeNotes({ id, value: _value }: Props) {
     setLoading(true)
     setError(false)
     try {
-      const { error } = await clientRequest('/api/recipes/notes', { method: 'POST', body: JSON.stringify({ id, notes: debouncedValue })})
+      const { error } = await request('/api/recipes/notes', { method: 'POST', body: JSON.stringify({ id, notes: debouncedValue })})
       if (error) {
         throw new Error(error.message)
       }
     } catch (e) {
-      console.log(e)
+      debug(e)
       setError(true)
     } finally {
       setLoading(false)

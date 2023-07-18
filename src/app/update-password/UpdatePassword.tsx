@@ -1,40 +1,16 @@
 'use client'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { Database } from '@/types/database.types'
-import { FormEvent, useEffect, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { FormEvent, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useNotificationContext } from '@/context/NotificationContext'
+import supabase from '@/lib/supabaseClient'
 
 export default function UpdatePassword() {
-  const supabase = createClientComponentClient<Database>()
   const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const router = useRouter()
-  const params = useSearchParams()
 
   const { showNotification } = useNotificationContext()
-
-  useEffect(() => {
-    const hashQuery = window.location.hash.substring(1)
-    if (hashQuery || !params.get('code')) {
-      const details = new URLSearchParams(window.location.hash.substring(1))
-      if (details.get('error')) {
-        setError(details.get('error_description') || 'Something went wrong. Please try again.')
-      } else {
-        setError('Something went wrong. Please try again')
-      }
-      setLoading(false)
-    } else {
-      const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-        if (session) {
-          setLoading(false)
-        }
-      })
-      return () => authListener.subscription.unsubscribe()
-    }
-  }, [])
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -49,7 +25,7 @@ export default function UpdatePassword() {
         router.push('/account')
         showNotification({
           title: 'Password changed.',
-          message: 'Your password has been changed succesfully.',
+          message: 'Your password has been changed successfully.',
           variant: 'success',
           timeout: 5000
         })
@@ -59,9 +35,6 @@ export default function UpdatePassword() {
     }
   }
 
-  if (loading) {
-    return null
-  }
   if (error) {
     return (
       <div className="max-w-xl mx-auto">

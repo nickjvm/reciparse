@@ -6,11 +6,8 @@ import { cookies } from 'next/headers'
 import { AuthContextProvider } from '@/context/AuthContext'
 
 import './globals.css'
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
-import { Database } from '@/types/database.types'
 
 import CookieBanner from '@/components/molecules/CookieBanner'
-import Footer from '@/components/partials/Footer'
 import NotificationProvider from '@/context/NotificationContext'
 import GA4 from '@/components/atoms/GA4'
 
@@ -38,22 +35,17 @@ export const dynamic = 'force-dynamic'
 export default async function RootLayout({ children }: {
   children: React.ReactNode
 }) {
-  const supabase = createServerComponentClient<Database>({ cookies })
-
-  const { data: { session } } = await supabase.auth.getSession()
-
   return (
     <html lang="en" className={classNames(openSans.className, openSans.variable, yesevaOne.variable)}>
       <link rel="icon" type="image/png" href="/favicon.png" />
       <GA4 />
       <body>
         <NotificationProvider>
-          <AuthContextProvider user={session?.user || null}>
+          <AuthContextProvider user={null}>
             <div className="min-h-screen flex flex-col">
               <div className="flex-grow flex flex-col ">
                 {children}
               </div>
-              <Footer />
               {!cookies().get('cookie_consent') && <CookieBanner />}
             </div>
           </AuthContextProvider>

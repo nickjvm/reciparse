@@ -16,14 +16,18 @@ export interface Recipe {
     raw_source: string
     saved?: boolean
     id: number
-    isFavorite: boolean
-    notes: string|null
     image: {
       url: string
       width: number
       height: number
     }
   }
+}
+
+export interface SavedRecipe {
+  id: number
+  isFavorite: boolean
+  notes: string|null
 }
 
 export interface Nutrition {
@@ -71,11 +75,10 @@ export interface HowToSection {
 export interface EdamamResponse {
   nutrition: Nutrition,
   servings: number,
-  error?: Error
 }
 
-
-export interface ReciparseRequestError {
-  error: boolean
-  message: string
+export interface ReciparseResponse {
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  data: any
+  error: null|Error
 }

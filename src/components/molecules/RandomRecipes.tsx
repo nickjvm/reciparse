@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { SupaRecipe } from '@/types'
-import clientRequest from '@/lib/api/client'
+import request from '@/lib/api'
 
 import RecipeCard from '../atoms/RecipeCard'
 
@@ -15,12 +15,14 @@ export default function RandomRecipes({ count = 8}: Props) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const getData = async () => {
-      setRecipes(await clientRequest('/api/recipes/random'))
-      setLoading(false)
-    }
-    getData()
+    getRandomRecipes()
   }, [])
+
+  const getRandomRecipes = async () => {
+    const { data }: { data: null|SupaRecipe[]} = await request('/api/recipes/random')
+    setRecipes(data || [])
+    setLoading(false)
+  }
 
   if (recipes && recipes.length) {
     return (

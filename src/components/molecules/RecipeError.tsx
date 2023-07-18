@@ -1,5 +1,4 @@
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
-import classNames from 'classnames'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -14,7 +13,7 @@ interface Props {
 export default function RecipeError({ actionUrl, actionText, errorText, errorTitle = 'Shoot.', image = '/404.svg', className }: Props) {
   const external = actionUrl && actionUrl.startsWith('http')
   return (
-    <div className={classNames('m-auto max-w-3xl mt-4 sm:mt-12 px-4 xl:px-0', className)}>
+    <div className={className}>
       <div className="grid grid-cols-12 items-center">
         <div className="col-span-12 sm:col-span-7 order-1 sm:order-0">
           <h2 className="text-brand-alt font-display text-4xl mb-4">{errorTitle}</h2>

@@ -1,50 +1,46 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
-import { Metadata } from 'next'
+'use client'
+import { useEffect, useState } from 'react'
 
-import { Database } from '@/types/database.types'
-import serverRequest from '@/lib/api/server'
-
-import withHeader from '@/components/hoc/withHeader'
+import request from '@/lib/api'
+import AppLayout from '@/components/layouts/AppLayout'
 import RecipeError from '@/components/molecules/RecipeError'
 
 import FavoritesList from './List'
 
-export const dynamic = 'force-dynamic'
+export default function Page() {
+  const [count, setCount] = useState(0)
+  const [error, setError] = useState<boolean>(false)
+  const [loading, setLoading] = useState(true)
 
-export const metadata: Metadata = {
-  title: 'My Favorites | Reciparse'
-}
+  useEffect(() => {
+    getCount()
+  }, [])
 
-async function Page() {
-  const supabase = createServerComponentClient<Database>({ cookies })
-  const { data: { session } } = await supabase.auth.getSession()
-
-  if (!session) {
-    redirect('/')
-  }
-
-  let count = 0
-  let error = false
-  try {
-    const response = await serverRequest('/api/recipes/favorites?count=true')
-    count = response.count
-
-    if (response.error) {
-      throw response.error
+  const getCount = async () => {
+    const { data, error } = await request('/api/recipes/favorites?count=true')
+    if (error) {
+      setError(true)
+    } else if (data) {
+      setCount(data.count)
     }
-  } catch (e) {
-    error = true
+
+    setLoading(false)
   }
 
-  if (error) {
-    return <RecipeError image="/404.svg" errorText="Something went wrong. Try again later." className="mb-6" />
-  } else if (!count) {
-    return <RecipeError errorTitle="Start saving!" image="/favorite.svg" errorText="Looks like you haven't saved any recipes yet." className="mb-6" />
-  } else {
-    return <FavoritesList count={count} error={error} />
+  const renderChildren = () => {
+    if (error) {
+      return <RecipeError image="/404.svg" errorText="Something went wrong. Try again later." className="mb-6" />
+    } else if (!loading && !count) {
+      return <RecipeError errorTitle="Start saving!" image="/favorite.svg" errorText="Looks like you haven't saved any recipes yet." className="mb-6" />
+    } else {
+      return <FavoritesList loading={loading} count={count} error={error} />
+    }
   }
+
+  return (
+    <AppLayout withSearch isPrivate className="py-4">
+      <title>My Favorites | Reciparse</title>
+      {renderChildren()}
+    </AppLayout>
+  )
 }
-
-export default withHeader(Page, { withSearch: true })

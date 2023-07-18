@@ -1,6 +1,6 @@
 'use client'
 import { useAuthContext } from '@/context/AuthContext'
-import clientRequest from '@/lib/api/client'
+import request from '@/lib/api'
 import { EdamamResponse, Nutrition } from '@/types'
 import Image from 'next/image'
 import { useState } from 'react'
@@ -41,7 +41,7 @@ export default function NutritionInfo({ data: _data, ingredientsList, recipeYiel
   const loadNutritionInfo = async () => {
     try {
       setLoading(true)
-      const { nutrition, servings, error }: EdamamResponse = await clientRequest('/api/recipes/nutrition', {
+      const { data, error } = await request('/api/recipes/nutrition', {
         method: 'POST',
         body: JSON.stringify({
           ingredientsList,
@@ -52,6 +52,8 @@ export default function NutritionInfo({ data: _data, ingredientsList, recipeYiel
       if (error) {
         throw error
       }
+
+      const { nutrition, servings }: EdamamResponse = data
 
       setShowEdamam(true)
       setServings(servings)
