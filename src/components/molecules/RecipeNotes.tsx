@@ -9,6 +9,7 @@ import debug from '@/lib/debug'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useDidUpdateEffect } from '@/hooks/useDidUpdateEffect'
 
+import { useAuthContext } from '@/context/AuthContext'
 import Loading from '@/components/icons/Loading'
 
 interface Props {
@@ -17,6 +18,7 @@ interface Props {
 }
 export default function RecipeNotes({ id, value: _value }: Props) {
   const [value, setValue] = useState<string>(_value || '')
+  const { user } = useAuthContext()
   const debouncedValue = useDebounce<string>(value, 1000)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
@@ -48,6 +50,11 @@ export default function RecipeNotes({ id, value: _value }: Props) {
       inputRef.current.style.height = inputRef.current?.scrollHeight + 'px'
     }
   }
+
+  if (!user) {
+    return null
+  }
+
   return (
     <div className={classNames('z-0 relative pb-4 group print:break-inside-avoid', !value && 'print:hidden')}>
       <h2 className="text-xl font-bold mb-2 mt-4">Notes</h2>

@@ -113,7 +113,7 @@ export function AuthContextProvider({ children }: Props) {
             timeout: 5000
           })
           setUser(null)
-          setDestination('/')
+          router.refresh()
           sessionStorage.setItem('authdelay', '1')
           localStorage.removeItem('access_token')
           localStorage.removeItem('expires_at')
@@ -126,6 +126,9 @@ export function AuthContextProvider({ children }: Props) {
             localStorage.setItem('expires_at', `${session.expires_at}`)
             if (user) {
               setUser(user)
+              if (event === 'SIGNED_IN') {
+                router.refresh()
+              }
             } else if (error) {
               throw error
             }

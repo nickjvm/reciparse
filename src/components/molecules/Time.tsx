@@ -33,9 +33,25 @@ function toHoursAndMinutes(totalMinutes: number): string {
 
 export default function Time(props: Props) {
 
-  const prepTime = td.parse(props.prepTime || 'PT0M').minutes
-  const cookTime = td.parse(props.cookTime || 'PT0M').minutes
-  const totalTime = td.parse(props.totalTime || 'PT0M').minutes
+  let prepTime: number
+  let cookTime: number
+  let totalTime: number
+  try {
+    prepTime = td.parse(props.prepTime || 'PT0M').minutes || 0
+    cookTime = td.parse(props.cookTime || 'PT0M').minutes || 0
+    totalTime = td.parse(props.totalTime || 'PT0M').minutes || 0
+  } catch {
+    if (props.totalTime) {
+      return (
+        <span className="inline-flex ring-2 ring-brand-alt focus-visible:outline-0 gap-1 items-center px-2 py-1 rounded">
+          <ClockIcon className="w-5"/>
+          {props.totalTime}
+        </span>
+      )
+    } else {
+      return null
+    }
+  }
 
   if (!totalTime) {
     return null
@@ -63,7 +79,7 @@ export default function Time(props: Props) {
     return (
       <span className="inline-flex ring-2 ring-brand-alt focus-visible:outline-0 gap-1 items-center px-2 py-1 rounded">
         <ClockIcon className="w-5"/>
-        {totalTime} minutes
+        {toHoursAndMinutes(totalTime)}
       </span>
     )
   }

@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode } from 'react'
+import { ReactNode, useEffect } from 'react'
 
 import { useAuthContext } from '@/context/AuthContext'
 
@@ -8,6 +8,7 @@ import Header from '@/components/partials/Header'
 import Footer from '@/components/partials/Footer'
 import classNames from 'classnames'
 import RecipeError from '../molecules/RecipeError'
+import { useRouter } from 'next/navigation'
 
 interface Props {
   fullWidth?: boolean
@@ -24,6 +25,14 @@ export default function AppLayout({
   className,
 }: Props) {
   const { user, userLoading } = useAuthContext()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!user && isPrivate && !userLoading) {
+      router.push('/')
+    }
+  }, [user, isPrivate, userLoading])
+
   const renderChildren = () => {
     if (fullWidth) {
       return children
