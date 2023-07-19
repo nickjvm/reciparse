@@ -103,7 +103,7 @@ export function AuthContextProvider({ children }: Props) {
   }, [pathname, searchParams])
 
   useEffect(() => {
-    supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       debug(event)
       try {
         if (event === 'SIGNED_OUT') {
@@ -119,13 +119,13 @@ export function AuthContextProvider({ children }: Props) {
           localStorage.removeItem('expires_at')
         } else if (event === 'PASSWORD_RECOVERY') {
           setDestination('/update-password')
-        } else {
-          const { data: { user }, error } = await supabase.auth.getUser()
+        } else if (event !== 'INITIAL_SESSION') {
+          const { data, error } = await supabase.auth.getUser()
           if (session) {
             localStorage.setItem('access_token', session.access_token)
             localStorage.setItem('expires_at', `${session.expires_at}`)
-            if (user) {
-              setUser(user)
+            if (data?.user && data?.user.id !== user?.id) {
+              setUser(data.user)
               if (event === 'SIGNED_IN') {
                 router.refresh()
               }
@@ -142,7 +142,10 @@ export function AuthContextProvider({ children }: Props) {
         router.refresh()
       }
     })
-  }, [])
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [user])
 
   return (
     <AuthContext.Provider
