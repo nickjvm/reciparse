@@ -34,7 +34,7 @@ export default function RandomRecipes({ count = 8}: Props) {
       }
     }
 
-    if (!data) {
+    if (!data?.length) {
       setTitle('Discover Recipes');
       ({ data } = await request('/api/recipes/random'))
     }

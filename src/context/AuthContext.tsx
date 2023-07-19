@@ -39,11 +39,10 @@ export function AuthContextProvider({ children }: Props) {
   const searchParams = useSearchParams()
 
   useEffect(() => {
-    if (destination && pathname !== destination) {
+    if (destination && window.location.href !== destination) {
       router.push(destination)
-    } else {
-      setDestination(null)
     }
+    setDestination(null)
   }, [destination, pathname, router])
 
   useEffect(() => {
@@ -104,7 +103,7 @@ export function AuthContextProvider({ children }: Props) {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      debug(event)
+      debug(event, session)
       try {
         if (event === 'SIGNED_OUT') {
           showNotification({
@@ -135,7 +134,7 @@ export function AuthContextProvider({ children }: Props) {
           }
         }
       } catch (e) {
-        console.error(e)
+        debug(e)
         setUser(null)
       } finally {
         setLoading(false)
@@ -146,6 +145,8 @@ export function AuthContextProvider({ children }: Props) {
       subscription.unsubscribe()
     }
   }, [user])
+
+  debug({ loading, hashChecked, destination })
 
   return (
     <AuthContext.Provider
