@@ -41,7 +41,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
       throw error
     } else if (recipe) {
       return {
-        title: `${recipe.name} | Reciparse`,
+        title: `${decode(recipe.name)} | Reciparse`,
         metadataBase: new URL(getUrl()),
         openGraph: {
           ...openGraph,
