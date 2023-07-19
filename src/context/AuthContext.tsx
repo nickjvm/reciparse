@@ -81,9 +81,20 @@ export function AuthContextProvider({ children }: Props) {
             }
             default:
           }
+        } else if (searchParams.get('error')) {
+          showNotification({
+            title: 'Oops.',
+            message: searchParams.get('error_description') || searchParams.get('error') || 'Something went wrong.',
+            variant: 'error',
+          })
         }
       } catch (e) {
-        // not a hashified query string
+        debug(e)
+        showNotification({
+          title: 'Oops.',
+          message: 'Something went wrong.',
+          variant: 'error',
+        })
       } finally {
         setHashChecked(true)
       }
