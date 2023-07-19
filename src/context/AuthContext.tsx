@@ -39,6 +39,12 @@ export function AuthContextProvider({ children }: Props) {
   const searchParams = useSearchParams()
 
   useEffect(() => {
+    if (authType) {
+      showNotification(null)
+    }
+  }, [authType])
+
+  useEffect(() => {
     if (destination && window.location.href !== destination) {
       router.push(destination)
     }
@@ -99,6 +105,11 @@ export function AuthContextProvider({ children }: Props) {
         setDestination(window.location.pathname)
       } finally {
         setHashChecked(true)
+        showNotification({
+          title: 'Oops.',
+          message: 'Something went wrong.',
+          variant: 'error',
+        })
       }
     }
 
