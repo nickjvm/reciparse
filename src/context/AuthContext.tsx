@@ -105,11 +105,6 @@ export function AuthContextProvider({ children }: Props) {
         setDestination(window.location.pathname)
       } finally {
         setHashChecked(true)
-        showNotification({
-          title: 'Oops.',
-          message: 'Something went wrong.',
-          variant: 'error',
-        })
       }
     }
 
