@@ -9,6 +9,7 @@ import debug from '@/lib/debug'
 
 import AuthModal from '@/components/molecules/AuthModal'
 import { useNotificationContext } from './NotificationContext'
+import gtag from '@/lib/gtag'
 
 interface Context {
   user: null | User
@@ -123,6 +124,7 @@ export function AuthContextProvider({ children }: Props) {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       debug(event, session)
+      let timeout
       try {
         if (event === 'SIGNED_OUT') {
           showNotification({
@@ -138,8 +140,26 @@ export function AuthContextProvider({ children }: Props) {
         } else if (event === 'PASSWORD_RECOVERY') {
           setDestination('/update-password')
         } else {
+          // set session storage value so we don't get in an infinate reload loop
+          if (sessionStorage.getItem('reload')) {
+            sessionStorage.removeItem('reload')
+          } else {
+            timeout = setTimeout(() => {
+              sessionStorage.setItem('reload', '1')
+              gtag('session_error')
+              debug('auth.getUser timed out. forceing reload')
+              window.location.reload()
+            }, 3000)
+          }
           if (session) {
-            const { data, error } = await supabase.auth.getUser()
+            // sometimes on first pageview, auth.getUser hangs and never resolves.
+            // its not ideal, but if it doesn't resolve in 3 seconds, we'll trigger
+            // a hard refresh of the page so supabase can try again. Second page load seems
+            // to work consistently. Maybe it's an issue with the free tier of vercel and supabase
+            // and starting up from a cold server if there hasn't been any activity for a while
+            const { data, error } = await supabase.auth.getUser(session.access_token)
+            // promise resolved, so clear the timeout and proceed as normal
+            clearTimeout(timeout)
             localStorage.setItem('access_token', session.access_token)
             localStorage.setItem('expires_at', `${session.expires_at}`)
             if (data?.user && data?.user.id !== user?.id) {
@@ -157,6 +177,7 @@ export function AuthContextProvider({ children }: Props) {
         setUser(null)
       } finally {
         setLoading(false)
+        clearTimeout(timeout)
         router.refresh()
       }
     })
