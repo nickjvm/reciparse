@@ -119,9 +119,9 @@ export function AuthContextProvider({ children }: Props) {
           localStorage.removeItem('expires_at')
         } else if (event === 'PASSWORD_RECOVERY') {
           setDestination('/update-password')
-        } else if (event !== 'INITIAL_SESSION') {
-          const { data, error } = await supabase.auth.getUser()
+        } else {
           if (session) {
+            const { data, error } = await supabase.auth.getUser()
             localStorage.setItem('access_token', session.access_token)
             localStorage.setItem('expires_at', `${session.expires_at}`)
             if (data?.user && data?.user.id !== user?.id) {
