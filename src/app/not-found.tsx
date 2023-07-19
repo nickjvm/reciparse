@@ -1,12 +1,22 @@
+import { Metadata } from 'next'
+
+import AppLayout from '@/components/layouts/AppLayout'
 import RecipeError from '@/components/molecules/RecipeError'
-import withHeader from '@/components/hoc/withHeader'
+
+import Layout from './layout'
+
+export const metadata: Metadata = {
+  title: 'Page not found | Reciparse'
+}
 
 // infinite loop is only in development env :shrug:
 // https://github.com/vercel/next.js/discussions/50429
-function Error() {
+export default function Error() {
   return (
-    <RecipeError actionText="Take me home." actionUrl="/" />
+    <Layout>
+      <AppLayout withSearch>
+        <RecipeError actionText="Take me home." actionUrl="/" className="max-w-xl py-8 mx-auto"/>
+      </AppLayout>
+    </Layout>
   )
 }
-
-export default withHeader(Error, { withSearch: true })

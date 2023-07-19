@@ -1,9 +1,7 @@
 'use client'
-import { createContext, useContext, useState, Fragment, useEffect } from 'react'
+import { createContext, useContext, useState, Fragment } from 'react'
 import { Transition } from '@headlessui/react'
 import { CheckCircleIcon, ExclamationCircleIcon, SparklesIcon, XMarkIcon } from '@heroicons/react/24/solid'
-import { getCookie, deleteCookie } from 'cookies-next'
-
 interface NotificationContext {
   showNotification: (alert: Notification) => void
 }
@@ -31,18 +29,6 @@ export default function NotificationProvider({ children }: { children: React.Rea
       }, newAlert.timeout)
     }
   }
-
-  useEffect(() => {
-    if (getCookie('notify') === 'signup') {
-      deleteCookie('notify')
-      showNotification({
-        title: 'Hello there!',
-        message: 'Thanks for creating an account. Your account has been confirmed.',
-        variant: 'success',
-        timeout: 5000,
-      })
-    }
-  }, [])
 
   return (
     <Context.Provider value={{ showNotification }}>

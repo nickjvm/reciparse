@@ -103,7 +103,7 @@ export default function AuthModal({ authType: defaultAuthType }: Props) {
               width="100"
               height="100"
               className="mx-auto h-10 w-1/2"
-              src="./logo.svg"
+              src="/logo.svg"
               alt="Reciparse"
             />
             <h2 className="mt-8 text-center text-xl font-bold leading-9 tracking-tight text-gray-900">

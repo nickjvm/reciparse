@@ -1,30 +1,19 @@
 'use client'
 
-import { Session, createClientComponentClient} from '@supabase/auth-helpers-nextjs'
-import { Database } from '@/types/database.types'
-import { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useNotificationContext } from '@/context/NotificationContext'
+import { useAuthContext } from '@/context/AuthContext'
+import supabase from '@/lib/supabaseClient'
 
 export default function MyAccount() {
-  const supabase = createClientComponentClient<Database>()
   const { showNotification } = useNotificationContext()
   const router = useRouter()
   const [password, setPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
-  const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
-  const [session, setSession] = useState<Session|null>()
-  useEffect(() => {
-    const getSession = async function() {
-      const { data: { session } } = await supabase.auth.getSession()
-      setEmail(session?.user.email || '')
-      setSession(session)
-    }
-
-    getSession()
-  }, [])
-
+  const { user } = useAuthContext()
+  const [email, setEmail] = useState(user?.email || '')
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -36,7 +25,7 @@ export default function MyAccount() {
     } else {
       try {
         const { error: signInError } = await supabase.auth.signInWithPassword({
-          email: session?.user.email || '',
+          email: user?.email || '',
           password: password
         })
 
@@ -47,14 +36,12 @@ export default function MyAccount() {
         const { error: updateError } = await supabase.auth.updateUser({
           email,
           password: newPassword || undefined,
-        }, {
-          emailRedirectTo: `${location.origin}/auth/callback?dest=/account/confirm`,
         })
 
         if (updateError) {
           throw updateError
         }
-        if (session?.user.email !== email) {
+        if (user?.email !== email) {
           showNotification({
             title: 'Verify your new email address.',
             message: 'We just sent you an email. Click the link verify your new email address and finish updating your profile.'

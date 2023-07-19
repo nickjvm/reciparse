@@ -1,5 +1,5 @@
 'use client'
-import { ChangeEvent, FormEvent, useRef, useState } from 'react'
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { ArrowRightIcon } from '@heroicons/react/20/solid'
 import classNames from 'classnames'
@@ -32,6 +32,11 @@ export default function QuickSearch({ size = 'md', inputClassName, autoFocus, pl
     setUrl(e.target.value)
   }
 
+  useEffect(() => {
+    if (autoFocus && global.window?.innerWidth > 768 && !('ontouchstart' in global.window)) {
+      inputRef.current?.focus()
+    }
+  }, [])
   const onSubmit = (e: FormEvent) => {
     e.preventDefault()
 
@@ -71,7 +76,6 @@ export default function QuickSearch({ size = 'md', inputClassName, autoFocus, pl
             name="search"
             id="search"
             placeholder={placeholder || 'Paste a recipe URL'}
-            autoFocus={!!autoFocus && (global.window.innerWidth > 768 && !('ontouchstart' in window))}
             required
             value={url}
             onChange={onChange}

@@ -1,9 +1,12 @@
 'use client'
-import { Database } from '@/types/database.types'
-import { User, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { useRouter } from 'next/navigation'
+import { User } from '@supabase/auth-helpers-nextjs'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { createContext, useState, useEffect, useContext, ReactNode } from 'react'
+
 import { signIn, signOut, signUp, reset, AuthActions} from '@/lib/auth'
+import supabase from '@/lib/supabaseClient'
+import debug from '@/lib/debug'
+
 import AuthModal from '@/components/molecules/AuthModal'
 import { useNotificationContext } from './NotificationContext'
 
@@ -20,45 +23,112 @@ interface Props {
   user: User | null
 }
 
-const AuthContext = createContext<Context>({
-  user: null,
-  userLoading: true,
-  actions: {
-    signIn,
-    signUp,
-    signOut,
-    reset,
-  },
-  setAuthType: (type: string|null|undefined) => {
-    console.log('noop', type)
-  }
-})
+const AuthContext = createContext<Context>({} as Context)
 
-export function AuthContextProvider({ children, user: serverUser}: Props) {
-  const supabase = createClientComponentClient<Database>()
-  const [user, setUser] = useState<User|null>(serverUser)
-  const [loading, setLoading] = useState(false)
+export function AuthContextProvider({ children }: Props) {
+  const [user, setUser] = useState<User|null>(null)
+  const [loading, setLoading] = useState(true)
+  const [hashChecked, setHashChecked] = useState(false)
   const [authType, setAuthType] = useState<string|null|undefined>(null)
+  const [destination, setDestination] = useState<string|null>(null)
+
   const router = useRouter()
   const { showNotification } = useNotificationContext()
 
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    if (destination && pathname !== destination) {
+      router.push(destination)
+    } else {
+      setDestination(null)
+    }
+  }, [destination, pathname, router])
+
+  useEffect(() => {
+    const redirectHash = () => {
+      if (!window.location.hash) {
+        setHashChecked(true)
+        return
+      }
+
+      try {
+        const searchParams = new URLSearchParams(window.location.hash.substring(1))
+        if (searchParams.get('access_token') && searchParams.get('type')) {
+          switch (searchParams.get('type')) {
+            case 'signup': {
+              showNotification({
+                title: 'Hello there!',
+                message: 'Thanks for creating an account. Your account has been confirmed.',
+                variant: 'success',
+                timeout: 5000,
+              })
+              setDestination('/')
+              break
+            }
+            case 'recovery': {
+              setDestination('/update-password')
+              break
+            }
+            case 'email_change': {
+              showNotification({
+                title: 'Success!',
+                message: 'Your email address has been changed successfully.',
+                variant: 'success'
+              })
+              setDestination('/')
+              break
+            }
+            default:
+          }
+        }
+      } catch (e) {
+        // not a hashified query string
+      } finally {
+        setHashChecked(true)
+      }
+    }
+
+    redirectHash()
+    window.addEventListener('hashchange', redirectHash)
+
+    return () => {
+      window.removeEventListener('hashchange', redirectHash)
+    }
+  }, [])
+
+  useEffect(() => {
+    sessionStorage.removeItem('authdelay')
+  }, [pathname, searchParams])
+
   useEffect(() => {
     supabase.auth.onAuthStateChange(async (event, session) => {
+      debug(event)
       try {
         if (event === 'SIGNED_OUT') {
-          router.push('/')
-          setUser(null)
-          router.refresh()
           showNotification({
             title: 'See ya later!',
             message: 'You have been signed out.',
             timeout: 5000
           })
+          setUser(null)
+          router.refresh()
+          sessionStorage.setItem('authdelay', '1')
+          localStorage.removeItem('access_token')
+          localStorage.removeItem('expires_at')
+        } else if (event === 'PASSWORD_RECOVERY') {
+          setDestination('/update-password')
         } else {
+          const { data: { user }, error } = await supabase.auth.getUser()
           if (session) {
-            const { data: { user }, error } = await supabase.auth.getUser()
+            localStorage.setItem('access_token', session.access_token)
+            localStorage.setItem('expires_at', `${session.expires_at}`)
             if (user) {
               setUser(user)
+              if (event === 'SIGNED_IN') {
+                router.refresh()
+              }
             } else if (error) {
               throw error
             }
@@ -67,9 +137,9 @@ export function AuthContextProvider({ children, user: serverUser}: Props) {
       } catch (e) {
         console.error(e)
         setUser(null)
-        router.push('/')
       } finally {
         setLoading(false)
+        router.refresh()
       }
     })
   }, [])
@@ -78,7 +148,7 @@ export function AuthContextProvider({ children, user: serverUser}: Props) {
     <AuthContext.Provider
       value={{
         user,
-        userLoading: loading,
+        userLoading: loading || !hashChecked || !!destination,
         actions: {
           signIn,
           signUp,

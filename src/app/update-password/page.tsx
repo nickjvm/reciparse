@@ -1,15 +1,15 @@
-import withHeader from '@/components/hoc/withHeader'
+import AppLayout from '@/components/layouts/AppLayout'
 import UpdatePassword from './UpdatePassword'
-import { Metadata } from 'next'
 
-export const metadata: Metadata = {
-  title: 'Update Password | Reciparse'
-}
-
-function Page() {
+export default function Page() {
   return (
-    <UpdatePassword />
+    <AppLayout
+      isPrivate
+      className="py-4"
+      withSearch={false}
+    >
+      <title>Update Password | Reciparse</title>
+      <UpdatePassword />
+    </AppLayout>
   )
 }
-
-export default withHeader(Page, { withSearch: false })

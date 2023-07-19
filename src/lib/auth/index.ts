@@ -1,7 +1,5 @@
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { AuthError, User } from '@supabase/supabase-js'
-
-const supabase = createClientComponentClient()
+import supabase from '../supabaseClient'
 
 interface Payload {
   email: string
@@ -36,9 +34,6 @@ export const signUp = async ({ email, password }: Payload) => {
   const response = await supabase.auth.signUp({
     email,
     password,
-    options: {
-      emailRedirectTo: `${location.origin}/auth/callback?action=signup`,
-    }
   })
 
   const { data: { user } } = response
@@ -59,12 +54,5 @@ export const signOut = async () => {
 }
 
 export const reset = async (email: string) => {
-  const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${location.origin}/auth/callback?dest=/update-password`,
-  })
-
-  return {
-    data,
-    error,
-  }
+  return await supabase.auth.resetPasswordForEmail(email)
 }

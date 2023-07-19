@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { Switch } from '@headlessui/react'
 import classNames from 'classnames'
+import debug from '@/lib/debug'
 
 interface Props {
   checked?: boolean
@@ -17,7 +18,7 @@ export default function CookMode({ checked }: Props) {
       try {
         setLock(await window.navigator.wakeLock.request('screen'))
       } catch (err) {
-        console.log('Wake Lock error: ', err)
+        debug('Wake Lock error: ', err)
       }
     } else if (lock) {
       await lock.release()

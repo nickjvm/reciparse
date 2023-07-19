@@ -1,28 +1,13 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
-import { Database } from '@/types/database.types'
-import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
-import { Metadata } from 'next'
+'use client'
 
-import withHeader from '@/components/hoc/withHeader'
-
+import AppLayout from '@/components/layouts/AppLayout'
 import MyAccount from './account-form'
 
-export const dynamic = 'force-dynamic'
-
-export const metadata: Metadata = {
-  title: 'My Account | Reciparse'
+export default function Page() {
+  return (
+    <AppLayout isPrivate withSearch={false} className="py-4">
+      <title>My Account | Reciparse</title>
+      <MyAccount />
+    </AppLayout>
+  )
 }
-
-async function Page() {
-  const supabase = createServerComponentClient<Database>({ cookies })
-  const { data: { session } } = await supabase.auth.getSession()
-
-  if (!session) {
-    redirect('/')
-  }
-
-  return <MyAccount />
-}
-
-export default withHeader(Page, { withSearch: false })
