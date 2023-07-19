@@ -39,6 +39,12 @@ export function AuthContextProvider({ children }: Props) {
   const searchParams = useSearchParams()
 
   useEffect(() => {
+    if (authType) {
+      showNotification(null)
+    }
+  }, [authType])
+
+  useEffect(() => {
     if (destination && window.location.href !== destination) {
       router.push(destination)
     }
@@ -81,9 +87,22 @@ export function AuthContextProvider({ children }: Props) {
             }
             default:
           }
+        } else if (searchParams.get('error')) {
+          showNotification({
+            title: 'Oops.',
+            message: searchParams.get('error_description') || searchParams.get('error') || 'Something went wrong.',
+            variant: 'error',
+          })
+          setDestination(window.location.pathname)
         }
       } catch (e) {
-        // not a hashified query string
+        debug(e)
+        showNotification({
+          title: 'Oops.',
+          message: 'Something went wrong.',
+          variant: 'error',
+        })
+        setDestination(window.location.pathname)
       } finally {
         setHashChecked(true)
       }

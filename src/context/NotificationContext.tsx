@@ -3,7 +3,7 @@ import { createContext, useContext, useState, Fragment } from 'react'
 import { Transition } from '@headlessui/react'
 import { CheckCircleIcon, ExclamationCircleIcon, SparklesIcon, XMarkIcon } from '@heroicons/react/24/solid'
 interface NotificationContext {
-  showNotification: (alert: Notification) => void
+  showNotification: (alert: Notification|null) => void
 }
 
 interface Notification {
@@ -20,7 +20,7 @@ export const useNotificationContext = () => useContext(Context)
 export default function NotificationProvider({ children }: { children: React.ReactNode }) {
   const [notification, setNotification] = useState<Notification|null>(null)
 
-  const showNotification = async (newAlert: Notification) => {
+  const showNotification = async (newAlert: Notification|null) => {
     setNotification(newAlert)
 
     if (newAlert?.timeout) {
@@ -37,7 +37,7 @@ export default function NotificationProvider({ children }: { children: React.Rea
         {/* Global notification live region, render this permanently at the end of the document */}
         <div
           aria-live="assertive"
-          className="pointer-events-none fixed top-0 right-0 w-full inset-0 flex items-end px-4 py-4 sm:items-start sm:p-6 z-[10000]"
+          className="pointer-events-none fixed top-16 right-0 w-full inset-0 flex items-end px-4 py-4 sm:items-start sm:p-6 z-[10000]"
         >
           <div className="flex w-full flex-col items-center space-y-4 sm:items-end">
             {/* Notification panel, dynamically insert this into the live region when it needs to be displayed */}
