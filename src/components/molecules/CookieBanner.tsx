@@ -1,11 +1,15 @@
 'use client'
 
-import Link from 'next/link'
 import { useState } from 'react'
+import Link from 'next/link'
 import { getCookie, setCookie } from 'cookies-next'
+import { usePathname } from 'next/navigation'
+import classNames from 'classnames'
 
 export default function CookieBanner() {
   const [accept, setAccept] = useState(getCookie('cookie_consent'))
+  const pathname = usePathname()
+
   const onClick = () => {
     const expires = new Date()
     expires.setFullYear(expires.getFullYear() + 1)
@@ -19,8 +23,9 @@ export default function CookieBanner() {
     return null
   }
 
+  console.log(pathname)
   return (
-    <div className="rounded-lg p-3 ring-2 ring-brand-alt fixed bottom-2 -translate-x-[50%] left-[50%] w-[90%] max-w-full md:max-w-2xl bg-white shadow">
+    <div className={classNames('z-[100000] rounded-lg p-3 ring-2 ring-brand-alt fixed -translate-x-[50%] left-[50%] w-[90%] max-w-full md:max-w-2xl bg-white shadow', pathname === '/recipe' ? 'bottom-16 md:bottom-2' : 'bottom-2')}>
       <div className="grid grid-cols-12 gap-4 items-center mx-auto max-w-4xl">
         <div className="col-span-12 sm:col-span-9 text-sm">
           This website collects cookies to deliver better user experience. For more information, read our{' '}
