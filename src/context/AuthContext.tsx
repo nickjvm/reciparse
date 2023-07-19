@@ -87,6 +87,7 @@ export function AuthContextProvider({ children }: Props) {
             message: searchParams.get('error_description') || searchParams.get('error') || 'Something went wrong.',
             variant: 'error',
           })
+          setDestination(window.location.pathname)
         }
       } catch (e) {
         debug(e)
@@ -95,6 +96,7 @@ export function AuthContextProvider({ children }: Props) {
           message: 'Something went wrong.',
           variant: 'error',
         })
+        setDestination(window.location.pathname)
       } finally {
         setHashChecked(true)
       }
