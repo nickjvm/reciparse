@@ -1,10 +1,10 @@
 import { Metadata } from 'next'
+import Link from 'next/link'
+import { ArrowRightIcon } from '@heroicons/react/24/outline'
 
 import QuickSearch from '@/components/molecules/QuickSearch'
 import RandomRecipes from '@/components/molecules/RandomRecipes'
 import AppLayout from '@/components/layouts/AppLayout'
-import Link from 'next/link'
-import { ArrowRightIcon } from '@heroicons/react/24/outline'
 
 export const dynamic = 'force-dynamic'
 
