@@ -6,8 +6,6 @@ import QuickSearch from '@/components/molecules/QuickSearch'
 import RandomRecipes from '@/components/molecules/RandomRecipes'
 import AppLayout from '@/components/layouts/AppLayout'
 
-export const dynamic = 'force-dynamic'
-
 export const metadata: Metadata = {
   title: 'Parse a Recipe | Reciparse'
 }

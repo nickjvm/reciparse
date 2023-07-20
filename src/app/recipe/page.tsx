@@ -25,7 +25,6 @@ interface Props {
 
 async function getRecipe(url: string): Promise<ReciparseResponse> {
   return await request(`/api/recipes/parse?url=${url}`, { method: 'POST' })
-
 }
 
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
