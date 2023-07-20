@@ -21,7 +21,6 @@ const yesevaOne = Yeseva_One({
   variable: '--font-yesevaone',
 })
 
-
 export const metadata = {
   title: 'Reciparse.com',
   description: 'Ditch the endless scrolling, stories, ads and videos. Get exactly what you need: the recipe.',
@@ -29,8 +28,6 @@ export const metadata = {
     images: 'og-image.png'
   }
 }
-
-export const dynamic = 'force-dynamic'
 
 export default async function RootLayout({ children }: {
   children: React.ReactNode
