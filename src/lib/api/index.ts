@@ -1,6 +1,8 @@
 import supabase from '../supabaseClient'
 import getUrl from './getUrl'
 import debug from '../debug'
+import timeout from '../timeout'
+import recoverError from '../recoverError'
 
 export default async function request(resource: string, options: RequestInit = {}) {
   let accessToken = null
@@ -53,9 +55,15 @@ export const getAccessToken = async () => {
   }
 
   if (!accessToken && global.window) {
-    debug('getting session asynchronously');
-    ({ data: { session } } = await supabase.auth.getSession())
-    accessToken = session?.access_token
+    try {
+      debug('getting session asynchronously');
+
+      ({ data: { session } } = await timeout(supabase.auth.getSession(), 5000, 'auth_timeout_error'))
+    } catch (e) {
+      if ((e as Error).message === 'auth_timeout_error') {
+        recoverError()
+      }
+    }
   }
 
   if (accessToken) {
