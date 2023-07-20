@@ -25,7 +25,6 @@ interface Props {
 
 async function getRecipe(url: string): Promise<ReciparseResponse> {
   return await request(`/api/recipes/parse?url=${url}`, { method: 'POST' })
-
 }
 
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
@@ -101,7 +100,7 @@ export default async function Page({ searchParams }: Props) {
 
     return (
       <>
-        <AppLayout withSearch className="py-4">
+        <AppLayout withSearch className="py-4 bg-gray-50" fullWidth>
           <GA4Event name="view_recipe" properties={{ url: searchParams.url }} />
           <link rel="canonical" href={getUrl(`recipe?url=${searchParams.url}`)} />
           <script
