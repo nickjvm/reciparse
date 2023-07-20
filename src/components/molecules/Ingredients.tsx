@@ -68,8 +68,8 @@ const cleanIngredientString = (ingredient: string): Ingredient => {
   }
 
   return {
-    primary: decode(ingredient.replace(subtext, '').replace(/\(\)/, '')).trim(),
-    subtext: decode(subtext.replace(/^,?\s?/, '')).trim(),
+    primary: decode(ingredient.replace(subtext, '').replace(/\(\)/, '').replace(/\s([^\s]+)$/, '&nbsp;$1')).trim(),
+    subtext: decode(subtext.replace(/^,?\s?/, '').replace(/\s([^\s]+)$/, '&nbsp;$1')).trim(),
   }
 }
 
