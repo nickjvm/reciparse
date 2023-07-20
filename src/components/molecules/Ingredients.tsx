@@ -17,18 +17,59 @@ interface Ingredient {
   primary: string
 }
 
-const cleanIngredientString = (ingredient: string): Ingredient => {
-  const subtextMatch = ingredient.match(/\s(\(,?\s?(.+))\)$/)
-  let subtext: string|null = null
+/**
+ * find matching closing paren based on the position of the opening paren
+ * https://codereview.stackexchange.com/questions/179471/find-the-corresponding-closing-parenthesis
+ */
+function findClosingBracketMatchIndex(str: string, pos: number) {
+  if (str[pos] != '(') {
+    throw new Error('No \'(\' at index ' + pos)
+  }
+  let depth = 1
+  for (let i = pos + 1; i < str.length; i++) {
+    switch (str[i]) {
+      case '(':
+        depth++
+        break
+      case ')':
+        if (--depth == 0) {
+          return i
+        }
+        break
+    }
+  }
+  return -1    // No matching closing parenthesis
+}
 
-  if (subtextMatch) {
-    ingredient = ingredient.replace(subtextMatch[0], '').replace(/\s([^\s]+)$/, '&nbsp;$1')
-    subtext = subtextMatch[subtextMatch.length - 1].replace(/\s([^\s]+)$/, '&nbsp;$1')
+/**
+ * if an ingredient ends with parenthesis, find the last full set of parenthesis
+ * and mark it as subtext to be styled differently. This finds and cleans the following:
+ * - example ing (peeled and diced)
+ * - example ing (, peeled and diced)
+ * - example ing (, peeled (and diced))
+ * - example ing (peeled (and diced))
+ * @param ingredient
+ * @returns
+ */
+const cleanIngredientString = (ingredient: string): Ingredient => {
+  const indices = []
+  let subtext = ''
+  for(let i=0; i<ingredient.length;i++) {
+    if (ingredient[i] === '(') indices.push(i)
+  }
+
+  for (let i=0; i<indices.length;i++) {
+    const endingIndex = findClosingBracketMatchIndex(ingredient, indices[i])
+    const phrase = ingredient.substring(indices[i] + 1, endingIndex)
+    subtext = phrase
+    if (phrase.indexOf('(') > -1) {
+      break
+    }
   }
 
   return {
-    primary: decode(ingredient),
-    subtext: decode(subtext)
+    primary: decode(ingredient.replace(subtext, '').replace(/\(\)/, '').replace(/\s([^\s]+)$/, '&nbsp;$1')).trim(),
+    subtext: decode(subtext.replace(/^,?\s?/, '').replace(/\s([^\s]+)$/, '&nbsp;$1')).trim(),
   }
 }
 
@@ -55,12 +96,16 @@ export default function IngredientsList({ ingredients, showStickyIngredients }: 
           {ingredients.map(cleanIngredientString).map((ingredient: Ingredient, i: number) => (
             <li key={i} className="border-b print:border-b-0 print:pb-0 print:mb-0 last:border-b-0 border-b-slate-200 pb-2 mb-2">
               {ingredient.primary}
-              {ingredient.subtext && <em className="ml-1.5 text-sm italic text-slate-500">{ingredient.subtext}</em>}
+              {ingredient.subtext && <em className="ml-1 text-sm italic text-slate-500">{ingredient.subtext}</em>}
             </li>
           ))}
         </ul>
       </div>
-      <div className={classNames('block print:hidden md:hidden fixed top-[100%] left-0 right-0 translate-y-0 transition-transform', showStickyIngredients && 'z-10 -translate-y-[100%]')}>
+      <div
+        className={classNames('block print:hidden md:hidden fixed bottom-0 left-0 right-0 translate-y-0 transition-transform',
+          showStickyIngredients && 'z-10',
+          !showStickyIngredients && 'translate-y-[100%]'
+        )}>
         <Disclosure>
           {({ open }) => (
             <div className={classNames('block print:hidden md:hidden border-t-2 transition bg-white border-brand')}>

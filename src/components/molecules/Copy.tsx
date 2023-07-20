@@ -1,7 +1,8 @@
 'use client'
 
-import { CheckCircleIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outline'
 import { KeyboardEvent, MouseEvent, useEffect, useState } from 'react'
+import { decode } from 'html-entities'
+import { CheckCircleIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outline'
 
 interface Props {
   text: string
@@ -27,7 +28,7 @@ export default function Copy({ text, preventBubble }: Props) {
     }
 
     try {
-      await navigator.clipboard.writeText(text)
+      await navigator.clipboard.writeText(decode(text))
       setCopied(true)
     } catch (err) {
       console.error('Failed to copy: ', err)
