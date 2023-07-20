@@ -16,6 +16,7 @@ interface Ingredient {
   subtext: string
   primary: string
 }
+
 const cleanIngredientString = (ingredient: string): Ingredient => {
   const subtextMatch = ingredient.match(/\s(\(,?\s?(.+))\)$/)
   let subtext: string|null = null
@@ -24,11 +25,13 @@ const cleanIngredientString = (ingredient: string): Ingredient => {
     ingredient = ingredient.replace(subtextMatch[0], '').replace(/\s([^\s]+)$/, '&nbsp;$1')
     subtext = subtextMatch[subtextMatch.length - 1].replace(/\s([^\s]+)$/, '&nbsp;$1')
   }
+
   return {
     primary: decode(ingredient),
     subtext: decode(subtext)
   }
 }
+
 export default function IngredientsList({ ingredients, showStickyIngredients }: Props) {
   const disclosureRef = useRef<HTMLButtonElement>(null)
   useEffect(() => {
