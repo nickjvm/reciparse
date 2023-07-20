@@ -101,7 +101,7 @@ export default async function Page({ searchParams }: Props) {
 
     return (
       <>
-        <AppLayout withSearch className="py-4">
+        <AppLayout withSearch className="py-4 bg-gray-50" fullWidth>
           <GA4Event name="view_recipe" properties={{ url: searchParams.url }} />
           <link rel="canonical" href={getUrl(`recipe?url=${searchParams.url}`)} />
           <script

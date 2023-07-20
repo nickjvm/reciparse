@@ -1,53 +1,62 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { SupaRecipe } from '@/types'
 import request from '@/lib/api'
 
 import { useAuthContext } from '@/context/AuthContext'
 
 import RecipeCard from '../atoms/RecipeCard'
+import classNames from 'classnames'
 
 interface Props {
   count?: number
+  source?: 'favorites'|'random'
+  title: string
+  className?: string
+  children?: ReactNode
 }
-export default function RandomRecipes({ count = 8}: Props) {
+
+export default function RandomRecipes({ count = 8, source = 'random', title, className, children}: Props) {
 
   const [recipes, setRecipes] = useState<SupaRecipe[]|number[]>(Array.from(new Array(count)))
   const [loading, setLoading] = useState(true)
-  const [title, setTitle] = useState('')
 
   const { user, userLoading } = useAuthContext()
 
   useEffect(() => {
-    if (!userLoading) {
-      getRandomRecipes(user?.id)
+    if (userLoading) {
+      return
     }
+
+    const getRecipes = async () => {
+      let endpoint = '/api/recipes/random'
+      if (source === 'favorites') {
+        endpoint = '/api/recipes/favorites/random'
+        if (!user) {
+          return
+        }
+      }
+
+      const { data }: { data: null|SupaRecipe[] } = await request(endpoint)
+
+      setRecipes(data || [])
+      setLoading(false)
+    }
+
+    getRecipes()
   }, [user, userLoading])
 
-  const getRandomRecipes = async (user_id?: string) => {
-    let data: null|SupaRecipe[] = null
-    if (user_id) {
-      ({ data } = await request('/api/recipes/favorites/random'))
-      if (data?.length) {
-        setTitle('Explore Your Favorites')
-      }
-    }
 
-    if (!data?.length) {
-      setTitle('Discover Recipes');
-      ({ data } = await request('/api/recipes/random'))
-    }
-
-    setRecipes(data || [])
-    setLoading(false)
+  if (source === 'favorites' && (!user || loading)) {
+    return null
   }
 
   if (recipes && recipes.length) {
     return (
-      <div className="w-full mt-6 md:mt-9 md:mb-9">
+      <div className={classNames('w-full', className)}>
         <h2 className="font-display text-center text-2xl md:text-4xl font-bold text-brand-alt">{title}</h2>
-        <div className="w-full mx-auto max-w-screen-2xl p-4 grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-4 justify-center flex-wrap align-stretch mb-4">
+        <div className="w-full mx-auto max-w-screen-2xl p-4 grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-4 justify-center flex-wrap align-stretch">
           {recipes.map((recipe: SupaRecipe|number, i) => (
             <RecipeCard loading={loading}
               key={i}
@@ -55,6 +64,7 @@ export default function RandomRecipes({ count = 8}: Props) {
             />
           ))}
         </div>
+        {children}
       </div>
     )
   } else {

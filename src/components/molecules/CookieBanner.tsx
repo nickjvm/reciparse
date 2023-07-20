@@ -25,7 +25,7 @@ export default function CookieBanner() {
 
   console.log(pathname)
   return (
-    <div className={classNames('z-[100000] rounded-lg p-3 ring-2 ring-brand-alt fixed -translate-x-[50%] left-[50%] w-[90%] max-w-full md:max-w-2xl bg-white shadow', pathname === '/recipe' ? 'bottom-16 md:bottom-2' : 'bottom-2')}>
+    <div className={classNames('z-[100000] rounded-lg p-3 ring-2 ring-brand-alt fixed -translate-x-[50%] left-[50%] w-[90%] max-w-full md:max-w-2xl bg-white shadow bottom-2')}>
       <div className="grid grid-cols-12 gap-4 items-center mx-auto max-w-4xl">
         <div className="col-span-12 sm:col-span-9 text-sm">
           This website collects cookies to deliver better user experience. For more information, read our{' '}

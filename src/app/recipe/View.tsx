@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { decode } from 'html-entities'
 
 import { useAuthContext } from '@/context/AuthContext'
@@ -20,6 +20,7 @@ import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import request from '@/lib/api'
 import debug from '@/lib/debug'
+import { useDebounce } from '@/hooks/useDebounce'
 
 interface Props {
   recipe: Recipe
@@ -28,10 +29,26 @@ export default function Recipe({ recipe }: Props) {
   const { user } = useAuthContext()
   const searchParams = useSearchParams()
   const [saved, setSaved] = useState<SavedRecipe|null>(null)
+  const [showStickyIngredients, setShowStickyIngredients] = useState(false)
+  const showStickyIngredients_debounced = useDebounce<boolean>(showStickyIngredients, 500)
+
+  const directionsRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     getSaved()
   }, [user])
+
+  useEffect(() => {
+    const showHideStickyIngredients = () => {
+
+      if (directionsRef.current) {
+        setShowStickyIngredients(directionsRef.current.getBoundingClientRect().top < window.innerHeight * .66)
+      }
+    }
+    window.addEventListener('scroll', showHideStickyIngredients)
+
+    return () => window.removeEventListener('scroll', showHideStickyIngredients)
+  }, [])
 
   const getSaved = async () => {
     if (user) {
@@ -94,7 +111,7 @@ export default function Recipe({ recipe }: Props) {
   }
 
   return (
-    <main className="print:bg-white print:min-h-0 md:p-4 md:pb-6 print:p-0">
+    <main className="print:bg-white print:min-h-0 md:p-4 md:pb-6 print:p-0 max-w-5xl mx-auto">
       <div className="m-auto max-w-3xl p-4 md:p-8 print:p-0 md:rounded-md ring-brand-alt md:ring-2 print:ring-0 print:shadow-none shadow-lg bg-white">
         <div>
           <header className="grid auto-rows-auto md:grid-cols-12 print:grid-cols-12 gap-4 mb-4">
@@ -121,8 +138,10 @@ export default function Recipe({ recipe }: Props) {
             </div>
           </header>
           <div className="pt-3 md:pt-0 md:grid grid-cols-8 gap-8 pb-8 sm:pb-4 md:pb-0">
-            <IngredientsList ingredients={recipe.recipeIngredient} />
-            <div className="col-span-8 md:col-span-5 print:col-span-5 print:mt-2" id="directions">
+            <div className="col-span-8 md:col-span-3 print:col-span-3 mb-3 md:mb-0">
+              <IngredientsList ingredients={recipe.recipeIngredient} showStickyIngredients={showStickyIngredients_debounced} />
+            </div>
+            <div className="col-span-8 md:col-span-5 print:col-span-5 print:mt-2" id="directions" ref={directionsRef}>
               {recipe.recipeInstructions.map(renderInstructionSection)}
               {saved?.isFavorite && <RecipeNotes id={recipe.meta.id} value={saved?.notes} />}
               <div className="mt-4">
