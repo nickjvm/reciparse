@@ -1,13 +1,16 @@
 'use client'
 
 import { ReactNode, useEffect, useState } from 'react'
+import Link from 'next/link'
+import classNames from 'classnames'
+import { ArrowRightIcon } from '@heroicons/react/24/outline'
+
 import { SupaRecipe } from '@/types'
 import request from '@/lib/api'
 
 import { useAuthContext } from '@/context/AuthContext'
 
 import RecipeCard from '../atoms/RecipeCard'
-import classNames from 'classnames'
 
 interface Props {
   count?: number
@@ -17,7 +20,7 @@ interface Props {
   children?: ReactNode
 }
 
-export default function RandomRecipes({ count = 8, source = 'random', title, className, children}: Props) {
+export default function RandomRecipes({ count = 8, source = 'random', title, className}: Props) {
 
   const [recipes, setRecipes] = useState<SupaRecipe[]|number[]>(Array.from(new Array(count)))
   const [loading, setLoading] = useState(true)
@@ -56,7 +59,7 @@ export default function RandomRecipes({ count = 8, source = 'random', title, cla
     return (
       <div className={classNames('w-full', className)}>
         <h2 className="font-display text-center text-2xl md:text-4xl font-bold text-brand-alt">{title}</h2>
-        <div className="w-full mx-auto max-w-screen-2xl p-4 grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-4 justify-center flex-wrap align-stretch">
+        <div className="w-full overflow-x-auto mx-auto max-w-screen-2xl p-4 flex gap-4 align-stretch no-scrollbar xl:justify-center">
           {recipes.map((recipe: SupaRecipe|number, i) => (
             <RecipeCard loading={loading}
               key={i}
@@ -64,7 +67,11 @@ export default function RandomRecipes({ count = 8, source = 'random', title, cla
             />
           ))}
         </div>
-        {children}
+        {source === 'favorites' && recipes.length >= 8 && (
+          <div className="text-center px-4 pt-6 md:pt-0">
+            <Link className="justify-center px-4 py-4 md:py-2 text-white bg-brand-alt font-semibold rounded flex md:inline-flex gap-3 md:hover:bg-brand focus-visible:bg-brand transition" href="/account/favorites">All Favorites <ArrowRightIcon className="w-5" /></Link>
+          </div>
+        )}
       </div>
     )
   } else {
