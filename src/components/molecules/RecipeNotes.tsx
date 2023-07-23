@@ -29,7 +29,10 @@ export default function RecipeNotes({ id, value: _value }: Props) {
     setLoading(true)
     setError(false)
     try {
-      const { error } = await request('/api/recipes/notes', { method: 'POST', body: JSON.stringify({ id, notes: debouncedValue })})
+      const { error } = await request('/api/recipes/notes', {
+        method: 'POST',
+        body: JSON.stringify({ id, notes: debouncedValue })
+      })
       if (error) {
         throw new Error(error.message)
       }

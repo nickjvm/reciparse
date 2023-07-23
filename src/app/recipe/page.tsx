@@ -75,7 +75,7 @@ export default async function Page({ searchParams }: Props) {
           className="max-w-xl py-8 mx-auto"
           actionUrl={searchParams.url}
           errorText="We tried our best, but couldn't find a recipe to parse at the URL you entered."
-          actionText="Vew on the original site"
+          actionText="View on the original site"
         />
       </AppLayout>
     )

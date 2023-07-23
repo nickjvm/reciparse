@@ -12,8 +12,12 @@ module.exports = {
       screens: {
         'print': {'raw': 'print'},
       },
+      width: {
+        '1/8': '12.5%',
+      },
       maxWidth: {
         '3xl': '56em',
+        '1/8': 'calc(12.5% - 1rem)',
       },
       colors: {
         'brand': '#b22066',
