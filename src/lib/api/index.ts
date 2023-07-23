@@ -5,10 +5,7 @@ import timeout from '../timeout'
 import recoverError from '../recoverError'
 
 export default async function request(resource: string, options: RequestInit = {}) {
-  let accessToken = null
-  if (global.window) {
-    accessToken = await getAccessToken()
-  }
+  const accessToken = await getAccessToken()
 
   let { headers } = options
   let finalResource = resource
@@ -48,31 +45,37 @@ export const getAccessToken = async () => {
   let accessToken:string|undefined|null = localStorage.getItem('access_token')
   let session
 
-  if (expiresAt && Date.now() < JSON.parse(expiresAt) * 1000) {
-    debug('getting session from localStorage')
-  } else {
-    accessToken = null
-  }
+  try {
+    if (accessToken && expiresAt && Date.now() < JSON.parse(expiresAt) * 1000) {
+      debug('getting session from localStorage')
+    } else if (accessToken) {
+      debug('refreshing session');
+      ({ data: { session } } = await timeout(supabase.auth.refreshSession(), 5000, 'auth_timeout_error'))
+      debug('session refreshed')
 
-  if (!accessToken && global.window) {
-    try {
+      accessToken = session?.access_token
+    }
+
+    if (!accessToken && global.window) {
       debug('getting session asynchronously');
-
       ({ data: { session } } = await timeout(supabase.auth.getSession(), 5000, 'auth_timeout_error'))
-    } catch (e) {
-      if ((e as Error).message === 'auth_timeout_error') {
-        recoverError()
-      }
+      debug('async token retrieved')
+
+      accessToken = session?.access_token
+    }
+
+    if (accessToken) {
+      localStorage.setItem('access_token', `${session?.accessToken || accessToken}`)
+      localStorage.setItem('expires_at', `${session?.expires_at || expiresAt}`)
+    } else {
+      localStorage.removeItem('access_token')
+      localStorage.removeItem('expires_at')
+    }
+
+    return accessToken
+  } catch (e) {
+    if ((e as Error).message === 'auth_timeout_error') {
+      recoverError()
     }
   }
-
-  if (accessToken) {
-    localStorage.setItem('access_token', `${accessToken}`)
-    localStorage.setItem('expires_at', `${session?.expires_at || expiresAt}`)
-  } else {
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('expires_at')
-  }
-
-  return accessToken
 }
