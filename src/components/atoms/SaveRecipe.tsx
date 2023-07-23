@@ -42,7 +42,10 @@ export default function SaveRecipe({ id, saved: _saved, onChange }: Props) {
     }
 
     try {
-      const { data, error }: { data: null|SavedRecipe, error: null|Error} = await request('/api/recipes/save', { method: 'POST', body: JSON.stringify({ id, save: !saved })})
+      const { data, error }: { data: null|SavedRecipe, error: null|Error} = await request('/api/recipes/save', {
+        method: 'POST',
+        body: JSON.stringify({ id, save: !saved })
+      })
       if (error) {
         showNotification({
           title: 'Oops',

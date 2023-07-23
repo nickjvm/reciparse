@@ -127,11 +127,14 @@ export function AuthContextProvider({ children }: Props) {
       debug(event, session)
       try {
         if (event === 'SIGNED_OUT') {
+          localStorage.removeItem('search_history')
+
           showNotification({
             title: 'See ya later!',
             message: 'You have been signed out.',
             timeout: 5000
           })
+
           setUser(null)
           router.refresh()
           sessionStorage.setItem('authdelay', '1')

@@ -15,16 +15,18 @@ import Nutrition from '@/components/molecules/Nutrition'
 import RecipeNotes from '@/components/molecules/RecipeNotes'
 import SaveRecipe from '@/components/atoms/SaveRecipe'
 import Print from '@/components/atoms/Print'
-import { HowToSection, Recipe, SavedRecipe } from '@/types'
+import { HowToSection, Recipe, SavedRecipe, SupaRecipe } from '@/types'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import request from '@/lib/api'
 import debug from '@/lib/debug'
 import { useDebounce } from '@/hooks/useDebounce'
+import { saveSearchToDb, saveSearchToLocalStorage } from '@/lib/searchHistory'
 
 interface Props {
   recipe: Recipe
 }
+
 export default function Recipe({ recipe }: Props) {
   const { user } = useAuthContext()
   const searchParams = useSearchParams()
@@ -35,6 +37,18 @@ export default function Recipe({ recipe }: Props) {
   const directionsRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    const payload: SupaRecipe = {
+      id: recipe.meta.id,
+      url: recipe.meta.raw_source,
+      image_url: recipe.image,
+      name: recipe.name,
+    }
+
+    saveSearchToLocalStorage(payload)
+    if (user) {
+      saveSearchToDb(payload)
+    }
+
     getSaved()
   }, [user])
 
