@@ -8,7 +8,7 @@ import { useState } from 'react'
 interface Props {
   data?: Nutrition|null
   ingredientsList: string[]
-  recipeYield: string | string[]
+  recipeYield?: string | string[]
   source?: string
 }
 
@@ -30,7 +30,7 @@ const getServingSize = (recipeYield: number|string|string[]): number|null => {
   return getServingSize(recipeYield.find((y) => y.match(/[1-9]+/)) || '1')
 }
 
-export default function NutritionInfo({ data: _data, ingredientsList, recipeYield, source }: Props) {
+export default function NutritionInfo({ data: _data, ingredientsList, recipeYield = '1', source }: Props) {
   const { user } = useAuthContext()
   const [data, setData] = useState<Nutrition|undefined|null>(_data)
   const [loading, setLoading] = useState(false)
@@ -109,7 +109,6 @@ export default function NutritionInfo({ data: _data, ingredientsList, recipeYiel
       {note}
       <h3 className="text-md font-bold mb-2">
         {servings && servings > 1 && 'Per serving: '}
-        {!servings || servings === 1 && 'Per recipe: '}
         {data.calories && <span className="font-bold">
           {typeof data.calories === 'number' && `${data.calories} kcal`}
           {typeof data.calories === 'string' && (data.calories.includes('cal') ? data.calories : `${data.calories} kcal`)}
