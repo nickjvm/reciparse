@@ -117,7 +117,7 @@ export default function FavoritesList({ count: initialCount, error: countError, 
         </div>
       </div>
       <div className={classNames('-mx-2 grid grid-cols-2 gap-3 gap-y-6 md:gap-0 md:gap-y-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 justify-start', maxPageCount === 1 && 'mb-8')}>
-        {!loading && !!results.length && (
+        {!loading && !!results?.length && (
           results.map((recipe: SupaRecipe) => (
             <RecipeCard key={recipe.id} recipe={recipe} className="md:px-2 w-full sm:w-full md:w-full max-w-full" />
           ))

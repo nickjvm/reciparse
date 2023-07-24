@@ -5,7 +5,10 @@ import timeout from '../timeout'
 import recoverError from '../recoverError'
 
 export default async function request(resource: string, options: RequestInit = {}) {
-  const accessToken = await getAccessToken()
+  let accessToken = null
+  if (global.window) {
+    accessToken = await getAccessToken()
+  }
 
   let { headers } = options
   let finalResource = resource
