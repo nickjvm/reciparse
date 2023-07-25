@@ -75,7 +75,7 @@ export default function Recipe({ recipe }: Props) {
     }
   }
 
-  const parseYield = (recipeYield: string | string[], i?: number, recipeYields?: string[]): string => {
+  const parseYield = (recipeYield: undefined |string | string[], i?: number, recipeYields?: string[]): string|undefined => {
     if (Array.isArray(recipeYield)) {
       return Array.from(new Set(recipeYield.map(parseYield).filter(v => v))).join(', ')
     } else {
@@ -85,7 +85,7 @@ export default function Recipe({ recipe }: Props) {
           return `${recipeYieldNum} serving${recipeYieldNum !== 1 ? 's' : ''}`
         }
         return ''
-      } else {
+      } else if (recipeYield) {
         let finalYield = recipeYield.replace(/^0/, '').replace(/\.$/, '').trim()
         const dozenMatch = finalYield.match(/([0-9.]+) dozen/)
         if (dozenMatch) {
@@ -139,10 +139,12 @@ export default function Recipe({ recipe }: Props) {
                 <p className="text-slate-500 text-sm hidden print:block">{searchParams.get('url')}</p>
               </div>
               <div className="flex gap-4 flex-wrap">
-                <span className="inline-flex text-sm md:text-base ring-2 ring-brand-alt focus-visible:outline-0 gap-1 items-center px-2 py-1 rounded">
-                  <Squares2X2Icon className="w-5"/>
-                  <p className="max-w-[200px] truncate" title={parseYield(recipe.recipeYield)}>{parseYield(recipe.recipeYield)}</p>
-                </span>
+                {recipe.recipeYield && (
+                  <span className="inline-flex text-sm md:text-base ring-2 ring-brand-alt focus-visible:outline-0 gap-1 items-center px-2 py-1 rounded">
+                    <Squares2X2Icon className="w-5"/>
+                    <p className="max-w-[200px] truncate" title={parseYield(recipe.recipeYield)}>{parseYield(recipe.recipeYield)}</p>
+                  </span>
+                )}
 
                 <Time prepTime={recipe.prepTime} cookTime={recipe.cookTime} totalTime={recipe.totalTime} />
                 <SaveRecipe id={recipe.meta.id} saved={!!saved?.isFavorite} onChange={setSaved} />

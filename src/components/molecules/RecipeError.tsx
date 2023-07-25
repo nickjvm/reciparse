@@ -1,6 +1,13 @@
-import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
+'use client'
+
+import { useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { usePathname, useSearchParams } from 'next/navigation'
+import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
+
+import request from '@/lib/api'
+import getUrl from '@/lib/api/getUrl'
 
 interface Props {
   actionUrl?: string | null
@@ -9,9 +16,42 @@ interface Props {
   errorTitle?: string
   image?: string
   className?: string
+  type?: string
+  url?: string
+  details?: {
+    message: string
+  }
 }
-export default function RecipeError({ actionUrl, actionText, errorText, errorTitle = 'Shoot.', image = '/404.svg', className }: Props) {
+
+export default function RecipeError({
+  actionUrl,
+  actionText,
+  errorText = 'Something went wrong.',
+  errorTitle = 'Shoot.',
+  image = '/404.svg',
+  type,
+  url,
+  className,
+  details,
+}: Props) {
   const external = actionUrl && actionUrl.startsWith('http')
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    if (type) {
+      const params = searchParams.toString()
+      request('/api/system/log', {
+        method: 'POST',
+        body: JSON.stringify({
+          type,
+          url: url || getUrl(`${pathname}${params ? `?${params}` : ''}`),
+          details,
+        })
+      })
+    }
+  }, [])
+
   return (
     <div className={className}>
       <div className="grid grid-cols-12 items-center">
