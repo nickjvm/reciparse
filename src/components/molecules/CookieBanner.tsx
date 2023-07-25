@@ -3,12 +3,10 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { getCookie, setCookie } from 'cookies-next'
-import { usePathname } from 'next/navigation'
 import classNames from 'classnames'
 
 export default function CookieBanner() {
   const [accept, setAccept] = useState(getCookie('cookie_consent'))
-  const pathname = usePathname()
 
   const onClick = () => {
     const expires = new Date()
@@ -23,7 +21,6 @@ export default function CookieBanner() {
     return null
   }
 
-  console.log(pathname)
   return (
     <div className={classNames('z-[100000] rounded-lg p-3 ring-2 ring-brand-alt fixed -translate-x-[50%] left-[50%] w-[90%] max-w-full md:max-w-2xl bg-white shadow bottom-2')}>
       <div className="grid grid-cols-12 gap-4 items-center mx-auto max-w-4xl">
