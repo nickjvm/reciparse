@@ -90,10 +90,19 @@ export default function FavoritesList({ count: initialCount, error: countError, 
     setInitted(true)
     setLoading(false)
   }
+
   const maxPageCount = Math.ceil(count / itemsPerPage)
 
   if (error) {
-    return <RecipeError image="/404.svg" errorText={error} className="mb-6" />
+    return <RecipeError
+      image="/404.svg"
+      errorText={error}
+      className="mb-6"
+      type="generic"
+      details={{
+        message: error
+      }}
+    />
   }
 
   return (

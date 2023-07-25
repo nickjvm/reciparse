@@ -29,7 +29,7 @@ export default function Page() {
 
   const renderChildren = () => {
     if (error) {
-      return <RecipeError image="/404.svg" errorText="Something went wrong. Try again later." className="mb-6" />
+      return <RecipeError image="/404.svg" errorText="Something went wrong. Try again later." className="mb-6" type="generic" details={{ message: 'error getting favorites count'}} />
     } else if (!loading && !count) {
       return <RecipeError errorTitle="Start saving!" image="/favorite.svg" errorText="Looks like you haven't saved any recipes yet." className="mb-6" />
     } else {
