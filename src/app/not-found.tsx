@@ -15,7 +15,7 @@ export default function Error() {
   return (
     <Layout>
       <AppLayout withSearch>
-        <RecipeError actionText="Take me home." actionUrl="/" className="max-w-xl py-8 mx-auto"/>
+        <RecipeError actionText="Take me home." actionUrl="/" className="max-w-xl py-8 mx-auto" type="not_found" />
       </AppLayout>
     </Layout>
   )

@@ -76,6 +76,9 @@ export default async function Page({ searchParams }: Props) {
           actionUrl={searchParams.url}
           errorText="We tried our best, but couldn't find a recipe to parse at the URL you entered."
           actionText="View on the original site"
+          type="parse_error"
+          url={searchParams.url}
+          details={error}
         />
       </AppLayout>
     )
@@ -90,6 +93,11 @@ export default async function Page({ searchParams }: Props) {
             errorText="We couldn&apos;t find any directions in this recipe :("
             actionText="View on the original site"
             actionUrl={searchParams.url}
+            type="parse_error"
+            url={searchParams.url}
+            details={{
+              message: 'missing instructions'
+            }}
           />
         </AppLayout>
       )

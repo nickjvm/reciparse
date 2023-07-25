@@ -8,7 +8,7 @@ export default function getUrl(path = '') {
   url = url.includes('http') ? url : `https://${url}`
 
   // Make sure to include a trailing `/`.
-  url = url.charAt(url.length - 1) === '/' ? url : `${url}/`
+  url = url.charAt(url.length - 1) === '/' || path.startsWith('/') ? url : `${url}/`
 
   return url + path
 }

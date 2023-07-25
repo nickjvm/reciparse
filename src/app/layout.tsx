@@ -1,7 +1,7 @@
-
 import { Open_Sans, Yeseva_One } from 'next/font/google'
 import classNames from 'classnames'
 import { cookies } from 'next/headers'
+import { ErrorBoundary } from 'react-error-boundary'
 
 import { AuthContextProvider } from '@/context/AuthContext'
 
@@ -10,6 +10,7 @@ import './globals.css'
 import CookieBanner from '@/components/molecules/CookieBanner'
 import NotificationProvider from '@/context/NotificationContext'
 import GA4 from '@/components/atoms/GA4'
+import Fallback from '@/components/molecules/ErrorFallback'
 
 const openSans = Open_Sans({
   subsets: ['latin'],
@@ -37,16 +38,18 @@ export default async function RootLayout({ children }: {
       <link rel="icon" type="image/png" href="/favicon.png" />
       <GA4 />
       <body>
-        <NotificationProvider>
-          <AuthContextProvider user={null}>
-            <div className="min-h-screen flex flex-col">
-              <div className="flex-grow flex flex-col ">
-                {children}
+        <ErrorBoundary FallbackComponent={Fallback}>
+          <NotificationProvider>
+            <AuthContextProvider user={null}>
+              <div className="min-h-screen flex flex-col">
+                <div className="flex-grow flex flex-col ">
+                  {children}
+                </div>
+                {!cookies().get('cookie_consent') && <CookieBanner />}
               </div>
-              {!cookies().get('cookie_consent') && <CookieBanner />}
-            </div>
-          </AuthContextProvider>
-        </NotificationProvider>
+            </AuthContextProvider>
+          </NotificationProvider>
+        </ErrorBoundary>
       </body>
     </html>
   )
