@@ -79,6 +79,7 @@ export default function QuickSearch({ size = 'md', inputClassName, autoFocus, pl
             required
             value={url}
             onChange={onChange}
+            onFocus={e => e.target.select()}
             className={classNames(
               error && 'ring-red-300 focus:ring-red-600',
               !error && 'ring-gray-300 focus:ring-brand-alt',
