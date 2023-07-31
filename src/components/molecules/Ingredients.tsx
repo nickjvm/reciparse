@@ -112,10 +112,8 @@ export default function IngredientsList({ ingredients, showStickyIngredients }: 
               <Disclosure.Button ref={disclosureRef} className={open ? 'py-2 mb-2 w-full text-left' : 'py-2 w-full text-left'}>
                 <h3 className="px-5 text-lg font-bold flex justify-between">
                   <div className="flex items-center gap-2">
-                  Ingredients
-                    <Copy preventBubble text={ingredients.join('\n')} />
+                    Ingredients
                   </div>
-
                   <ChevronUpIcon className={open ? 'w-5 rotate-180 transform' : 'w-5'} />
                 </h3>
               </Disclosure.Button>
