@@ -37,7 +37,7 @@ export default function CookMode({ checked }: Props) {
           onChange={handleChange}
           className={classNames(
             'relative inline-flex h-6 w-11 items-center rounded-full focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2',
-            enabled  ? 'bg-brand' : 'bg-gray-200'
+            enabled  ? 'bg-brand' : 'bg-slate-200'
           )}>
           <span className="sr-only">Enable cooking mode</span>
           <span

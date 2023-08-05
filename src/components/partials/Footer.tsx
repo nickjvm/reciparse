@@ -41,6 +41,9 @@ export default function Footer({ className }: Props) {
           <h4 className="font-semibold text-xs mt-2 mb-4">Other Links</h4>
           <ul className="space-y-2">
             <li>
+              <Link href="/info/support">Support the developer</Link>
+            </li>
+            <li>
               <Link href="/info/privacy">Privacy policy</Link>
             </li>
             <li>
@@ -48,9 +51,6 @@ export default function Footer({ className }: Props) {
             </li>
             <li>
               <Link href="/info/terms">Terms of use</Link>
-            </li>
-            <li>
-              <Link href="/info/support">Support the developer</Link>
             </li>
           </ul>
         </div>
