@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { decode } from 'html-entities'
 
 import { SupaRecipe } from '@/types'
+import PlaceholderImage from './PlaceholderImage'
 
 interface Props {
   recipe?: SupaRecipe
@@ -31,7 +32,8 @@ export default function RecipeCard({ recipe, className, loading }: Props) {
           href={`/recipe/?url=${recipe.url}`}
           className="flex flex-col md:hover:bg-white md:hover:ring-brand transition ring-2 ring-transparent rounded block md:p-3 md:-mx-1.5 h-full">
           <div className="w-full rounded aspect-square mb-3 relative">
-            <Image alt={recipe.name} src={recipe.image_url} width="100" height="100" className="w-full aspect-square" style={{ objectFit: 'cover' }} />
+            {recipe.image_url && <Image alt={recipe.name} src={recipe.image_url} width="100" height="100" className="w-full aspect-square" style={{ objectFit: 'cover' }} />}
+            {!recipe.image_url && <PlaceholderImage />}
           </div>
           <p className="leading-tight text-sm line-clamp-2 mb-1">{decode(recipe.name)}</p>
           {recipe.url && <p className="mt-auto text-xs text-slate-500 truncate">{new URL(recipe.url).hostname.replace('www.', '')}</p>}

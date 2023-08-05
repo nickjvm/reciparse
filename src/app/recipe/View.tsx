@@ -22,6 +22,7 @@ import request from '@/lib/api'
 import debug from '@/lib/debug'
 import { useDebounce } from '@/hooks/useDebounce'
 import { saveSearchToDb, saveSearchToLocalStorage } from '@/lib/searchHistory'
+import classNames from 'classnames'
 
 interface Props {
   recipe: Recipe
@@ -35,6 +36,7 @@ export default function Recipe({ recipe }: Props) {
   const showStickyIngredients_debounced = useDebounce<boolean>(showStickyIngredients, 500)
 
   const directionsRef = useRef<HTMLDivElement>(null)
+  const endRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const payload: SupaRecipe = {
@@ -55,8 +57,11 @@ export default function Recipe({ recipe }: Props) {
   useEffect(() => {
     const showHideStickyIngredients = () => {
 
-      if (directionsRef.current) {
-        setShowStickyIngredients(directionsRef.current.getBoundingClientRect().top < window.innerHeight * .66)
+      if (directionsRef.current && endRef.current) {
+        setShowStickyIngredients(
+          directionsRef.current.getBoundingClientRect().top < window.innerHeight * .66 &&
+          endRef.current.getBoundingClientRect().top > window.innerHeight * .75
+        )
       }
     }
     window.addEventListener('scroll', showHideStickyIngredients)
@@ -129,10 +134,12 @@ export default function Recipe({ recipe }: Props) {
       <div className="m-auto max-w-3xl p-4 md:p-8 print:p-0 md:rounded-md ring-brand-alt md:ring-2 print:ring-0 print:shadow-none shadow-lg bg-white">
         <div>
           <header className="grid auto-rows-auto md:grid-cols-12 print:grid-cols-12 gap-4 mb-4">
-            <div className="relative w-full md:col-span-3 print:col-span-3">
-              <Image className="w-full rounded aspect-square" style={{ objectFit: 'cover' }} alt={recipe.name} width={150} height={150} src={recipe.image} />
-            </div>
-            <div className="md:col-span-9 print:col-span-8">
+            {recipe.image && (
+              <div className="relative w-full md:col-span-3 print:col-span-3">
+                <Image className="w-full rounded aspect-square" style={{ objectFit: 'cover' }} alt={recipe.name} width={150} height={150} src={recipe.image} />
+              </div>
+            )}
+            <div className={classNames(recipe.image ? 'md:col-span-9 print:col-span-8' : 'mb-4 col-span-12')}>
               <div className="mb-4">
                 <h2 className="font-display text-brand-alt text-3xl font-bold">{decode(recipe.name)}</h2>
                 <p className="text-slate-500 text-sm print:hidden">from <Link target="_blank" href={recipe.meta.raw_source}>{recipe.meta.source}</Link></p>
@@ -172,6 +179,7 @@ export default function Recipe({ recipe }: Props) {
           </div>
         </div>
       </div>
+      <div ref={endRef} />
     </main>
   )
 }
