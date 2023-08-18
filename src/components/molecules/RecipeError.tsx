@@ -6,8 +6,10 @@ import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
 
+import env from '@/lib/getEnv'
 import request from '@/lib/api'
 import getUrl from '@/lib/api/getUrl'
+import debug from '@/lib/debug'
 
 interface Props {
   actionUrl?: string | null
@@ -39,7 +41,8 @@ export default function RecipeError({
   const searchParams = useSearchParams()
 
   useEffect(() => {
-    if (type) {
+    debug({ type, details })
+    if (type && env === 'production') {
       const params = searchParams.toString()
       request('/api/system/log', {
         method: 'POST',
