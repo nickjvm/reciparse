@@ -82,7 +82,7 @@ export default function Recipe({ recipe }: Props) {
 
   const parseYield = (recipeYield: undefined |string | string[], i?: number, recipeYields?: string[]): string|undefined => {
     if (Array.isArray(recipeYield)) {
-      return Array.from(new Set(recipeYield.map(parseYield).filter(v => v))).join(', ')
+      return parseYield(recipeYield[0])
     } else {
       const recipeYieldNum = Number(recipeYield)
       if (!isNaN(recipeYieldNum)) {

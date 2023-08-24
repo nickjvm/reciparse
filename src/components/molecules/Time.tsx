@@ -10,9 +10,16 @@ interface Props {
   totalTime?: string
 }
 
-function toHoursAndMinutes(totalMinutes: number): string {
-  const hours = Math.floor(totalMinutes / 60)
-  const minutes = totalMinutes % 60
+function toHoursAndMinutes(duration: td.Duration|undefined): string {
+  if (!duration) {
+    return ''
+  }
+
+  let { hours = 0, minutes = 0 } = duration
+  if (minutes >= 60) {
+    hours += Math.floor(minutes / 60)
+    minutes = minutes % 60
+  }
 
   let str = ''
   if (hours) {
@@ -31,45 +38,43 @@ function toHoursAndMinutes(totalMinutes: number): string {
   return str
 }
 
+interface Times {
+  prepTime?: td.Duration|undefined
+  cookTime?: td.Duration|undefined
+  totalTime?: td.Duration|undefined
+}
+
+type TimeKey = 'prepTime'|'totalTime'|'cookTime'
 export default function Time(props: Props) {
-
-  let prepTime: number
-  let cookTime: number
-  let totalTime: number
-  try {
-    prepTime = td.parse(props.prepTime || 'PT0M').minutes || 0
-    cookTime = td.parse(props.cookTime || 'PT0M').minutes || 0
-    totalTime = td.parse(props.totalTime || 'PT0M').minutes || 0
-  } catch {
-    if (props.totalTime) {
-      return (
-        <span className="inline-flex ring-2 ring-brand-alt focus-visible:outline-0 gap-1 items-center px-2 py-1 rounded">
-          <ClockIcon className="w-5"/>
-          {props.totalTime}
-        </span>
-      )
-    } else {
-      return null
+  const times: Times = {};
+  ['prepTime', 'cookTime', 'totalTime'].forEach((dur: string) => {
+    let time: td.Duration|undefined = undefined
+    try {
+      time = td.parse(props[dur as TimeKey] || 'PT0M')
+    } catch (e) {
+      //
+    } finally {
+      times[dur as TimeKey] = time
     }
-  }
+  })
 
-  if (!totalTime) {
+  if (!times.totalTime?.hours && !times.totalTime?.minutes) {
     return null
   }
 
-  if (prepTime && cookTime) {
+  if (times.prepTime && times.cookTime) {
     return (
       <Popover className="relative">
         {({ open }) => (
           <>
             <Popover.Button className={classnames('h-full inline-flex text-sm md:text-base ring-2 ring-brand-alt focus-visible:outline-0 gap-1 items-center px-2 py-1 rounded hover:bg-slate-100 focus-visible:bg-slate-100', { 'bg-slate-100': open })}>
               <ClockIcon className="w-5"/>
-              <p className="max-w-[200px] truncate">{toHoursAndMinutes(totalTime)}</p>
+              <p className="max-w-[200px] truncate">{toHoursAndMinutes(times.totalTime)}</p>
             </Popover.Button>
 
             <Popover.Panel className="shadow-sm absolute z-10 bg-slate-100 px-3 py-2 mt-2 rounded w-16 min-w-fit whitespace-nowrap">
-              <p className="text-sm">Prep time: {toHoursAndMinutes(prepTime)}</p>
-              <p className="text-sm">Cook time: {toHoursAndMinutes(cookTime)}</p>
+              {(!!times.prepTime?.hours || !!times.prepTime?.minutes) && <p className="text-sm">Prep time: {toHoursAndMinutes(times.prepTime)}</p>}
+              {(!!times.cookTime?.hours || !!times.cookTime?.minutes) && <p className="text-sm">Cook time: {toHoursAndMinutes(times.cookTime)}</p>}
             </Popover.Panel>
           </>
         )}
@@ -79,7 +84,7 @@ export default function Time(props: Props) {
     return (
       <span className="inline-flex ring-2 ring-brand-alt focus-visible:outline-0 gap-1 items-center px-2 py-1 rounded">
         <ClockIcon className="w-5"/>
-        {toHoursAndMinutes(totalTime)}
+        {toHoursAndMinutes(times.totalTime)}
       </span>
     )
   }
