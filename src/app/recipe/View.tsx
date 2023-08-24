@@ -164,7 +164,7 @@ export default function Recipe({ recipe }: Props) {
             <div className="col-span-8 md:col-span-3 print:col-span-3 mb-3 md:mb-0">
               <IngredientsList ingredients={recipe.recipeIngredient} showStickyIngredients={showStickyIngredients_debounced} />
             </div>
-            <div className="col-span-8 md:col-span-5 print:col-span-5 print:mt-2" id="directions" ref={directionsRef}>
+            <div className="col-span-8 md:col-span-5 print:col-span-5 print:mt-2 md:sticky md:self-start md:top-[80px]" id="directions" ref={directionsRef}>
               {recipe.recipeInstructions.map(renderInstructionSection)}
               {saved?.isFavorite && <RecipeNotes id={recipe.meta.id} value={saved?.notes} />}
               <div className="mt-4">
