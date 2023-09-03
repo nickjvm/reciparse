@@ -11,6 +11,7 @@ import CookieBanner from '@/components/molecules/CookieBanner'
 import NotificationProvider from '@/context/NotificationContext'
 import GA4 from '@/components/atoms/GA4'
 import Fallback from '@/components/molecules/ErrorFallback'
+import LogRocketInit from '@/components/atoms/LogRocket'
 
 const openSans = Open_Sans({
   subsets: ['latin'],
@@ -38,6 +39,7 @@ export default async function RootLayout({ children }: {
       <link rel="icon" type="image/png" href="/favicon.png" />
       <GA4 />
       <body>
+        <LogRocketInit />
         <ErrorBoundary FallbackComponent={Fallback}>
           <NotificationProvider>
             <AuthContextProvider user={null}>
