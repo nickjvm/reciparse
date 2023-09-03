@@ -12,6 +12,7 @@ import recoverError from '@/lib/recoverError'
 import AuthModal from '@/components/molecules/AuthModal'
 
 import { useNotificationContext } from './NotificationContext'
+import LogRocket from 'logrocket'
 interface Context {
   user: null | User
   userLoading: boolean
@@ -155,6 +156,9 @@ export function AuthContextProvider({ children }: Props) {
             localStorage.setItem('expires_at', `${session.expires_at}`)
             if (data?.user && data?.user.id !== user?.id) {
               setUser(data.user)
+              debug(event, data.user)
+              LogRocket.identify(data.user.email)
+
               if (event === 'SIGNED_IN') {
                 router.refresh()
               }
