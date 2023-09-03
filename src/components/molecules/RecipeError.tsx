@@ -10,6 +10,7 @@ import env from '@/lib/getEnv'
 import request from '@/lib/api'
 import getUrl from '@/lib/api/getUrl'
 import debug from '@/lib/debug'
+import LogRocket from 'logrocket'
 
 interface Props {
   actionUrl?: string | null
@@ -51,6 +52,14 @@ export default function RecipeError({
           url: url || getUrl(`${pathname}${params ? `?${params}` : ''}`),
           details,
         })
+      })
+
+      LogRocket.captureMessage(errorTitle, {
+        extra: {
+          type,
+          url: url || getUrl(`${pathname}${params ? `?${params}` : ''}`),
+          message: details?.message || '',
+        }
       })
     }
   }, [])
