@@ -10,9 +10,10 @@ interface Props {
   recipe?: SupaRecipe
   className?: string
   loading?: boolean
+  internal?: boolean
 }
 
-export default function RecipeCard({ recipe, className, loading }: Props) {
+export default function RecipeCard({ recipe, className, loading, internal }: Props) {
 
   if (loading) {
     return (
@@ -29,7 +30,7 @@ export default function RecipeCard({ recipe, className, loading }: Props) {
     return (
       <div className={classNames('self-stretch w-[33vw] min-w-[33vw] md:w-[19vw] md:min-w-[19vw] xl:w-auto xl:min-w-0 max-w-1/8 shrink-0 flex-1 flex-grow', className)}>
         <Link
-          href={`/recipe/?url=${recipe.url}`}
+          href={internal ? `/account/recipes/view/${recipe.id}` : `/recipe/?url=${recipe.url}`}
           className="flex flex-col md:hover:bg-white md:hover:ring-brand transition ring-2 ring-transparent rounded block md:p-3 md:-mx-1.5 h-full">
           <div className="w-full rounded aspect-square mb-3 relative">
             {recipe.image_url && <Image alt={recipe.name} src={recipe.image_url} width="100" height="100" className="w-full aspect-square" style={{ objectFit: 'cover' }} />}
