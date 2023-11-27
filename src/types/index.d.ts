@@ -1,5 +1,4 @@
 export interface Recipe {
-  public?: boolean
   user_id?: string
   error?: boolean
   message?: string
@@ -29,6 +28,10 @@ export interface Recipe {
   }
 }
 
+export type CustomRecipe = Omit<Recipe, 'recipeYield'> & {
+  public: boolean
+  recipeYield: number
+}
 export interface SavedRecipe {
   id: number
   isFavorite: boolean
