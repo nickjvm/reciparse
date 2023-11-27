@@ -30,6 +30,9 @@ export default function Footer({ className }: Props) {
                   <Link href="/account">My Profile</Link>
                 </li>
                 <li>
+                  <Link href="/recipes">My Recipes</Link>
+                </li>
+                <li>
                   <Link href="/account/favorites">My Favorites</Link>
                 </li>
               </>

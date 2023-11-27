@@ -94,9 +94,13 @@ export default function IngredientsList({ ingredients, showStickyIngredients }: 
         </h3>
         <ul className={classNames(ingredients.length > 8 && 'print:columns-2', 'print:mb-4')}>
           {ingredients.map(cleanIngredientString).map((ingredient: Ingredient, i: number) => (
-            <li key={i} className="border-b print:border-b-0 print:pb-0 print:mb-0 last:border-b-0 border-b-slate-200 pb-2 mb-2">
-              {ingredient.primary}
-              {ingredient.subtext && <em className="ml-1 text-sm italic text-slate-500">{ingredient.subtext}</em>}
+            <li key={i} className={classNames('border-b print:border-b-0 print:pb-0 print:mb-0 last:border-b-0 pb-2 mb-2 border-b-slate-200', ingredient.primary.endsWith(':') && 'border-b-0')}>
+              {ingredient.primary.endsWith(':') ? (<h3 className="text-md font-bold mt-6">{ingredient.primary}</h3>) : (
+                <>
+                  {ingredient.primary}
+                  {ingredient.subtext && <em className="ml-1 text-sm italic text-slate-500">{ingredient.subtext}</em>}
+                </>
+              )}
             </li>
           ))}
         </ul>
@@ -121,8 +125,12 @@ export default function IngredientsList({ ingredients, showStickyIngredients }: 
                 <ul className="px-5 overflow-auto max-h-80">
                   {ingredients.map(cleanIngredientString).map((ingredient, i: number) => (
                     <li key={i} className="border-b last:border-b-0 border-b-slate-200 pb-2 mb-2">
-                      {ingredient.primary}
-                      {ingredient.subtext && <em className="ml-1.5 text-sm italic text-slate-500">{ingredient.subtext}</em>}
+                      {ingredient.primary.endsWith(':') ? (<h3>{ingredient.primary}</h3>) : (
+                        <>
+                          {ingredient.primary}
+                          {ingredient.subtext && <em className="ml-1.5 text-sm italic text-slate-500">{ingredient.subtext}</em>}
+                        </>
+                      )}
                     </li>
                   ))}
                 </ul>

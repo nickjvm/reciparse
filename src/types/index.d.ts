@@ -1,4 +1,5 @@
 export interface Recipe {
+  user_id?: string
   error?: boolean
   message?: string
   name: string
@@ -11,6 +12,9 @@ export interface Recipe {
   totalTime?: string
   cookTime?: string
   nutrition?: Nutrition|null
+  id: number
+  handle?: string
+  url?: string
   meta: {
     source: string
     raw_source: string
@@ -50,6 +54,7 @@ export interface SupaRecipe {
   name: string,
   url: string,
   image_url: string,
+  handle?: string,
 }
 
 export type AuthAction = 'signup'|'signin'|'reset'

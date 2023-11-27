@@ -4,10 +4,9 @@ import { Fragment, useEffect, useRef, useState } from 'react'
 import request from '@/lib/api'
 import { HowToSection, Recipe } from '@/types'
 import AppLayout from '@/components/layouts/AppLayout'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import classNames from 'classnames'
-import Link from 'next/link'
 import { decode } from 'html-entities'
 import { Squares2X2Icon } from '@heroicons/react/24/outline'
 import Time from '@/components/molecules/Time'
@@ -17,22 +16,25 @@ import IngredientsList from '@/components/molecules/Ingredients'
 import NutritionInfo from '@/components/molecules/Nutrition'
 import { useDebounce } from '@/hooks/useDebounce'
 import { ErrorBoundary } from 'react-error-boundary'
+import Button from '@/components/atoms/Button'
+import { useAuthContext } from '@/context/AuthContext'
+import { PencilIcon } from '@heroicons/react/24/solid'
 
 export default function MyRecipes() {
   const [recipe, setRecipe] = useState<Recipe|null>(null)
-  const { id } = useParams()
+  const { handle } = useParams()
   const endRef = useRef<HTMLDivElement>(null)
   const directionsRef = useRef<HTMLDivElement>(null)
-
+  const router = useRouter()
+  const { user } = useAuthContext()
   const [showStickyIngredients, setShowStickyIngredients] = useState(false)
   const showStickyIngredients_debounced = useDebounce<boolean>(showStickyIngredients, 500)
 
   useEffect(() => {
-    request(`/api/recipes/mine/${id}`).then(({ data }: { data: null|Recipe, error: null|Error}) => {
+    request(`/api/recipes/custom/${handle}`).then(({ data }: { data: null|Recipe, error: null|Error}) => {
       setRecipe(data)
     })
   }, [])
-
 
   useEffect(() => {
     const showHideStickyIngredients = () => {
@@ -77,10 +79,9 @@ export default function MyRecipes() {
     )
   }
 
-  console.log(recipe)
   if (!recipe) return
   return (
-    <AppLayout withSearch>
+    <AppLayout withSearch isPrivate>
       <ErrorBoundary fallback={<div>Error</div>} onError={console.log}>
         <main className="print:bg-white print:min-h-0 md:p-4 md:pb-6 print:p-0 max-w-5xl mx-auto">
           <div className="m-auto max-w-3xl p-4 md:p-8 print:p-0 md:rounded-md ring-brand-alt md:ring-2 print:ring-0 print:shadow-none shadow-lg bg-white">
@@ -93,8 +94,10 @@ export default function MyRecipes() {
                 )}
                 <div className={classNames(recipe.image ? 'md:col-span-9 print:col-span-8' : 'mb-4 col-span-12')}>
                   <div className="mb-4">
-                    <h2 className="font-display text-brand-alt text-3xl font-bold">{decode(recipe.name)}</h2>
-                    <p className="text-slate-500 text-sm print:hidden">from <Link href="/account/recipes">My Recipes</Link></p>
+                    <h2 className="font-display text-brand-alt text-3xl font-bold">
+                      {decode(recipe.name)}
+                      {user && user.id === recipe.user_id && <Button appearance="icon" className="opacity-40 hover:opacity-100 focus-visible:opacity-100 print:hidden" icon={<PencilIcon className="w-5" />} onClick={() => router.push(`/recipes/edit/${handle}`)} />}
+                    </h2>
                   </div>
                   <div className="flex gap-4 flex-wrap">
                     {recipe.recipeYield && (

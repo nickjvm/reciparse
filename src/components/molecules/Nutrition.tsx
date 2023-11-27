@@ -27,7 +27,6 @@ const getServingSize = (recipeYield: number|string|string[]): number|null => {
     return recipeYield
   }
 
-  console.log(recipeYield)
   return getServingSize(recipeYield.find((y) => y.match(/[1-9]+/)) || '1')
 }
 
@@ -39,7 +38,6 @@ export default function NutritionInfo({ data: _data, ingredientsList, recipeYiel
   const [showEdamam, setShowEdamam] = useState(false)
   const [error, setError] = useState(false)
 
-  console.log(recipeYield, getServingSize(recipeYield))
   const loadNutritionInfo = async () => {
     try {
       setLoading(true)

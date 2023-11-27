@@ -4,7 +4,10 @@ import debug from '../debug'
 import timeout from '../timeout'
 import recoverError from '../recoverError'
 
-export default async function request(resource: string, options: RequestInit = {}) {
+type CustomOptions = {
+  multipart?: boolean
+}
+export default async function request(resource: string, options: RequestInit & CustomOptions = {}) {
   let accessToken = null
   if (global.window) {
     accessToken = await getAccessToken()
@@ -14,12 +17,16 @@ export default async function request(resource: string, options: RequestInit = {
   let finalResource = resource
   headers = new Headers(headers)
 
-  headers.append('Content-Type', 'application/json')
+  if (!options.multipart) {
+    headers.append('Content-Type', 'application/json')
+  }
+
   if (accessToken) {
     headers.append('authorization', `Bearer ${accessToken}`)
   }
 
   options.headers = headers
+  delete options.multipart
 
   if (resource.startsWith('/')) {
     finalResource = `${getUrl()}${resource.substring(1)}`
@@ -28,7 +35,13 @@ export default async function request(resource: string, options: RequestInit = {
   debug('REQUEST', finalResource)
 
   return fetch(finalResource, options).then(async (r) => {
-    const data = await r.json()
+    let data
+    try {
+      data = await r.json()
+    } catch (e) {
+      // no json in response
+    }
+
     if (r.ok) {
       return {
         data,

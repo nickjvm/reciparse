@@ -112,7 +112,7 @@ export default function FavoritesList({ count: initialCount, error: countError, 
         <div className="flex flex-col-reverse justify-center md:flex-row md:items-center gap-4 ">
           <input
             autoFocus
-            className="ring-gray-300 text-base md:text-base focus:ring-brand-alt block transition w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset"
+            className="text-base md:text-base focus:ring-brand-alt block transition w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset"
             placeholder="Search your saved recipes"
             type="text"
             value={value}

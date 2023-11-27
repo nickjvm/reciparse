@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { Popover } from '@headlessui/react'
-import { HeartIcon, UserIcon, ArrowLeftOnRectangleIcon} from '@heroicons/react/20/solid'
+import { HeartIcon, UserIcon, ArrowLeftOnRectangleIcon, ArchiveBoxIcon } from '@heroicons/react/20/solid'
 import { ChevronDownIcon } from '@heroicons/react/24/solid'
 import classNames from 'classnames'
 
@@ -26,7 +26,7 @@ function AuthBtn({ onClick }: Props) {
   if (!user) {
     return (
       <div className="flex gap-3 items-center whitespace-nowrap">
-        <button className="w-[50%] md:w-auto bg-white semibold px-3 ring-1 ring-gray-200 md:ring-transparent py-1.5 ring-gray-200 rounded hover:ring-1 hover:bg-gray-100 focus-visible:bg-gray-100 focus-visible:ring-1 transition" onClick={handleClick('signin')}>Sign In</button>
+        <button className="w-[50%] md:w-auto bg-white semibold px-3 ring-1  md:ring-transparent py-1.5 ring-gray-200 rounded hover:ring-1 hover:bg-gray-100 focus-visible:bg-gray-100 focus-visible:ring-1 transition" onClick={handleClick('signin')}>Sign In</button>
         <button className="w-[50%] md:w-auto bg-brand-alt text-white semibold px-3 py-1.5 rounded hover:bg-brand focus-visible:bg-brand transition"  onClick={handleClick('signup')}>Sign Up</button>
       </div>
     )
@@ -51,6 +51,10 @@ function AuthBtn({ onClick }: Props) {
                 </Popover.Button>
 
                 <Popover.Panel className="transition text-sm font-semibold leading-6 shadow absolute mt-2 bg-white right-0 rounded w-40 min-w-fit whitespace-nowrap">
+                  <Link href="/recipes" className="block hover:bg-slate-50 px-3 py-2">
+                    <ArchiveBoxIcon className="w-5 inline-block mr-2" />
+                    My Recipes
+                  </Link>
                   <Link href="/account/favorites" className="block hover:bg-slate-50 px-3 py-2">
                     <HeartIcon className="w-5 inline-block mr-2" />
                     My Favorites
