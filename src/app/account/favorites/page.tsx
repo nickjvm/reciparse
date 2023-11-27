@@ -4,8 +4,7 @@ import { useEffect, useState } from 'react'
 import request from '@/lib/api'
 import AppLayout from '@/components/layouts/AppLayout'
 import RecipeError from '@/components/molecules/RecipeError'
-
-import FavoritesList from './List'
+import SearchList from '@/components/organisms/SearchList'
 
 export default function Page() {
   const [count, setCount] = useState(0)
@@ -33,7 +32,7 @@ export default function Page() {
     } else if (!loading && !count) {
       return <RecipeError errorTitle="Start saving!" image="/favorite.svg" errorText="Looks like you haven't saved any recipes yet." className="mb-6" />
     } else {
-      return <FavoritesList loading={loading} count={count} error={error} />
+      return <SearchList title="My Favorites" endpoint="/api/recipes/favorites" internal loading={loading} count={count} error={error} />
     }
   }
 
