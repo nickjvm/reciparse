@@ -30,9 +30,10 @@ export type FormValues = {
 
 type Props = {
   onSubmit: (values: FormValues) => void
+  onLoad?: (values: Recipe) => void
 }
 
-export default function AddEditForm({ onSubmit }: Props) {
+export default function AddEditForm({ onSubmit, onLoad }: Props) {
   const { handle } = useParams()
   const router = useRouter()
   const { register, reset, control, watch, handleSubmit, setFocus, setValue, unregister } = useForm<FormValues>({
@@ -99,6 +100,9 @@ export default function AddEditForm({ onSubmit }: Props) {
           recipeYield,
         }
         reset(defaultValues || {})
+        if (onLoad) {
+          onLoad(data)
+        }
       }
     })
   }, [handle])

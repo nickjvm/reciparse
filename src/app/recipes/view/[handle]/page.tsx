@@ -20,6 +20,7 @@ import Button from '@/components/atoms/Button'
 import { useAuthContext } from '@/context/AuthContext'
 import { PencilIcon } from '@heroicons/react/24/solid'
 import RecipeError from '@/components/molecules/RecipeError'
+import Breadcrumbs from '@/components/molecules/Breadcrumbs'
 
 export default function MyRecipes() {
   const [recipe, setRecipe] = useState<Recipe|null>(null)
@@ -91,52 +92,61 @@ export default function MyRecipes() {
     <AppLayout withSearch>
       <ErrorBoundary fallback={<div>Error</div>} onError={console.log}>
         <main className="print:bg-white print:min-h-0 md:p-4 md:pb-6 print:p-0 max-w-5xl mx-auto">
-          <div className="m-auto max-w-3xl p-4 md:p-8 print:p-0 md:rounded-md ring-brand-alt md:ring-2 print:ring-0 print:shadow-none shadow-lg bg-white">
+          <div className="m-auto max-w-3xl">
+            {recipe && recipe.user_id === user?.id && (
+              <Breadcrumbs className="mb-4" links={[
+                { href: '/account', text: 'My account' },
+                { href: '/recipes', text: 'My recipes' },
+                { text: recipe.name },
+              ]} />
+            )}
             {error && (
-              <RecipeError errorTitle="Unauthorized." actionText="Back to home" actionUrl="/" errorText="The creator of this recipe has not made it public."  />
+              <RecipeError className="mt-8" errorTitle="Unauthorized." actionText="Back to home" actionUrl="/" errorText="The creator of this recipe has not made it public."  />
             )}
             {!error && recipe && (
-              <div>
-                <header className="grid auto-rows-auto md:grid-cols-12 print:grid-cols-12 gap-4 mb-4">
-                  {recipe.image && (
-                    <div className="relative w-full md:col-span-3 print:col-span-3">
-                      <Image className="w-full rounded aspect-square" style={{ objectFit: 'cover' }} alt={recipe.name} width={150} height={150} src={recipe.image} />
-                    </div>
-                  )}
-                  <div className={classNames(recipe.image ? 'md:col-span-9 print:col-span-8' : 'mb-4 col-span-12')}>
-                    <div className="mb-4">
-                      <h2 className="font-display text-brand-alt text-3xl font-bold">
-                        {decode(recipe.name)}
-                        {user && user.id === recipe.user_id && <Button appearance="icon" className="opacity-40 hover:opacity-100 focus-visible:opacity-100 print:hidden" icon={<PencilIcon className="w-5" />} onClick={() => router.push(`/recipes/edit/${handle}`)} />}
-                      </h2>
-                    </div>
-                    <div className="flex gap-4 flex-wrap">
-                      {recipe.recipeYield && (
-                        <span className="inline-flex text-sm md:text-base ring-2 ring-brand-alt focus-visible:outline-0 gap-1 items-center px-2 py-1 rounded">
-                          <Squares2X2Icon className="w-5"/>
-                          <p className="max-w-[200px] truncate">{recipe.recipeYield} servings</p>
-                        </span>
-                      )}
+              <div className="p-4 md:p-8 print:p-0 md:rounded-md ring-brand-alt md:ring-2 print:ring-0 print:shadow-none shadow-lg bg-white">
+                <div>
+                  <header className="grid auto-rows-auto md:grid-cols-12 print:grid-cols-12 gap-4 mb-4">
+                    {recipe.image && (
+                      <div className="relative w-full md:col-span-3 print:col-span-3">
+                        <Image className="w-full rounded aspect-square" style={{ objectFit: 'cover' }} alt={recipe.name} width={150} height={150} src={recipe.image} />
+                      </div>
+                    )}
+                    <div className={classNames(recipe.image ? 'md:col-span-9 print:col-span-8' : 'mb-4 col-span-12')}>
+                      <div className="mb-4">
+                        <h2 className="font-display text-brand-alt text-3xl font-bold">
+                          {decode(recipe.name)}
+                          {user && user.id === recipe.user_id && <Button appearance="icon" className="opacity-40 hover:opacity-100 focus-visible:opacity-100 print:hidden" icon={<PencilIcon className="w-5" />} onClick={() => router.push(`/recipes/edit/${handle}`)} />}
+                        </h2>
+                      </div>
+                      <div className="flex gap-4 flex-wrap">
+                        {recipe.recipeYield && (
+                          <span className="inline-flex text-sm md:text-base ring-2 ring-brand-alt focus-visible:outline-0 gap-1 items-center px-2 py-1 rounded">
+                            <Squares2X2Icon className="w-5"/>
+                            <p className="max-w-[200px] truncate">{recipe.recipeYield} servings</p>
+                          </span>
+                        )}
 
-                      <Time prepTime={recipe.prepTime} cookTime={recipe.cookTime} totalTime={recipe.totalTime} />
-                      <Print />
-                      <CookMode />
+                        <Time prepTime={recipe.prepTime} cookTime={recipe.cookTime} totalTime={recipe.totalTime} />
+                        <Print />
+                        <CookMode />
+                      </div>
                     </div>
-                  </div>
-                </header>
-                <div className="pt-3 md:pt-0 md:grid grid-cols-8 gap-8 pb-8 sm:pb-4 md:pb-0">
-                  <div className="col-span-8 md:col-span-3 print:col-span-3 mb-3 md:mb-0">
-                    <IngredientsList ingredients={recipe.recipeIngredient} showStickyIngredients={showStickyIngredients_debounced} />
-                  </div>
-                  <div className="col-span-8 md:col-span-5 print:col-span-5 print:mt-2" id="directions" ref={directionsRef}>
-                    {recipe.recipeInstructions.map(renderInstructionSection)}
-                    <div className="mt-4">
-                      <NutritionInfo
-                        data={recipe.nutrition}
-                        ingredientsList={recipe.recipeIngredient}
-                        recipeYield={recipe.recipeYield}
-                        source={recipe.meta.source}
-                      />
+                  </header>
+                  <div className="pt-3 md:pt-0 md:grid grid-cols-8 gap-8 pb-8 sm:pb-4 md:pb-0">
+                    <div className="col-span-8 md:col-span-3 print:col-span-3 mb-3 md:mb-0">
+                      <IngredientsList ingredients={recipe.recipeIngredient} showStickyIngredients={showStickyIngredients_debounced} />
+                    </div>
+                    <div className="col-span-8 md:col-span-5 print:col-span-5 print:mt-2" id="directions" ref={directionsRef}>
+                      {recipe.recipeInstructions.map(renderInstructionSection)}
+                      <div className="mt-4">
+                        <NutritionInfo
+                          data={recipe.nutrition}
+                          ingredientsList={recipe.recipeIngredient}
+                          recipeYield={recipe.recipeYield}
+                          source={recipe.meta.source}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
