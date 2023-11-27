@@ -1,4 +1,5 @@
 export interface Recipe {
+  public?: boolean
   user_id?: string
   error?: boolean
   message?: string
