@@ -52,7 +52,7 @@ export default function AddEditForm({ onSubmit, onLoad }: Props) {
   const { register, reset, control, watch, handleSubmit, setFocus, setValue, unregister, formState: { errors }, setError, clearErrors } = useForm<FormValues>({
     defaultValues: {
       name: '',
-      recipeYield: 4,
+      recipeYield: 1,
       recipeInstructions: [{ text: ''}],
       prepTime: {
         hours: 0,
@@ -85,7 +85,7 @@ export default function AddEditForm({ onSubmit, onLoad }: Props) {
 
     request(`/api/recipes/custom/${handle}`).then(({ data }: { data: null|CustomRecipe, error: null|Error}) => {
       if (data) {
-        const { name, prepTime = '', cookTime = '', recipeYield = 0, id, image } = data
+        const { name, prepTime = '', cookTime = '', recipeYield = 1, id, image } = data
         let finalPrepTime
         let finalCookTime
         try {
@@ -210,7 +210,7 @@ export default function AddEditForm({ onSubmit, onLoad }: Props) {
                     positive,
                     wholeNumber,
                   },
-                })} type="text" name="recipeYield" id="price" className="rounded-md block w-12 text-center border-0 py-1.5 px-2 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-transparent" />
+                })} placeholder="1" type="text" name="recipeYield" id="price" className="rounded-md block w-12 text-center border-0 py-1.5 px-2 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-transparent" />
                 <div className=" inset-y-0 right-0 flex items-center h-full rounded-md border-0 bg-transparent py-0 px-4 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm">
                   servings
                 </div>
@@ -226,7 +226,7 @@ export default function AddEditForm({ onSubmit, onLoad }: Props) {
                       positive,
                       wholeNumber,
                     },
-                  })} type="text" className="text-center block w-12 rounded-md border-0 py-1.5 px-4 text-gray-900 bg-transparent placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                  })} type="text" placeholder="0" className="text-center block w-12 rounded-md border-0 py-1.5 px-4 text-gray-900 bg-transparent placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                   <div className="inset-y-0 right-0 flex items-center h-full rounded-md border-0 bg-transparent py-0 px-4 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm">
                     hours
                   </div>
@@ -240,7 +240,7 @@ export default function AddEditForm({ onSubmit, onLoad }: Props) {
                       positive,
                       wholeNumber,
                     },
-                  })} className="text-center block w-12 rounded-md border-0 py-1.5 px-4 text-gray-900 bg-transparent placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                  })} placeholder="0" className="text-center block w-12 rounded-md border-0 py-1.5 px-4 text-gray-900 bg-transparent placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                   <div className="inset-y-0 right-0 flex items-center h-full rounded-md border-0 bg-transparent py-0 px-4 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm">
                     minutes
                   </div>
@@ -257,7 +257,7 @@ export default function AddEditForm({ onSubmit, onLoad }: Props) {
                       positive,
                       wholeNumber,
                     },
-                  })} className="text-center block w-12 rounded-md border-0 py-1.5 px-4 text-gray-900 bg-transparent placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                  })} placeholder="0" className="text-center block w-12 rounded-md border-0 py-1.5 px-4 text-gray-900 bg-transparent placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                   <div className="inset-y-0 right-0 flex items-center">
                     <div className="inset-y-0 right-0 flex items-center h-full rounded-md border-0 bg-transparent py-0 px-4 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm">
                       hours
@@ -273,7 +273,7 @@ export default function AddEditForm({ onSubmit, onLoad }: Props) {
                       positive,
                       wholeNumber,
                     },
-                  })} className="text-center block w-12 rounded-md border-0 py-1.5 px-4 text-gray-900 bg-transparent placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                  })} placeholder="0" className="text-center block w-12 rounded-md border-0 py-1.5 px-4 text-gray-900 bg-transparent placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                   <div className="inset-y-0 right-0 flex items-center">
                     <div className="inset-y-0 right-0 flex items-center h-full rounded-md border-0 bg-transparent py-0 px-4 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm">
                       minutes

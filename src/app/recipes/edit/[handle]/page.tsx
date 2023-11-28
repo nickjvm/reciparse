@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { ErrorBoundary } from 'react-error-boundary'
 
 import request from '@/lib/api'
-import { Recipe } from '@/types'
+import { CustomRecipe, Recipe } from '@/types'
 
 import AddEditForm, { FormValues } from '../../addEditForm'
 import { serializeRecipeForm } from '../../helpers'
@@ -42,7 +42,7 @@ export default function EditRecipe() {
               { text: 'Edit' },
             ]} />
             <div className="p-4 md:p-8 print:p-0 md:rounded-md ring-brand-alt md:ring-2 print:ring-0 print:shadow-none shadow-lg bg-white">
-              <AddEditForm onSubmit={onSubmit} onLoad={(data: Recipe) => setName(data.name)} />
+              <AddEditForm onSubmit={onSubmit} onLoad={(data: CustomRecipe) => setName(data.name)} />
             </div>
           </div>
         </main>
