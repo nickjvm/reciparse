@@ -10,7 +10,7 @@ type Props = {
   links: Link[]
 }
 export default function Breadcrumbs(props: Props) {
-  return <ol className={classNames('flex items-center gap-2', props.className)}>
+  return <ol className={classNames('flex items-center gap-2 print:hidden', props.className)}>
     {props.links.map((link, i) => (
       <li key={i} className="[&:not(:last-child)]:after:content-['›'] inline-flex gap-2 text-slate-500 text-sm">
         {link.href && <Link className="text-brand-alt hover:text-brand hover:underline" href={link.href}>{link.text}</Link>}

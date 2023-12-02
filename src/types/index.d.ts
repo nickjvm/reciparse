@@ -36,6 +36,7 @@ export interface SavedRecipe {
   id: number
   isFavorite: boolean
   notes: string|null
+  handle: string
 }
 
 export interface Nutrition {

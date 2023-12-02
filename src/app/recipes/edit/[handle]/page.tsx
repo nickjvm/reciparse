@@ -1,16 +1,17 @@
 'use client'
 
 import AppLayout from '@/components/layouts/AppLayout'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import { ErrorBoundary } from 'react-error-boundary'
 
 import request from '@/lib/api'
 import { CustomRecipe, Recipe } from '@/types'
 
-import AddEditForm, { FormValues } from '../../addEditForm'
+import AddEditForm from '../../addEditForm'
 import { serializeRecipeForm } from '../../helpers'
 import Breadcrumbs from '@/components/molecules/Breadcrumbs'
 import { useState } from 'react'
+import { FormValues } from '../../types'
 
 type EditRecipe = {
   recipeIngredient: string
@@ -19,15 +20,15 @@ type EditRecipe = {
 
 export default function EditRecipe() {
   const { handle } = useParams()
-  const router = useRouter()
   const [name, setName] = useState('')
   const onSubmit = async (values: FormValues) => {
+    console.log(values)
     await request(`/api/recipes/custom/${handle}`, {
       method: 'PUT',
       multipart: true,
       body: serializeRecipeForm(values),
     })
-    router.push(`/recipes/view/${handle}`)
+    // router.push(`/recipes/view/${handle}`)
   }
 
   return (

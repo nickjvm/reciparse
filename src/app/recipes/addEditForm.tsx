@@ -1,10 +1,11 @@
 'use client'
 
-import { useForm, useFieldArray, Controller } from 'react-hook-form'
-import { parse, Duration } from 'iso8601-duration'
+import { useForm, Controller } from 'react-hook-form'
+import { decode } from 'html-entities'
+import { parse } from 'iso8601-duration'
 import Image from 'next/image'
 import Textarea from '@/components/atoms/Textarea'
-import { MinusIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { XMarkIcon } from '@heroicons/react/24/outline'
 import Button from '@/components/atoms/Button'
 import { useParams, useRouter } from 'next/navigation'
 import React, { useEffect, useRef } from 'react'
@@ -13,22 +14,9 @@ import { CustomRecipe } from '@/types'
 import useAutosizeTextArea from '@/hooks/useAutosizeTextarea'
 import PlaceholderImage from '@/components/atoms/PlaceholderImage'
 import FormError from '@/components/atoms/FormError'
-
-
-export type FormValues = {
-  id?: number
-  handle?: string
-  name: string
-  recipeInstructions: {
-    text: string
-  }[],
-  file?: File
-  image: string
-  recipeYield: number
-  prepTime: Duration
-  cookTime: Duration
-  recipeIngredient: string
-}
+import RecipeInstructions from './recipeInstructions'
+import { FormValues } from './types'
+import Input from '@/components/atoms/Input'
 
 type Props = {
   onSubmit: (values: FormValues) => void
@@ -53,7 +41,14 @@ export default function AddEditForm({ onSubmit, onLoad }: Props) {
     defaultValues: {
       name: '',
       recipeYield: 1,
-      recipeInstructions: [{ text: ''}],
+      recipeInstructions: [{
+        '@type': 'HowToSection',
+        name: 'Directions',
+        itemListElement: [{
+          '@type': 'HowToStep',
+          text: '',
+        }]
+      }],
       prepTime: {
         hours: 0,
         minutes: 0,
@@ -65,16 +60,6 @@ export default function AddEditForm({ onSubmit, onLoad }: Props) {
       image: '',
       recipeIngredient: '',
     }
-  })
-  const { fields, append, remove } = useFieldArray({
-    control,
-    rules: {
-      minLength: {
-        message: 'Enter details for at least one step',
-        value: 1,
-      }
-    },
-    name: 'recipeInstructions',
   })
 
   const recipe = watch()
@@ -98,7 +83,6 @@ export default function AddEditForm({ onSubmit, onLoad }: Props) {
 
         if (finalPrepTime.minutes ?? 0 >= 60) {
           const additionalHours = Math.floor((finalPrepTime.minutes ?? 0) / 60)
-          console.log(finalPrepTime.minutes, additionalHours)
           finalPrepTime.hours = (finalPrepTime.hours ?? 0) + additionalHours
           finalPrepTime.minutes = (finalPrepTime.minutes ?? 0) - (additionalHours * 60)
         }
@@ -106,19 +90,20 @@ export default function AddEditForm({ onSubmit, onLoad }: Props) {
           const additionalHours = Math.floor((finalCookTime.minutes ?? 0) / 60)
           finalCookTime.hours = (finalCookTime.hours ?? 0) + additionalHours
           finalCookTime.minutes = (finalCookTime.minutes ?? 0) - (additionalHours * 60)
-
         }
+
         const defaultValues: FormValues = {
           id,
           name,
           image,
-          recipeIngredient: data.recipeIngredient.join('\n'),
-          recipeInstructions: data.recipeInstructions[0].itemListElement.map(item => ({ text: item.text })),
+          recipeIngredient: data.recipeIngredient.map((s) => decode(s)).join('\n'),
+          recipeInstructions: data.recipeInstructions,
           prepTime: finalPrepTime,
           cookTime: finalCookTime,
           recipeYield,
         }
         reset(defaultValues || {})
+
         if (onLoad) {
           onLoad(data)
         }
@@ -197,7 +182,7 @@ export default function AddEditForm({ onSubmit, onLoad }: Props) {
         </div>
         <div className="md:col-span-9 print:col-span-8">
           <div className="mb-4">
-            <input {...register('name', { required: 'Required'})} autoFocus placeholder="Recipe Title" className="placeholder:text-gray-300 w-full rounded-md border-gray-200 font-display text-brand-alt text-3xl font-bold" />
+            <Input label="Recipe Name" error={!!errors.name?.message} {...register('name', { required: 'Required'})} autoFocus />
             <FormError message={errors.name?.message} />
           </div>
           <div className="flex gap-4 flex-wrap">
@@ -308,40 +293,8 @@ export default function AddEditForm({ onSubmit, onLoad }: Props) {
           />
         </div>
         <div className="col-span-8 md:col-span-5 print:col-span-5 print:mt-2" id="directions">
-          <h2 className="text-xl font-bold mb-2">Directions</h2>
-          <ol className="[counter-reset: step]">
-            {fields.map((field, i) => (
-              <li key={field.id} className="mb-2 before:text-brand-alt grid grid-cols-12 before:content-[counter(step)] before:font-bold before:text-xl print:before:text-right print:before:pr-3 [counter-increment:step]">
-                <span className="grid grid-cols-12 gap-2 flex-grow col-span-11 items-start">
-                  <Controller rules={{ required: 'Required' }} name={`recipeInstructions.${i}.text`} control={control} render={({ field, fieldState }) => (
-                    <div className="col-span-11">
-                      <Textarea className="resize-none w-full rounded-md border-gray-200 col-span-11" {...field} onKeyDown={(e) => {
-                        if (e.code === 'Enter' && !e.shiftKey) {
-                          e.preventDefault()
-                          append({ text: '' })
-                          setFocus(`recipeInstructions.${recipe.recipeInstructions.length}.text`)
-                        }
-                      }} />
-                      <FormError message={fieldState.error?.message} />
-                    </div>
-                  )} />
-                  {fields.length > 1 && (
-                    <button type="button" className="mt-3" onClick={() => remove(i)}>
-                      <MinusIcon className="w-5" />
-                    </button>
-                  )}
-                </span>
-              </li>
-            ))}
-          </ol>
-          <FormError message={errors.recipeInstructions?.root?.message} />
-          {recipe.recipeInstructions[recipe.recipeInstructions.length - 1]?.text && (
-            <div className="grid grid-cols-12">
-              <Button type="button" block appearance="secondary" icon={<PlusIcon className="w-5" />} onClick={() => append({ text: '' })} className="col-span-10 col-start-2">
-                Add step
-              </Button>
-            </div>
-          )}
+          <h2 className="text-xl font-bold mb-2">Directions & Steps</h2>
+          <RecipeInstructions instructions={recipe.recipeInstructions} control={control} setFocus={setFocus} register={register} errors={errors} />
         </div>
       </div>
       <div className="text-center pt-6 border-t border-t-gray-200 mt-6 flex justify-between">

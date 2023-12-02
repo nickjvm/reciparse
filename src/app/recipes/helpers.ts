@@ -1,4 +1,4 @@
-import { FormValues } from './addEditForm'
+import { FormValues } from './types'
 
 export const serializeRecipeForm = (values: FormValues) => {
   const formData = new FormData()
@@ -6,8 +6,7 @@ export const serializeRecipeForm = (values: FormValues) => {
     const value = values[name as keyof FormValues]
     if (Array.isArray(value)) {
       value.forEach((s) => {
-        const { text } = s as { text: string }
-        formData.append(`${name}[]`, text || '')
+        formData.append(`${name}[]`, JSON.stringify(s) || '')
       })
     } else if (name !== 'file' && typeof value === 'object') {
       formData.append(name, JSON.stringify(value))

@@ -16,7 +16,7 @@ import RecipeNotes from '@/components/molecules/RecipeNotes'
 import SaveRecipe from '@/components/atoms/SaveRecipe'
 import Print from '@/components/atoms/Print'
 import { HowToSection, Recipe, SavedRecipe, SupaRecipe } from '@/types'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import request from '@/lib/api'
 import debug from '@/lib/debug'
@@ -30,6 +30,7 @@ interface Props {
 
 export default function Recipe({ recipe }: Props) {
   const { user } = useAuthContext()
+  const router = useRouter()
   const searchParams = useSearchParams()
   const [saved, setSaved] = useState<SavedRecipe|null>(null)
   const [showStickyIngredients, setShowStickyIngredients] = useState(false)
@@ -129,6 +130,17 @@ export default function Recipe({ recipe }: Props) {
     )
   }
 
+  const copy = async () => {
+    try {
+      const { data } = await request('/api/recipes/copy', {
+        method: 'POST',
+        body: JSON.stringify(recipe)
+      })
+      router.push(`/recipes/view/${data.handle}`)
+    } catch (e) {
+      console.log(e)
+    }
+  }
   return (
     <main className="print:bg-white print:min-h-0 md:p-4 md:pb-6 print:p-0 max-w-5xl mx-auto">
       <div className="m-auto max-w-3xl p-4 md:p-8 print:p-0 md:rounded-md ring-brand-alt md:ring-2 print:ring-0 print:shadow-none shadow-lg bg-white">
@@ -155,6 +167,7 @@ export default function Recipe({ recipe }: Props) {
 
                 <Time prepTime={recipe.prepTime} cookTime={recipe.cookTime} totalTime={recipe.totalTime} />
                 <SaveRecipe id={recipe.meta.id} saved={!!saved?.isFavorite} onChange={setSaved} />
+                <button onClick={copy}>copy</button>
                 <Print />
                 <CookMode />
               </div>

@@ -9,30 +9,37 @@ import gtag from '@/lib/gtag'
 import debug from '@/lib/debug'
 
 import { useAuthContext } from '@/context/AuthContext'
-import { useNotificationContext } from '@/context/NotificationContext'
 import { SavedRecipe } from '@/types'
+import { useRouter } from 'next/navigation'
 
 interface Props {
   id: number
   saved: boolean
   onChange?: (value: null|SavedRecipe) => void
 }
-export default function SaveRecipe({ id, saved: _saved, onChange }: Props) {
+export default function SaveRecipe({ id }: Props) {
   const { user, setAuthType } = useAuthContext()
-  const [saved, setSaved] = useState<boolean>(_saved)
-  const { showNotification } = useNotificationContext()
+  const [saved, setSaved] = useState<SavedRecipe|null>(null)
+  const router = useRouter()
 
-  useEffect(() => {
-    setSaved(_saved)
-  }, [_saved])
+  const getSaved = async () => {
+    if (user) {
+      try {
+        const { data }: { data: null|SavedRecipe} = await request(`/api/recipes/saved/${id}`)
+        setSaved(data)
+      } catch (e) {
+        debug(e)
+      }
+    }
+  }
 
   useEffect(() => {
     if (!user) {
-      setSaved(false)
+      setSaved(null)
     } else {
-      setSaved(_saved)
+      getSaved()
     }
-  }, [user])
+  }, [user, id])
 
   const handleClick = async (e: MouseEvent) => {
     e.preventDefault()
@@ -41,26 +48,20 @@ export default function SaveRecipe({ id, saved: _saved, onChange }: Props) {
       return
     }
 
+    if (saved) {
+      return router.push(`/recipes/view/${saved.handle}`)
+    }
+
     try {
-      const { data, error }: { data: null|SavedRecipe, error: null|Error} = await request('/api/recipes/save', {
+      const { data } = await request('/api/recipes/copy/' + id , {
         method: 'POST',
-        body: JSON.stringify({ id, save: !saved })
       })
-      if (error) {
-        showNotification({
-          title: 'Oops',
-          message: 'Something went wrong. Please try again',
-          variant: 'error'
-        })
-      } else {
-        if (!saved) {
-          gtag('save_recipe', { id })
-        }
-        setSaved(!saved)
-        onChange?.(data)
-      }
+
+      gtag('save_recipe', { id })
+
+      router.push(`/recipes/view/${data.handle}`)
     } catch (e) {
-      debug(e)
+      console.log(e)
     }
   }
 

@@ -15,8 +15,9 @@ type ButtonProps = CommonProps & React.ComponentPropsWithoutRef<'button'>
 type AnchorProps = CommonProps & LinkProps
 
 export default function Button({ as, children, icon, className, appearance = 'primary', block, size = 'md', ...props }: ButtonProps|AnchorProps) {
-  const classList = classNames('inline-flex gap-2 items-center rounded-md', {
-    'flex justify-center': block,
+  const classList = classNames('gap-2 items-center rounded-md', {
+    'inline-flex': !block,
+    'flex justify-center w-full': block,
     'px-3 py-1.5 text-sm': size === 'md',
     'px-5 py-2 text-md': size === 'lg',
     'border border-gray-200': appearance === 'secondary',

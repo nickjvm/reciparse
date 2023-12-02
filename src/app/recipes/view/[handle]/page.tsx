@@ -2,9 +2,9 @@
 
 import { Fragment, useEffect, useRef, useState } from 'react'
 import request from '@/lib/api'
-import { HowToSection, Recipe } from '@/types'
+import { CustomRecipe, HowToSection } from '@/types'
 import AppLayout from '@/components/layouts/AppLayout'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import Image from 'next/image'
 import classNames from 'classnames'
 import { decode } from 'html-entities'
@@ -16,25 +16,24 @@ import IngredientsList from '@/components/molecules/Ingredients'
 import NutritionInfo from '@/components/molecules/Nutrition'
 import { useDebounce } from '@/hooks/useDebounce'
 import { ErrorBoundary } from 'react-error-boundary'
-import Button from '@/components/atoms/Button'
 import { useAuthContext } from '@/context/AuthContext'
-import { PencilIcon } from '@heroicons/react/24/solid'
 import RecipeError from '@/components/molecules/RecipeError'
 import Breadcrumbs from '@/components/molecules/Breadcrumbs'
+import Link from 'next/link'
+import ManageRecipe from '@/components/molecules/ManageRecipe'
 
 export default function MyRecipes() {
-  const [recipe, setRecipe] = useState<Recipe|null>(null)
+  const [recipe, setRecipe] = useState<CustomRecipe|null>(null)
   const { handle } = useParams()
   const endRef = useRef<HTMLDivElement>(null)
   const directionsRef = useRef<HTMLDivElement>(null)
-  const router = useRouter()
   const { user } = useAuthContext()
   const [showStickyIngredients, setShowStickyIngredients] = useState(false)
   const showStickyIngredients_debounced = useDebounce<boolean>(showStickyIngredients, 500)
   const [error, setError] = useState<string|null>(null)
 
   useEffect(() => {
-    request(`/api/recipes/custom/${handle}`).then(({ data, error }: { data: null|Recipe, error: null|Error}) => {
+    request(`/api/recipes/custom/${handle}`).then(({ data, error }: { data: null|CustomRecipe, error: null|Error}) => {
       if (error) {
         setError(error.message)
       } else {
@@ -75,7 +74,6 @@ export default function MyRecipes() {
             {section.itemListElement.map((step, i) => (
               <li key={i} className="mb-2 before:text-brand-alt grid grid-cols-12 before:content-[counter(step)] before:font-bold before:text-xl print:before:text-right print:before:pr-3 [counter-increment:step]">
                 <span className="flex-grow col-span-11">
-                  {step.name && decode(step.name) !== step.text && <span className="block font-bold">{decode(step.name)}</span>}
                   <span dangerouslySetInnerHTML={{ __html: step.text }} />
                 </span>
               </li>
@@ -93,13 +91,20 @@ export default function MyRecipes() {
       <ErrorBoundary fallback={<div>Error</div>} onError={console.log}>
         <main className="print:bg-white print:min-h-0 md:p-4 md:pb-6 print:p-0 max-w-5xl mx-auto">
           <div className="m-auto max-w-3xl">
-            {recipe && recipe.user_id === user?.id && (
-              <Breadcrumbs className="mb-4" links={[
-                { href: '/account', text: 'My account' },
-                { href: '/recipes', text: 'My recipes' },
-                { text: recipe.name },
-              ]} />
-            )}
+            <div className="flex">
+              {recipe && recipe.user_id === user?.id && (
+                <Breadcrumbs className="mb-4" links={[
+                  { href: '/account', text: 'My account' },
+                  { href: '/recipes', text: 'My recipes' },
+                  { text: recipe.name },
+                ]} />
+              )}
+              {user && user.id === recipe?.user_id && (
+                <div className="ml-auto print:hidden">
+                  <ManageRecipe recipe={recipe} />
+                </div>
+              )}
+            </div>
             {error && (
               <RecipeError className="mt-8" errorTitle="Unauthorized." actionText="Back to home" actionUrl="/" errorText="The creator of this recipe has not made it public."  />
             )}
@@ -116,8 +121,8 @@ export default function MyRecipes() {
                       <div className="mb-4">
                         <h2 className="font-display text-brand-alt text-3xl font-bold">
                           {decode(recipe.name)}
-                          {user && user.id === recipe.user_id && <Button appearance="icon" className="opacity-40 hover:opacity-100 focus-visible:opacity-100 print:hidden" icon={<PencilIcon className="w-5" />} onClick={() => router.push(`/recipes/edit/${handle}`)} />}
                         </h2>
+                        {recipe.meta.source && <p className="text-slate-500 text-sm">from <Link target="_blank" href={recipe.meta.raw_source}>{recipe.meta.source}</Link></p>}
                       </div>
                       <div className="flex gap-4 flex-wrap">
                         {recipe.recipeYield && (
@@ -138,7 +143,7 @@ export default function MyRecipes() {
                       <IngredientsList ingredients={recipe.recipeIngredient} showStickyIngredients={showStickyIngredients_debounced} />
                     </div>
                     <div className="col-span-8 md:col-span-5 print:col-span-5 print:mt-2" id="directions" ref={directionsRef}>
-                      {recipe.recipeInstructions.map(renderInstructionSection)}
+                      {recipe.recipeInstructions?.map(renderInstructionSection)}
                       <div className="mt-4">
                         <NutritionInfo
                           data={recipe.nutrition}

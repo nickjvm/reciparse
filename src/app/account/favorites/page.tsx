@@ -32,7 +32,7 @@ export default function Page() {
     } else if (!loading && !count) {
       return <RecipeError errorTitle="Start saving!" image="/favorite.svg" errorText="Looks like you haven't saved any recipes yet." className="mb-6" />
     } else {
-      return <SearchList title="My Favorites" endpoint="/api/recipes/favorites" internal loading={loading} count={count} error={error} />
+      return <SearchList title="My Favorites" endpoint="/api/recipes/favorites" loading={loading} count={count} error={error} />
     }
   }
 
