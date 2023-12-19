@@ -48,7 +48,7 @@ export function AuthContextProvider({ children }: Props) {
   }, [authType])
 
   useEffect(() => {
-    if (destination && window.location.href !== destination) {
+    if (destination && pathname !== destination) {
       router.push(destination)
     }
     setDestination(null)
@@ -141,8 +141,6 @@ export function AuthContextProvider({ children }: Props) {
           sessionStorage.setItem('authdelay', '1')
           localStorage.removeItem('access_token')
           localStorage.removeItem('expires_at')
-        } else if (event === 'PASSWORD_RECOVERY') {
-          setDestination('/update-password')
         } else {
           if (session) {
             // sometimes on first pageview, auth.getUser hangs and never resolves.

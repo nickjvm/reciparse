@@ -1,5 +1,6 @@
 import { AuthError, User } from '@supabase/supabase-js'
 import supabase from '../supabaseClient'
+import getUrl from '../api/getUrl'
 
 interface Payload {
   email: string
@@ -54,5 +55,7 @@ export const signOut = async () => {
 }
 
 export const reset = async (email: string) => {
-  return await supabase.auth.resetPasswordForEmail(email)
+  return await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: getUrl('/update-password')
+  })
 }
