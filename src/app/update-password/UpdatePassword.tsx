@@ -1,11 +1,11 @@
 'use client'
 import { FormEvent, useState } from 'react'
+import { AuthError } from '@supabase/gotrue-js'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useNotificationContext } from '@/context/NotificationContext'
 import supabase from '@/lib/supabaseClient'
-import { AuthError } from '@supabase/gotrue-js'
-import { debug } from 'console'
+import debug from '@/lib/debug'
 
 export default function UpdatePassword() {
   const [password, setPassword] = useState('')
