@@ -1,9 +1,11 @@
 'use client'
 import { FormEvent, useState } from 'react'
+import { AuthError } from '@supabase/gotrue-js'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useNotificationContext } from '@/context/NotificationContext'
 import supabase from '@/lib/supabaseClient'
+import debug from '@/lib/debug'
 
 export default function UpdatePassword() {
   const [password, setPassword] = useState('')
@@ -30,8 +32,13 @@ export default function UpdatePassword() {
           timeout: 5000
         })
       }
-    } catch (e) {
-      setError(e as string || 'Something went wrong. Please try again.')
+    } catch (err) {
+      debug(err)
+      if (err instanceof AuthError || err instanceof Error) {
+        setError(err?.message || 'Something went wrong. Please try again.')
+      } else {
+        setError('Something went wrong. Please try again.')
+      }
     }
   }
 
