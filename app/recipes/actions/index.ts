@@ -29,6 +29,6 @@ export async function readCollections() {
   return result
 }
 
-export async function deleteTodoById(id: string) {}
+// export async function deleteTodoById(id: string) {}
 
-export async function updateTodoById(id: string, completed: boolean) {}
+// export async function updateTodoById(id: string, completed: boolean) {}

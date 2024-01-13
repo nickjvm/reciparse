@@ -1,5 +1,4 @@
 import React from 'react'
-import { parseRecipe } from './actions'
 import { NextPage } from '@/lib/types'
 import Image from 'next/image'
 import { cn, parseDuration } from '@/lib/utils'
@@ -10,10 +9,19 @@ import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/solid'
 import Print from '@/components/ui/Print'
 import SaveRecipe from '@/components/ui/SaveRecipe'
 import ShareRecipe from '@/components/ui/ShareRecipe'
+import createSupabaseServerClient from '@/lib/supabase/server'
+import { getRecipeIngredients } from '@/app/parse/actions'
 
-export default async function Page({ searchParams }: NextPage) {
+export default async function Page({ params }: NextPage) {
   try {
-    const recipe = await parseRecipe(searchParams.url)
+    const supabase = await createSupabaseServerClient()
+
+    const { data, error } = await supabase.from('recipes').select().eq('id', params.handle).single()
+
+    const recipe = {
+      ...data,
+      ingredients: await getRecipeIngredients(data.ingredients),
+    }
 
     const prepTime = parseDuration(recipe.prepTime)
     const cookTime = parseDuration(recipe.cookTime)
@@ -30,8 +38,8 @@ export default async function Page({ searchParams }: NextPage) {
           <div className={cn('bg-slate-50 p-4 print:p-0 rounded-md', recipe.image ? 'col-span-10' : 'col-span-12 px-6')}>
             <div className="mb-3">
               <h1 className="text-brand font-display text-3xl font-semibold">{recipe.name}</h1>
-              {searchParams.url && <p className="text-slate-600 text-sm hover:underline line-clamp-1">
-                <Link target="_blank" href={searchParams.url}>{searchParams.url}</Link>
+              {recipe.source && <p className="text-slate-600 text-sm hover:underline line-clamp-1">
+                <Link target="_blank" href={recipe.source}>{recipe.source}</Link>
               </p>}
             </div>
             <div className="flex space-x-3">
@@ -62,7 +70,7 @@ export default async function Page({ searchParams }: NextPage) {
             </div>
             <div className="space-x-3 mt-3">
               <Print />
-              <SaveRecipe recipe={recipe} source={searchParams.url} />
+              {/* <SaveRecipe recipe={recipe} source={searchParams.url} /> */}
               <ShareRecipe recipe={recipe} />
             </div>
           </div>
@@ -161,12 +169,12 @@ export default async function Page({ searchParams }: NextPage) {
         <h1 className="font-display text-4xl text-primary text-center font-semibold mb-3">{(e as Error).message}</h1>
         <p>We searched high and low, but couldn&apos;t find all of the information we needed to parse the recipe.</p>
       </div>
-      {searchParams.url && <Button variant="outline" size="lg">
+      {/* {searchParams.url && <Button variant="outline" size="lg">
         <Link href={searchParams.url} target="_blank" className="flex gap-2 items-center">
           Go to the original site
           <ArrowTopRightOnSquareIcon className="w-5" />
         </Link>
-      </Button>}
+      </Button>} */}
     </div>
   }
 }

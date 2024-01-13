@@ -1,11 +1,21 @@
 export type NextPage = {
-  params: { slug: string }
+  params: { [key: string]: string }
   searchParams: { [key: string]: string | undefined }
 }
 
 export type Ingredient = {
   primary: string;
   subtext?: string;
+}
+
+export type InstructionSection = {
+  name: string
+  steps: InstructionStep[]
+}
+
+export type InstructionStep = {
+  name?: string
+  text: string
 }
 
 export type HowToSection = {
@@ -21,3 +31,18 @@ export type HowToStep = {
 }
 
 export type Instructions = string[]|HowToSection[]
+
+export type Recipe = {
+  id?: string;
+  name: string;
+  yield: number;
+  prepTime: string;
+  cookTime: string;
+  totalTime: string;
+  ingredients: Ingredient[]|string[];
+  instructions: InstructionSection[];
+  nutrition?: { [key: string]: string };
+  image: string;
+  collection_id?: string;
+  source?: string;
+}

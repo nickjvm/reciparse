@@ -5,19 +5,7 @@ import { decode } from 'html-entities'
 import { HTMLElement, parse } from 'node-html-parser'
 
 import { findClosingBracketMatchIndex, isValidUrl, pick, stripTags } from '@/lib/utils'
-import { HowToSection, HowToStep, Ingredient } from '@/lib/types'
-
-type Recipe = {
-  name: string;
-  yield: number;
-  prepTime: string;
-  cookTime: string;
-  totalTime: string;
-  ingredients: Ingredient[];
-  instructions: HowToSection[];
-  nutrition?: { [key: string]: string };
-  image: string;
-}
+import { HowToSection, HowToStep, Ingredient, InstructionSection, Recipe } from '@/lib/types'
 
 const isPinterestLink = (location: URL) => location.hostname === 'www.pinterest.com' || location.hostname === 'pin.it'
 
@@ -103,7 +91,7 @@ const cleanIngredientString = (ingredient: string): Ingredient => {
   }
 }
 
-function getRecipeIngredients(ingredients: string[]): Ingredient[] {
+export async function getRecipeIngredients(ingredients: string[]): Promise<Ingredient[]> {
   if (!ingredients) {
     return []
   }
@@ -123,31 +111,28 @@ function getRecipeIngredients(ingredients: string[]): Ingredient[] {
   }).filter((r) => r.trim()).map(cleanIngredientString)
 }
 
-function getRecipeInstructions(instructions?: string|string[]|HowToStep[]|HowToSection[]): HowToSection[] {
+function getRecipeInstructions(instructions?: string|string[]|HowToStep[]|HowToSection[]): InstructionSection[] {
   if (!instructions) {
     return []
   }
 
   if (typeof instructions === 'string') {
     return [{
-      '@type': 'HowToSection',
       name: 'Instructions',
-      itemListElement: instructions
+      steps: instructions
         .replaceAll(',    ', '\n\n')
         .replaceAll('&nbsp;', ' ')
         .split('\n\n').map((step) => ({
-          '@type': 'HowToStep',
           text: step.replace(/\d+[.\s]+/, ''),
         }))
     }]
   }
 
-  const steps = instructions.reduce((acc: HowToSection[], _instruction) => {
+  const steps = instructions.reduce((acc: InstructionSection[], _instruction) => {
     let instruction = _instruction
 
     if (typeof instruction === 'string') {
-      acc[0].itemListElement.push({
-        '@type': 'HowToStep',
+      acc[0].steps.push({
         text: stripTags(instruction),
       })
     } else if (instruction['@type'] === 'HowToStep') {
@@ -160,14 +145,12 @@ function getRecipeInstructions(instructions?: string|string[]|HowToStep[]|HowToS
             ? instruction.text.indexOf(allInOne[i + 1])
             : instruction.text.length
           const text = instruction.text.slice(start, end).trim()
-          acc[0].itemListElement.push({
-            '@type': 'HowToStep',
+          acc[0].steps.push({
             text: stripTags(text),
           })
         })
       } else {
-        acc[0].itemListElement.push({
-          '@type': 'HowToStep',
+        acc[0].steps.push({
           name: stripTags(instruction.name) === stripTags(instruction.text)
             ? undefined
             : stripTags(instruction.name),
@@ -175,21 +158,18 @@ function getRecipeInstructions(instructions?: string|string[]|HowToStep[]|HowToS
         })
       }
     } else if (instruction['@type'] === 'HowToSection') {
-      instruction = {
-        ...instruction,
-        itemListElement: instruction.itemListElement.map((item) => ({
-          ...item,
+      acc.push({
+        name: instruction.name,
+        steps: instruction.itemListElement.map((item) => ({
           name: stripTags(item.name),
           text: stripTags(item.text),
         })),
-      }
-      acc.push(instruction)
+      })
     }
     return acc
   }, [{
-    name: 'Directions',
-    '@type': 'HowToSection',
-    itemListElement: [],
+    name: 'Instructions',
+    steps: [],
   }])
 
   return steps
@@ -217,7 +197,6 @@ export async function parseRecipe(url?: string): Promise<Recipe> {
   if (!url || !isValidUrl(url)) {
     throw new Error('The URL provided is invalid.')
   }
-
 
   const responseHtml = await fetch(url).then((r) => {
     if (r.ok) {
@@ -337,7 +316,7 @@ export async function parseRecipe(url?: string): Promise<Recipe> {
   const data = {
     ...recipe,
     ...pick(recipeData, ['name', 'prepTime', 'cookTime', 'totalTime']),
-    ingredients: getRecipeIngredients(recipeData.recipeIngredient),
+    ingredients: await getRecipeIngredients(recipeData.recipeIngredient),
     instructions: getRecipeInstructions(recipeData.recipeInstructions),
     nutrition: getRecipeNutrition(recipeData.nutrition),
     image: getRecipeImage(recipeData.image),
