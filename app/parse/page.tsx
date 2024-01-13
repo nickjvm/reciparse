@@ -83,14 +83,14 @@ export default async function Page({ searchParams }: NextPage) {
             <div className="space-y-3 print:space-y-1">
               {recipe.instructions.map((section, i) => {
                 return (
-                  <>
+                  <React.Fragment key={i}>
                     <h2 key={i} className="text-2xl font-semibold mb-2">{section.name}</h2>
                     <ol className={cn('space-y-2 print:space-y-0', section.itemListElement.length > 1 && 'list-decimal pl-8')}>
                       {section.itemListElement.map((step, j) => {
                         return <li key={j}>{step.name !== step.text && <strong>{step.name}</strong>} {step.text}</li>
                       })}
                     </ol>
-                  </>
+                  </React.Fragment>
                 )
               })}
             </div>
@@ -151,7 +151,7 @@ export default async function Page({ searchParams }: NextPage) {
     return <div className="max-w-xl m-auto text-center space-y-7 mt-5">
       <div>
         <Image className="inline-block mb-5 m-auto" src="/404.svg" alt="parse error" width="150" height="150" />
-        <h1 className="font-display text-4xl text-primary text-center mb-4 font-semibold mb-3">{(e as Error).message}</h1>
+        <h1 className="font-display text-4xl text-primary text-center font-semibold mb-3">{(e as Error).message}</h1>
         <p>We searched high and low, but couldn&apos;t find all of the information we needed to parse the recipe.</p>
       </div>
       {searchParams.url && <Button variant="outline" size="lg">
