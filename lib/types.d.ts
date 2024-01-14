@@ -46,3 +46,8 @@ export type Recipe = {
   collection_id?: string;
   source?: string;
 }
+
+export type Collection = {
+  id: string;
+  name: string;
+}

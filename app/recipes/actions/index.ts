@@ -1,6 +1,7 @@
 'use server'
 
 import createSupabaseServerClient from '@/lib/supabase/server'
+import { Collection, Recipe } from '@/lib/types'
 import { revalidatePath, unstable_noStore } from 'next/cache'
 
 export async function createTodo(title: string) {
@@ -11,22 +12,46 @@ export async function createTodo(title: string) {
   return JSON.stringify(result)
 }
 
-export async function readTodo() {
+type SearchParams = {
+  q?: string
+  page?: string
+  collection_id?: string
+}
+
+export async function getRecipes({ q, page, collection_id }: SearchParams) {
   unstable_noStore()
   const supabase = await createSupabaseServerClient()
 
-  const result = await supabase.from('recipes').select('*, collections(name)')
+  const query = supabase.from('recipes').select('id, name, image, source, collections(name)', { count: 'exact' })
 
-  return result
+  if (q) {
+    query.ilike('name', `%${q}%`)
+  }
+
+  if (collection_id) {
+    query.eq('collection_id', collection_id)
+  }
+
+  if (page) {
+    const pageIndex = Number(page) - 1
+    const perPage = 25
+    query.range(pageIndex * perPage, (pageIndex * perPage) + (perPage - 1))
+  }
+
+  query.order('created_at', { ascending: false })
+
+  const result = await query.select()
+
+  return result as { data: Recipe[] }
 }
 
 export async function readCollections() {
   unstable_noStore()
   const supabase = await createSupabaseServerClient()
 
-  const result = await supabase.from('collections').select('name, recipes(name)')
+  const result = await supabase.from('collections').select('name, id, recipes(name)')
 
-  return result
+  return result as { data: Collection[] }
 }
 
 // export async function deleteTodoById(id: string) {}

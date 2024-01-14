@@ -4,10 +4,7 @@ import Image from 'next/image'
 import { cn, parseDuration } from '@/lib/utils'
 import Link from 'next/link'
 import CookMode from '@/components/ui/CookMode'
-import { Button } from '@/components/ui/button'
-import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/solid'
 import Print from '@/components/ui/Print'
-import SaveRecipe from '@/components/ui/SaveRecipe'
 import ShareRecipe from '@/components/ui/ShareRecipe'
 import createSupabaseServerClient from '@/lib/supabase/server'
 import { getRecipeIngredients } from '@/app/parse/actions'
@@ -16,7 +13,7 @@ export default async function Page({ params }: NextPage) {
   try {
     const supabase = await createSupabaseServerClient()
 
-    const { data, error } = await supabase.from('recipes').select().eq('id', params.handle).single()
+    const { data } = await supabase.from('recipes').select().eq('id', params.handle).single()
 
     const recipe = {
       ...data,
