@@ -35,25 +35,25 @@ export default async function Page({ searchParams }: NextPage) {
               </p>}
             </div>
             <div className="flex space-x-3">
-              {prepTime && (
+              {!!prepTime && (
                 <div className="min-w-[150px]">
                   <h3 className="font-semibold">Prep Time</h3>
                   {prepTime}
                 </div>
               )}
-              {cookTime && (
+              {!!cookTime && (
                 <div className="min-w-[150px]">
                   <h3 className="font-semibold">Cook Time</h3>
                   {cookTime}
                 </div>
               )}
-              {totalTime && (
+              {!!totalTime && (
                 <div className="min-w-[150px]">
                   <h3 className="font-semibold">Total Time</h3>
                   {totalTime}
                 </div>
               )}
-              {recipe.yield && (
+              {!!recipe.yield && (
                 <div className="min-w-[150px]">
                   <h3 className="font-semibold">Recipe Yield</h3>
                   {recipe.yield} serving{recipe.yield !== 1 && 's'}

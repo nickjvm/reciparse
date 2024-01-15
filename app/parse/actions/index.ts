@@ -6,6 +6,8 @@ import { HTMLElement, parse } from 'node-html-parser'
 
 import { findClosingBracketMatchIndex, isValidUrl, pick, stripTags } from '@/lib/utils'
 import { HowToSection, HowToStep, Ingredient, InstructionSection, Recipe } from '@/lib/types'
+import createSupabaseServerClient from '@/lib/supabase/server'
+import readUserSession from '@/lib/actions'
 
 const isPinterestLink = (location: URL) => location.hostname === 'www.pinterest.com' || location.hostname === 'pin.it'
 
@@ -153,13 +155,13 @@ function getRecipeInstructions(instructions?: string|string[]|HowToStep[]|HowToS
         acc[0].steps.push({
           name: stripTags(instruction.name) === stripTags(instruction.text)
             ? undefined
-            : stripTags(instruction.name),
+            : stripTags(decode(instruction.name)),
           text: stripTags(instruction.text),
         })
       }
     } else if (instruction['@type'] === 'HowToSection') {
       acc.push({
-        name: instruction.name,
+        name: decode(instruction.name),
         steps: instruction.itemListElement.map((item) => ({
           name: stripTags(item.name),
           text: stripTags(item.text),
@@ -330,5 +332,24 @@ export async function parseRecipe(url?: string): Promise<Recipe> {
   } else if (!data.name) {
     throw new Error('Unable to find a recipe name.')
   }
+
+  const supabase = await createSupabaseServerClient()
+  const { data: sessionData } = await readUserSession()
+  const response = await supabase.from('parsed').upsert({
+    ...pick(data, ['name', 'image']),
+    url
+  }, {
+    onConflict: 'url'
+  }).select().single()
+
+  if (response.data?.id && sessionData?.session) {
+    await supabase.from('history').upsert({
+      user_id: sessionData.session.user.id,
+      parsed_id: response.data.id
+    }, {
+      onConflict: 'user_id, parsed_id'
+    })
+  }
+
   return data
 }

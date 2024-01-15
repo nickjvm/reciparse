@@ -66,7 +66,6 @@ export function parseDuration(isoDuration: string): string|null {
 
     if (config.minutes >= 60) {
       const additionalHours = Math.floor(config.minutes / 60)
-      console.log(additionalHours)
       config.hours += additionalHours
       config.minutes -= additionalHours * 60
     }

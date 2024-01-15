@@ -28,7 +28,7 @@ export default function Card({ url, image, title, subtitle, className, loading }
     )
   } else {
     return (
-      <div className={cn('self-stretch w-[33vw] min-w-[33vw] md:w-[19vw] md:min-w-[19vw] xl:w-auto xl:min-w-0 max-w-1/8 shrink-0 flex-1 flex-grow', className)}>
+      <div className={cn('self-stretch shrink-0 flex-1 flex-grow', className)}>
         <Link
           href={url}
           className="flex flex-col md:hover:bg-white md:hover:ring-brand transition ring-2 ring-transparent rounded md:p-3 md:-mx-1.5 h-full">

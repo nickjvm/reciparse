@@ -44,6 +44,7 @@ export type Recipe = {
   nutrition?: { [key: string]: string };
   image: string;
   collection_id?: string;
+  collection?: Collection;
   source?: string;
 }
 

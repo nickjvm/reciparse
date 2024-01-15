@@ -16,6 +16,9 @@ module.exports = {
       },
     },
     extend: {
+      width: {
+        '1/8': '12.5%',
+      },
       colors: {
         'brand': '#7b3366',
         'brand-alt': '#b22066',

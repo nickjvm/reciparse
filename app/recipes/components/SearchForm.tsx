@@ -3,7 +3,7 @@
 import { useDebounce } from '@/lib/hooks/useDebounce'
 import { Collection } from '@/lib/types'
 import { useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 type Props = {
   onChange: (args: { q: string; collection_id: string }) => void;
@@ -18,9 +18,13 @@ export default function SearchForm({ onChange, collections }: Props) {
 
   const [collection, setCollection] = useState<string>(searchParams.get('collection') || '')
 
+  const prevCollectionRef = useRef<string>(collection)
   useEffect(() => {
-    onChange({ q: query, collection_id: collection})
-  }, [debouncedQuery, collection])
+    if (debouncedQuery !== query || prevCollectionRef.current !== collection) {
+      prevCollectionRef.current = collection
+      onChange({ q: query, collection_id: collection})
+    }
+  }, [debouncedQuery, collection, query])
 
   return (
     <>

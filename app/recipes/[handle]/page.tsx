@@ -8,11 +8,14 @@ import Print from '@/components/ui/Print'
 import ShareRecipe from '@/components/ui/ShareRecipe'
 import createSupabaseServerClient from '@/lib/supabase/server'
 import { getRecipeIngredients } from '@/app/parse/actions'
+import readUserSession from '@/lib/actions'
+import { decode } from 'html-entities'
 
 export default async function Page({ params }: NextPage) {
   try {
     const supabase = await createSupabaseServerClient()
 
+    const { data: sessionData } = await readUserSession()
     const { data } = await supabase.from('recipes').select().eq('id', params.handle).single()
 
     const recipe = {
@@ -20,6 +23,14 @@ export default async function Page({ params }: NextPage) {
       ingredients: await getRecipeIngredients(data.ingredients),
     }
 
+    if (data?.id && sessionData?.session) {
+      await supabase.from('history').upsert({
+        user_id: sessionData.session.user.id,
+        recipe_id: data.id
+      }, {
+        onConflict: 'user_id, recipe_id'
+      })
+    }
     const prepTime = parseDuration(recipe.prepTime)
     const cookTime = parseDuration(recipe.cookTime)
     const totalTime = parseDuration(recipe.totalTime)
@@ -96,7 +107,7 @@ export default async function Page({ params }: NextPage) {
               {recipe.instructions.map((section, i) => {
                 return (
                   <React.Fragment key={i}>
-                    <h2 key={i} className="text-2xl font-semibold mb-2">{section.name}</h2>
+                    <h2 key={i} className="text-2xl font-semibold mb-2">{decode(section.name)}</h2>
                     <ol className={cn('space-y-2 print:space-y-0', section.steps.length > 1 && 'list-decimal pl-8')}>
                       {section.steps.map((step, j) => {
                         return <li key={j}>{step.name !== step.text && <strong>{step.name}</strong>} {step.text}</li>

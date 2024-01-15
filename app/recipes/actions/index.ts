@@ -22,10 +22,12 @@ export async function getRecipes({ q, page, collection_id }: SearchParams) {
   unstable_noStore()
   const supabase = await createSupabaseServerClient()
 
-  const query = supabase.from('recipes').select('id, name, image, source, collections(name)', { count: 'exact' })
+  const query = supabase.from('recipes').select('id, name, image, source, collection:collections(name)', { count: 'exact' })
 
   if (q) {
     query.ilike('name', `%${q}%`)
+    // query.ilike('collection.name', `%${q}%`)
+    // query.or(`name.ilike.%${q}%, collections.name.ilike.%${q}%`, { foreignTable: 'collections' })
   }
 
   if (collection_id) {
@@ -40,9 +42,9 @@ export async function getRecipes({ q, page, collection_id }: SearchParams) {
 
   query.order('created_at', { ascending: false })
 
-  const result = await query.select()
+  const result = await query
 
-  return result as { data: Recipe[] }
+  return result
 }
 
 export async function readCollections() {

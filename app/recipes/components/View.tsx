@@ -5,7 +5,7 @@ import SearchForm from './SearchForm'
 import { Collection, Recipe } from '@/lib/types'
 import Card from '@/components/ui/atoms/Card'
 import { getRecipes } from '../actions'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 type Props = {
   recipes: Recipe[]
@@ -16,6 +16,7 @@ export default function View({ recipes: initialRecipes, collections, }: Props) {
   const [isLoading, startTransition] = useTransition()
   const router = useRouter()
   const pathname = usePathname()
+  const searchParams = useSearchParams()
 
   const handleChange = (args: { q: string, collection_id: string }) => {
     startTransition(async () => {
@@ -30,7 +31,7 @@ export default function View({ recipes: initialRecipes, collections, }: Props) {
       router.push(`${pathname}?${searchParams}`)
 
       const { data: recipes } = await getRecipes(args)
-      setRecipes(recipes)
+      setRecipes(recipes as unknown as Recipe[])
     })
   }
 
@@ -42,7 +43,13 @@ export default function View({ recipes: initialRecipes, collections, }: Props) {
       </div>
       <div className="grid grid-cols-5 gap-3">
         {recipes?.map(recipe => {
-          const subtitle = recipe.source ? new URL(recipe.source).hostname : undefined
+          let subtitle
+          const source = recipe.source ? new URL(recipe.source).hostname : undefined
+          if (!searchParams.get('collection')) {
+            subtitle = recipe.collection?.name ? `Saved to ${recipe.collection.name}` : source
+          } else if (source) {
+            subtitle = source.replace('www.', '')
+          }
           return (
             <Card
               loading={isLoading}
