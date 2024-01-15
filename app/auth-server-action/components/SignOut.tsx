@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
-import createSupabaseServerClient from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
+import { Button } from '@/components/ui/button'
+import createSupabaseServerClient from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
 
 export default function SignOut() {
   const logout = async () => {

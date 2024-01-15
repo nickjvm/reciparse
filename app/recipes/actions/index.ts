@@ -1,7 +1,7 @@
 'use server'
 
 import createSupabaseServerClient from '@/lib/supabase/server'
-import { Collection, Recipe } from '@/lib/types'
+import { Collection } from '@/lib/types'
 import { revalidatePath, unstable_noStore } from 'next/cache'
 
 export async function createTodo(title: string) {
