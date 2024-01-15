@@ -5,7 +5,7 @@ import createSupabaseServerClient from '@/lib/supabase/server'
 export default async function EditRecipe({ params }: NextPage) {
   const supabase = await createSupabaseServerClient()
   const { data: recipe } = await supabase.from('recipes').select().eq('id', params.handle).single()
-
+  const { data: collections } = await supabase.from('collections').select()
   if (!recipe) {
     return null
   }
@@ -13,7 +13,7 @@ export default async function EditRecipe({ params }: NextPage) {
   return (
     <div className="max-w-5xl m-auto">
       <h1 className="font-display text-primary text-3xl mb-6">Edit {recipe.name} Recipe</h1>
-      <TabNav recipe={recipe} />
+      <TabNav recipe={recipe} collections={collections || []} />
     </div>
   )
 }

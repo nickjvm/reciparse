@@ -35,17 +35,22 @@ export type Instructions = string[]|HowToSection[]
 export type Recipe = {
   id?: string;
   name: string;
-  yield: number;
-  prepTime: string;
-  cookTime: string;
-  totalTime: string;
+  yield?: number;
+  prepTime?: string;
+  cookTime?: string;
+  totalTime?: string;
   ingredients: Ingredient[]|string[];
   instructions: InstructionSection[];
   nutrition?: { [key: string]: string };
-  image: string;
+  image?: string;
   collection_id?: string;
   collection?: Collection;
   source?: string;
+}
+
+export type DBRecipe = Omit<Recipe, 'ingredients'|'id'> & {
+  id: string
+  ingredients: string[]
 }
 
 export type Collection = {
