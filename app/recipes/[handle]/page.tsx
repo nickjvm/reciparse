@@ -16,7 +16,7 @@ import { PencilIcon } from '@heroicons/react/24/outline'
 import { Button } from '@/components/ui/button'
 import SaveRecipe from '@/components/ui/SaveRecipe'
 
-export default async function Page({ params, pathn}: NextPage) {
+export default async function Page({ params }: NextPage) {
   try {
     const headersList = headers()
     const supabase = await createSupabaseServerClient()

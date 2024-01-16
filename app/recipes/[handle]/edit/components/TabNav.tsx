@@ -10,12 +10,13 @@ import { Switch } from '@headlessui/react'
 import * as Tabs from '@radix-ui/react-tabs'
 import Link from 'next/link'
 import DurationInput from './DurationInput'
-import { updateRecipe } from '../actions'
+import { deleteRecipe, updateRecipe } from '../actions'
 import { useToast } from '@/components/ui/use-toast'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { TrashIcon } from '@radix-ui/react-icons'
 import SectionSteps from './SectionSteps'
 import FormSchema from '../schema'
+import DeleteRecipe from './DeleteRecipe'
 
 type Props = {
   recipe: DBRecipe
@@ -95,7 +96,7 @@ export default function TabNav({ recipe, collections }: Props) {
               {tab.label}
             </Tabs.Trigger>
           ))}
-
+          <DeleteRecipe id={recipe.id} onConfirm={deleteRecipe} />
         </Tabs.List>
         <div className="col-span-3">
           <Tabs.Content value="general">

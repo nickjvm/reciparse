@@ -1,5 +1,6 @@
 'use server'
 
+import readUserSession from '@/lib/actions'
 import createSupabaseServerClient from '@/lib/supabase/server'
 import { Recipe } from '@/lib/types'
 import { pick } from '@/lib/utils'
@@ -14,4 +15,11 @@ export async function updateRecipe(id: string, values: Recipe) {
   }
 
   return response
+}
+
+export async function deleteRecipe(id: string) {
+  const supabase = await createSupabaseServerClient()
+  const { data } = await readUserSession()
+
+  return await supabase.from('recipes').delete().eq('id', id).eq('created_by', data.session?.user.id)
 }
