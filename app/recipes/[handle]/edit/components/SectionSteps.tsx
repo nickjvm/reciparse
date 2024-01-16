@@ -27,7 +27,7 @@ export default function SectionSteps({
                   {...form.register(`instructions.${sectionIndex}.steps.${j}.text`)}
                   className="bg-white flex h-24 w-full rounded-md border border-input px-3 py-1 pr-14 text-md shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                 />
-                {steps.length > 1 && <Button className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity group-hover:bg-slate-100" variant="ghost" onClick={() => removeStep(j)}><TrashIcon /></Button>}
+                {steps.length > 1 && <Button type="button" className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity group-hover:bg-slate-100" variant="ghost" onClick={() => removeStep(j)}><TrashIcon /></Button>}
               </div>
               <div className="text-red-800 mt-2 text-sm">{form.formState.errors.instructions?.[sectionIndex]?.steps?.[j]?.text?.message}</div>
             </li>
@@ -35,11 +35,11 @@ export default function SectionSteps({
         })}
       </ol>
       <div className="ml-6 space-x-3">
-        <Button variant="outline" onClick={() => addStep({
+        <Button variant="outline" type="button" onClick={() => addStep({
           text: ''
         })}>Add step to section</Button>
         {addSection && (
-          <Button onClick={() => {
+          <Button type="button" onClick={() => {
             addSection({
               name: '',
               steps: [{

@@ -22,7 +22,7 @@ export async function getRecipes({ q, page, collection_id }: SearchParams) {
   unstable_noStore()
   const supabase = await createSupabaseServerClient()
 
-  const query = supabase.from('recipes').select('id, name, image, source, collection:collections(name)', { count: 'exact' })
+  const query = supabase.from('recipes').select('*, collection:collections(name)', { count: 'exact' })
 
   if (q) {
     query.ilike('name', `%${q}%`)

@@ -1,4 +1,6 @@
 import React from 'react'
+import { headers } from 'next/headers'
+
 import { NextPage } from '@/lib/types'
 import Image from 'next/image'
 import { cn, parseDuration } from '@/lib/utils'
@@ -10,9 +12,13 @@ import createSupabaseServerClient from '@/lib/supabase/server'
 import { getRecipeIngredients } from '@/app/parse/actions'
 import readUserSession from '@/lib/actions'
 import { decode } from 'html-entities'
+import { PencilIcon } from '@heroicons/react/24/outline'
+import { Button } from '@/components/ui/button'
+import SaveRecipe from '@/components/ui/SaveRecipe'
 
-export default async function Page({ params }: NextPage) {
+export default async function Page({ params, pathn}: NextPage) {
   try {
+    const headersList = headers()
     const supabase = await createSupabaseServerClient()
 
     const { data: sessionData } = await readUserSession()
@@ -78,8 +84,17 @@ export default async function Page({ params }: NextPage) {
             </div>
             <div className="space-x-3 mt-3">
               <Print />
-              {/* <SaveRecipe recipe={recipe} source={searchParams.url} /> */}
               <ShareRecipe recipe={recipe} />
+              {sessionData?.session?.user?.id === recipe.created_by
+                ? (
+                  <Button>
+                    <Link className="print:hidden hidden sm:inline-flex gap-2" href={`/recipes/${recipe.id}/edit`}>
+                      <PencilIcon className="w-5 h-5" /> Edit
+                    </Link>
+                  </Button>
+                )
+                : <SaveRecipe recipe={recipe} source={recipe.source || headersList.get('x-url')} />
+              }
             </div>
           </div>
         </div>

@@ -15,7 +15,9 @@ export default async function Page({ searchParams }: NextPage) {
   const { data: recipes } = await getRecipes({ q: searchParams.q, collection_id: searchParams.collection })
   const { data: collections } = await readCollections()
 
-  return (
-    <View recipes={recipes} collections={collections} />
-  )
+  if (recipes) {
+    return (
+      <View recipes={recipes} collections={collections} />
+    )
+  }
 }

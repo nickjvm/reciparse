@@ -17,7 +17,7 @@ interface Props {
 export default function Card({ url, image, title, subtitle, className, loading }: Props) {
   if (loading) {
     return (
-      <div className={cn('animate-pulse sself-stretch w-[33vw] min-w-[33vw] md:w-[19vw] md:min-w-[19vw] xl:w-auto xl:min-w-0 max-w-1/8 shrink-0 flex-1 flex-grow', className)}>
+      <div className={cn('animate-pulse self-stretch w-[33vw] min-w-[33vw] md:w-[19vw] md:min-w-[19vw] xl:w-auto xl:min-w-0 max-w-1/8 shrink-0 flex-1 flex-grow', className)}>
         <div className="rounded block md:p-3 md:-mx-1.5 h-full">
           <div className="bg-gray-200 w-full rounded-lg aspect-square mb-3"></div>
           <div className="bg-gray-200 w-full rounded-full mb-2 h-4"></div>
@@ -28,7 +28,7 @@ export default function Card({ url, image, title, subtitle, className, loading }
     )
   } else {
     return (
-      <div className={cn('self-stretch shrink-0 flex-1 flex-grow', className)}>
+      <div className={cn('self-stretch flex-1 flex-grow flex-shrink', className)}>
         <Link
           href={url}
           className="flex flex-col md:hover:bg-white md:hover:ring-brand transition ring-2 ring-transparent rounded md:p-3 md:-mx-1.5 h-full">
@@ -37,7 +37,7 @@ export default function Card({ url, image, title, subtitle, className, loading }
             {!image && <PlaceholderImage />}
           </div>
           <p className="leading-tight text-sm line-clamp-2 mb-1">{decode(title)}</p>
-          {subtitle && <p className="mt-auto text-xs text-slate-500 truncate">{subtitle}</p>}
+          {subtitle && <p className="mt-auto text-xs text-slate-500 line-clamp-1">{subtitle}</p>}
         </Link>
       </div>
     )

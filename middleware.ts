@@ -2,9 +2,18 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
+  const url = new URL(request.url)
+  const origin = url.origin
+  const pathname = url.pathname
+  const requestHeaders = new Headers(request.headers)
+
+  requestHeaders.set('x-url', request.url)
+  requestHeaders.set('x-origin', origin)
+  requestHeaders.set('x-pathname', pathname)
+
   let response = NextResponse.next({
     request: {
-      headers: request.headers,
+      headers: requestHeaders,
     },
   })
 

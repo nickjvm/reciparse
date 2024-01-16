@@ -44,7 +44,12 @@ export default async function RootLayout({
                   <Image width="100" height="100" className="h-8 max-w-[125px] w-auto" src="/logo.svg" alt="" />
                 </Link>
                 <div className="flex items-center gap-3">
-                  {data.session && <Link href="/recipes">My Recipes</Link>}
+                  {data.session && (
+                    <>
+                      <Link href="/recipes">My Recipes</Link>
+                      <Link href="/collections">My Collections</Link>
+                    </>
+                  )}
                 </div>
               </div>
               <div className="flex items-center gap-3">

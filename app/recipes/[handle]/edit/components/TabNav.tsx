@@ -210,7 +210,7 @@ export default function TabNav({ recipe, collections }: Props) {
                       <label htmlFor={`instructions.${i}.name`} className="text-sm text-slate-600">Section name</label>
                       <div className="relative">
                         <Input key={section.id} {...form.register(`instructions.${i}.name`)} className="w-full" />
-                        {instructions.length > 1 && <Button className="absolute right-0 top-1/2 -translate-y-1/2" variant="ghost" onClick={() => removeSection(i)}><TrashIcon /></Button>}
+                        {instructions.length > 1 && <Button type="button" className="absolute right-0 top-1/2 -translate-y-1/2" variant="ghost" onClick={() => removeSection(i)}><TrashIcon /></Button>}
                       </div>
                       <div className="text-red-800 mt-2 text-sm">{form.formState.errors.instructions?.[i]?.name?.message}</div>
                     </div>
