@@ -1,6 +1,6 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, FieldErrors, useFieldArray, useForm } from 'react-hook-form'
 import * as z from 'zod'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -11,38 +11,23 @@ import * as Tabs from '@radix-ui/react-tabs'
 import Link from 'next/link'
 import DurationInput from './DurationInput'
 import { updateRecipe } from '../actions'
-import { toast } from '@/components/ui/use-toast'
+import { useToast } from '@/components/ui/use-toast'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { TrashIcon } from '@radix-ui/react-icons'
+import SectionSteps from './SectionSteps'
+import FormSchema from '../schema'
 
 type Props = {
   recipe: DBRecipe
   collections: Collection[]
 }
 
-const FormSchema = z
-  .object({
-    name: z.string(),
-    collection_id: z.string({ invalid_type_error: 'Please select a collection' }),
-    source: z.string().optional(),
-    prepTime: z.string().optional(),
-    cookTime: z.string().optional(),
-    totalTime: z.string().optional(),
-    yield: z.number({ invalid_type_error: 'Please enter a number' }).min(1).optional(),
-    is_public: z.boolean(),
-    ingredients: z.string().array(),
-    instructions: z.object({
-      name: z.string(),
-      steps: z.object({
-        name: z.string().optional(),
-        text: z.string(),
-      }).array(),
-    }).array(),
-    image: z.string().url().optional()
-  })
 export default function TabNav({ recipe, collections }: Props) {
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const router = useRouter()
+
+  const toast = useToast()
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -62,19 +47,39 @@ export default function TabNav({ recipe, collections }: Props) {
     label: 'Directions & Steps',
   }]
 
+  const onSubmitError = (errors: FieldErrors) => {
+    const [firstErrorField] = Object.keys(errors)
+    const [firstError] = firstErrorField.split('.')
+    let tabContainingError = 'general'
+    if (['ingredients'].includes(firstError) && searchParams.get('tab') !== 'ingredients') {
+      tabContainingError = 'ingredients'
+    } else if (['instructions'].includes(firstError)) {
+      tabContainingError = 'directions'
+    }
+    if (searchParams.get('tab') !== tabContainingError) {
+      router.push(`${pathname}?tab=${tabContainingError}`)
+    }
+  }
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     const { data, error } = await updateRecipe(recipe.id, values)
     form.reset(data)
 
-    toast({
+    toast.toast({
       variant: error ? 'destructive' : 'default',
       title: error ? 'Error' : 'Success!',
-      description: error ? error.message : 'Your recipe has been updated.'
+      description: error ? error.message : <p>Your recipe has been updated. <Link href={`/recipes/${data.id}`} onClick={() => toast.dismiss()} className="underline">View</Link></p>
     })
   }
-  const defaultTab = tabs.find(t => t.value === searchParams.get('tab'))?.value || tabs[0].value
+
+  const activeTab = tabs.find(t => t.value === searchParams.get('tab'))?.value || tabs[0].value
+
+  const { fields: instructions, append: addSection, remove: removeSection } = useFieldArray({ control: form.control, name: 'instructions' })
+
+  const onTabChange = (value: string) => {
+    router.push(`${pathname}?tab=${value}`)
+  }
   return (
-    <Tabs.Root className="TabsRoot" defaultValue={defaultTab} onValueChange={value => router.push(`${pathname}?tab=${value}`)}>
+    <Tabs.Root className="TabsRoot"value={activeTab} onValueChange={onTabChange}>
       <div className="grid grid-cols-4 gap-6 items-start">
         <Tabs.List aria-label="Edit recipe" className="col-span-1 flex flex-col rounded overflow-hidden mb-3">
           {tabs.map(tab => (
@@ -94,7 +99,7 @@ export default function TabNav({ recipe, collections }: Props) {
         </Tabs.List>
         <div className="col-span-3">
           <Tabs.Content value="general">
-            <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit, console.log)}>
+            <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit, onSubmitError)}>
               <div className="grid grid-cols-4 gap-4">
                 <div className="col-span-3">
                   <label htmlFor="name" className="text-sm text-slate-600">Recipe name</label>
@@ -165,7 +170,7 @@ export default function TabNav({ recipe, collections }: Props) {
             </form>
           </Tabs.Content>
           <Tabs.Content className="TabsContent" value="ingredients">
-            <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit, console.log)}>
+            <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit, onSubmitError)}>
               <div className="grid grid-cols-4 gap-4">
                 <div className="col-span-3">
                   <label htmlFor="name" className="sr-only text-xl font-semibold text-slate-600">Ingredients</label>
@@ -175,16 +180,46 @@ export default function TabNav({ recipe, collections }: Props) {
                     const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
                       field.onChange(e.target.value.split('\n'))
                     }
-                    return <textarea
-                      {...form.register('ingredients')}
-                      {...field}
-                      value={value}
-                      onChange={onChange}
-                      className="bg-white flex h-96 w-full rounded-md border border-input px-3 py-1 text-md shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                    />
+                    return (
+                      <>
+                        <textarea
+                          {...form.register('ingredients')}
+                          {...field}
+                          value={value}
+                          onChange={onChange}
+                          className="bg-white flex h-96 w-full rounded-md border border-input px-3 py-1 text-md shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                        />
+                        <div className="text-red-800 mt-2 text-sm">{form.formState.errors.ingredients?.[0]?.message}</div>
+                      </>
+                    )
                   }} />
                 </div>
               </div>
+              <div className="col-start-2 col-span-3 text-center mt-3 gap-4 flex items-center justify-end">
+                <Link href={`/recipes/${recipe.id}`} className="underline text-slate-600 text-sm">Cancel</Link>
+                <Button>Save</Button>
+              </div>
+            </form>
+          </Tabs.Content>
+          <Tabs.Content value="directions">
+            <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit, onSubmitError)}>
+              {instructions.map((section, i) => {
+                return (
+                  <div key={section.id} className="space-y-3">
+                    <div>
+                      <label htmlFor={`instructions.${i}.name`} className="text-sm text-slate-600">Section name</label>
+                      <div className="relative">
+                        <Input key={section.id} {...form.register(`instructions.${i}.name`)} className="w-full" />
+                        {instructions.length > 1 && <Button className="absolute right-0 top-1/2 -translate-y-1/2" variant="ghost" onClick={() => removeSection(i)}><TrashIcon /></Button>}
+                      </div>
+                      <div className="text-red-800 mt-2 text-sm">{form.formState.errors.instructions?.[i]?.name?.message}</div>
+                    </div>
+                    <ol className="list-decimal ml-6 space-y-3">
+                      <SectionSteps sectionIndex={i} form={form} addSection={i === instructions.length - 1 ? addSection : null} />
+                    </ol>
+                  </div>
+                )
+              })}
               <div className="col-start-2 col-span-3 text-center mt-3 gap-4 flex items-center justify-end">
                 <Link href={`/recipes/${recipe.id}`} className="underline text-slate-600 text-sm">Cancel</Link>
                 <Button>Save</Button>
