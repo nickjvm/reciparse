@@ -1,7 +1,7 @@
 import React from 'react'
 import { headers } from 'next/headers'
 
-import { NextPage } from '@/lib/types'
+import { InstructionSection, NextPage } from '@/lib/types'
 import Image from 'next/image'
 import { cn, parseDuration } from '@/lib/utils'
 import Link from 'next/link'
@@ -22,7 +22,12 @@ export default async function Page({ params }: NextPage) {
     const supabase = await createSupabaseServerClient()
 
     const { data: sessionData } = await readUserSession()
-    const { data } = await supabase.from('recipes').select().eq('id', params.handle).single()
+    const { data, error } = await supabase.from('recipes').select().eq('id', params.handle).single()
+
+    if (error) {
+      console.log(error)
+      throw new Error('something went wrong')
+    }
 
     const recipe = {
       ...data,
@@ -37,13 +42,9 @@ export default async function Page({ params }: NextPage) {
         onConflict: 'user_id, recipe_id'
       })
     }
-    const prepTime = parseDuration(recipe.prepTime)
-    const cookTime = parseDuration(recipe.cookTime)
-    const totalTime = parseDuration(recipe.totalTime)
-
-    const renderNutritionValue = (value: string) => {
-      return value.replace('milli', 'm').replace(/grams?/, 'g')
-    }
+    const prepTime = parseDuration(recipe.prepTime || 'PT0H0M')
+    const cookTime = parseDuration(recipe.cookTime || 'PT0H0M')
+    const totalTime = parseDuration(recipe.totalTime || 'PT0H0M')
 
     return (
       <div className="m-auto max-w-5xl">
@@ -119,7 +120,8 @@ export default async function Page({ params }: NextPage) {
           <div className="space-y-8 print:space-y-2 col-span-8 print:col-span-10">
             <CookMode />
             <div className="space-y-3 print:space-y-1">
-              {recipe.instructions.map((section, i) => {
+              {recipe.instructions.map((_section, i) => {
+                const section = _section as unknown as InstructionSection
                 return (
                   <React.Fragment key={i}>
                     <h2 key={i} className="text-2xl font-semibold mb-2">{decode(section.name)}</h2>
@@ -132,55 +134,6 @@ export default async function Page({ params }: NextPage) {
                 )
               })}
             </div>
-            {recipe.nutrition && (
-              <div>
-                <h2 className="text-xl font-semibold mb-2">Nutrition</h2>
-                <div className="text-sm mb-3">Note: The information shown below is an estimate based on available ingredients and preparation. It should not be considered a substitute for a professional advice.</div>
-                <div className="grid grid-cols-1 sm:grid-cols-2">
-                  {recipe.nutrition.servingSize && <span className="font-bold col-span-2">Serving size: {recipe.nutrition.servingSize}</span>}
-                  {recipe.nutrition.calories && <span className="font-bold col-span-2">
-                    {typeof recipe.nutrition.calories === 'number' && `${recipe.nutrition.calories} calories`}
-                    {typeof recipe.nutrition.calories === 'string' && (recipe.nutrition.calories.includes('cal') ? recipe.nutrition.calories : `${recipe.nutrition.calories} calories`)}
-                  </span>}
-                  {recipe.nutrition.fatContent && <div>
-                    <span className="font-medium">Total fat: </span>
-                    {renderNutritionValue(recipe.nutrition.fatContent)}
-                  </div>}
-                  {recipe.nutrition.saturatedFatContent && <div>
-                    <span className="font-medium">Saturated fat: </span>
-                    {renderNutritionValue(recipe.nutrition.saturatedFatContent)}
-                  </div>}
-                  {recipe.nutrition.unsaturatedFatContent && <div>
-                    <span className="font-medium">Unsaturated fat: </span>
-                    {renderNutritionValue(recipe.nutrition.unsaturatedFatContent)}
-                  </div>}
-                  {recipe.nutrition.transFatContent && <div>
-                    <span className="font-medium">Trans fat: </span>
-                    {renderNutritionValue(recipe.nutrition.transFatContent)}
-                  </div>}
-                  {recipe.nutrition.sodiumContent && <div>
-                    <span className="font-medium">Sodium: </span>
-                    {renderNutritionValue(recipe.nutrition.sodiumContent)}
-                  </div>}
-                  {recipe.nutrition.carbohydrateContent && <div>
-                    <span className="font-medium">Total carbs: </span>
-                    {renderNutritionValue(recipe.nutrition.carbohydrateContent)}
-                  </div>}
-                  {recipe.nutrition.fiberContent && <div>
-                    <span className="font-medium">Fiber: </span>
-                    {renderNutritionValue(recipe.nutrition.fiberContent)}
-                  </div>}
-                  {recipe.nutrition.sugarContent && <div>
-                    <span className="font-medium">Sugar: </span>
-                    {renderNutritionValue(recipe.nutrition.sugarContent)}
-                  </div>}
-                  {recipe.nutrition.proteinContent && <div>
-                    <span className="font-medium">Protein: </span>
-                    {renderNutritionValue(recipe.nutrition.proteinContent)}
-                  </div>}
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>

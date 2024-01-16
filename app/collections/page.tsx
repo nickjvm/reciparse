@@ -7,7 +7,7 @@ import { deleteCollection } from './actions'
 
 export default async function Collections() {
   const supabase = await createSupabaseServerClient()
-  const { data } = await supabase.from('collections').select('*, recipes(id, image, name)').order('created_at', { ascending: false })
+  const { data } = await supabase.from('collections').select('*, recipes(*)').order('created_at', { ascending: false })
 
   if (!data) {
     return 'Error'

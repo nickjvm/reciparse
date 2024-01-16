@@ -7,7 +7,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-
 export function isValidUrl(url?: string) {
   try {
     new URL(url || '')
@@ -15,14 +14,6 @@ export function isValidUrl(url?: string) {
   } catch (e) {
     return false
   }
-}
-
-export function pick(obj: { [key: string]: any }, keys: string[]) {
-  return Object.fromEntries(
-    keys
-      .filter((key: string) => key in obj)
-      .map((key: string) => [key, obj[key]]),
-  )
 }
 
 /**

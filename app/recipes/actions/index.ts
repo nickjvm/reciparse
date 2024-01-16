@@ -2,15 +2,15 @@
 
 import createSupabaseServerClient from '@/lib/supabase/server'
 import { Collection } from '@/lib/types'
-import { revalidatePath, unstable_noStore } from 'next/cache'
+import { unstable_noStore } from 'next/cache'
 
-export async function createTodo(title: string) {
-  const supabase = await createSupabaseServerClient()
+// export async function createTodo(title: string) {
+//   const supabase = await createSupabaseServerClient()
 
-  const result = await supabase.from('recipes').insert({ title }).single()
-  revalidatePath('/recipes')
-  return JSON.stringify(result)
-}
+//   const result = await supabase.from('recipes').insert({ title }).single()
+//   revalidatePath('/recipes')
+//   return JSON.stringify(result)
+// }
 
 type SearchParams = {
   q?: string
@@ -22,7 +22,7 @@ export async function getRecipes({ q, page, collection_id }: SearchParams) {
   unstable_noStore()
   const supabase = await createSupabaseServerClient()
 
-  const query = supabase.from('recipes').select('*, collection:collections(name)', { count: 'exact' })
+  const query = supabase.from('recipes').select('*, collection:collections(id, name)', { count: 'exact' })
 
   if (q) {
     query.ilike('name', `%${q}%`)

@@ -63,7 +63,9 @@ export default function TabNav({ recipe, collections }: Props) {
   }
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     const { data, error } = await updateRecipe(recipe.id, values)
-    form.reset(data)
+    if (data) {
+      form.reset(data as DBRecipe)
+    }
 
     toast.toast({
       variant: error ? 'destructive' : 'default',

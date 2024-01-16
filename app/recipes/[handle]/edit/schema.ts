@@ -5,9 +5,9 @@ const FormSchema = z
     name: z.string(),
     collection_id: z.string({ invalid_type_error: 'Select a collection.' }).uuid(),
     source: z.string().optional(),
-    prepTime: z.string().optional(),
-    cookTime: z.string().optional(),
-    totalTime: z.string().optional(),
+    prepTime: z.string().nullable().optional(),
+    cookTime: z.string().nullable().optional(),
+    totalTime: z.string().nullable().optional(),
     yield: z.number({ invalid_type_error: 'Enter a number.' }).min(1).optional(),
     is_public: z.boolean(),
     ingredients: z.string().min(1, { message: 'Required.' }).array(),
@@ -18,7 +18,7 @@ const FormSchema = z
         text: z.string().min(1, { message: 'Required.'}),
       }).array(),
     }).array(),
-    image: z.string().url().optional()
+    image: z.string().url().nullable().optional()
   })
 
 export default FormSchema

@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from 'react'
 
 type Props = {
   onChange: (args: { q: string; collection_id: string }) => void;
-  collections: Collection[]
+  collections?: Collection[]|null
 }
 
 export default function SearchForm({ onChange, collections }: Props) {

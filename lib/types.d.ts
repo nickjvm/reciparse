@@ -1,3 +1,5 @@
+import { Json } from './supabase/types/supabase'
+
 export type NextPage = {
   params: { [key: string]: string }
   searchParams: { [key: string]: string | undefined }
@@ -35,20 +37,20 @@ export type Instructions = string[]|HowToSection[]
 export type Recipe = {
   id?: string;
   name: string;
-  yield?: number;
-  prepTime?: string;
-  cookTime?: string;
-  totalTime?: string;
+  yield?: number|null;
+  prepTime?: string|null;
+  cookTime?: string|null;
+  totalTime?: string|null;
   ingredients: Ingredient[]|string[];
-  instructions: InstructionSection[];
+  instructions: Json[];
   nutrition?: { [key: string]: string };
-  image?: string;
+  image?: string|null;
   collection_id?: string;
-  collection?: Collection;
-  source?: string;
+  collection?: Collection|null;
+  source?: string|null;
 }
 
-export type DBRecipe = Omit<Recipe, 'ingredients'|'id'> & {
+export type DBRecipe = Omit<Recipe, 'ingredients'|'id', 'nutrition'> & {
   id: string
   ingredients: string[]
 }
@@ -56,4 +58,14 @@ export type DBRecipe = Omit<Recipe, 'ingredients'|'id'> & {
 export type Collection = {
   id: string;
   name: string;
+}
+
+export type PostgrestResponseFailure = {
+  data: null,
+  error: {
+    message: string,
+  },
+  count: null,
+  status: number,
+  statusText: string
 }

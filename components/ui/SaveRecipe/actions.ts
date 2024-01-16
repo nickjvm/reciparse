@@ -2,13 +2,12 @@
 
 import createSupabaseServerClient from '@/lib/supabase/server'
 import { Recipe } from '@/lib/types'
-import { pick } from '@/lib/utils'
 
 type CopyRecipe = {
   id: string;
   collectionName?: string
   recipe: Recipe;
-  source?: string;
+  source?: string|null;
 }
 
 export async function copyRecipe({ id: collection_id, collectionName, recipe, source}: CopyRecipe) {
@@ -43,19 +42,18 @@ export async function copyRecipe({ id: collection_id, collectionName, recipe, so
       return ingredient.primary
     }
   })
-  const { data, error } = await supabase.from('recipes').insert(
-    pick(recipe, [
-      'name',
-      'instructions',
-      'ingredients',
-      'cookTime',
-      'prepTime',
-      'totalTime',
-      'image',
-      'collection_id',
-      'yield',
-      'source',
-    ])
+  const { data, error } = await supabase.from('recipes').insert({
+    name: recipe.name,
+    instructions: recipe.instructions,
+    ingredients: recipe.ingredients,
+    cookTime: recipe.cookTime,
+    prepTime: recipe.prepTime,
+    totalTime: recipe.totalTime,
+    image: recipe.image,
+    collection_id: recipe.collection_id,
+    yield: recipe.yield,
+    source: recipe.source
+  }
   ).select().single()
 
   if (error) {

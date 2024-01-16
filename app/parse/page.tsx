@@ -1,6 +1,6 @@
 import React from 'react'
 import { parseRecipe } from './actions'
-import { NextPage } from '@/lib/types'
+import { InstructionSection, NextPage } from '@/lib/types'
 import Image from 'next/image'
 import { cn, parseDuration } from '@/lib/utils'
 import Link from 'next/link'
@@ -15,9 +15,9 @@ export default async function Page({ searchParams }: NextPage) {
   try {
     const recipe = await parseRecipe(searchParams.url)
 
-    const prepTime = parseDuration(recipe.prepTime)
-    const cookTime = parseDuration(recipe.cookTime)
-    const totalTime = parseDuration(recipe.totalTime)
+    const prepTime = parseDuration(recipe.prepTime || 'PT0H0M')
+    const cookTime = parseDuration(recipe.cookTime || 'PT0H0M')
+    const totalTime = parseDuration(recipe.totalTime || 'PT0H0M')
 
     const renderNutritionValue = (value: string) => {
       return value.replace('milli', 'm').replace(/grams?/, 'g')
@@ -88,7 +88,8 @@ export default async function Page({ searchParams }: NextPage) {
           <div className="space-y-8 print:space-y-2 col-span-8 print:col-span-10">
             <CookMode />
             <div className="space-y-3 print:space-y-1">
-              {recipe.instructions.map((section, i) => {
+              {recipe.instructions.map((_section, i) => {
+                const section = _section as unknown as InstructionSection
                 return (
                   <React.Fragment key={i}>
                     <h2 key={i} className="text-2xl font-semibold mb-2">{section.name}</h2>

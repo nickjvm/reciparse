@@ -3,8 +3,8 @@
 import fetch from 'node-fetch'
 import { decode } from 'html-entities'
 import { HTMLElement, parse } from 'node-html-parser'
-
-import { findClosingBracketMatchIndex, isValidUrl, pick, stripTags } from '@/lib/utils'
+import pick from 'lodash.pick'
+import { findClosingBracketMatchIndex, isValidUrl, stripTags } from '@/lib/utils'
 import { HowToSection, HowToStep, Ingredient, InstructionSection, Recipe } from '@/lib/types'
 import createSupabaseServerClient from '@/lib/supabase/server'
 import readUserSession from '@/lib/actions'
@@ -336,7 +336,8 @@ export async function parseRecipe(url?: string): Promise<Recipe> {
   const supabase = await createSupabaseServerClient()
   const { data: sessionData } = await readUserSession()
   const response = await supabase.from('parsed').upsert({
-    ...pick(data, ['name', 'image']),
+    name: data.name,
+    image: data.image,
     url
   }, {
     onConflict: 'url'

@@ -1,10 +1,10 @@
 'use client'
-import { Recipe } from '@/lib/types'
 import { Button } from './button'
 import { ShareIcon } from '@heroicons/react/24/outline'
+import { DBRecipe } from '@/lib/types'
 
 type Props = {
-  recipe: Recipe
+  recipe: DBRecipe
 }
 export default function ShareRecipe({ recipe }: Props) {
   if (!global.window?.navigator?.canShare) {

@@ -15,7 +15,7 @@ type Collection = {
   name: string,
   id: string,
 }
-export default function SaveRecipe({ recipe, source }: { recipe: Recipe, source?: string }) {
+export default function SaveRecipe({ recipe, source }: { recipe: Recipe, source?: string|null }) {
   const [collections, setCollections] = useState<Collection[]>([])
   const [value, setValue] = useState<string>('')
   const [error, setError] = useState<string>('')

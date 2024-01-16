@@ -45,13 +45,13 @@ export default async function Home() {
                   if (i > 7) {
                     return null
                   }
-                  const subtitle = history.parsed?.url ? new URL(history.parsed.url).hostname : `Saved to ${history.recipes.collections?.name}`
+                  const subtitle = history.parsed?.url ? new URL(history.parsed.url).hostname : `Saved to ${history.recipes?.collections?.name}`
                   return (
                     <div key={history.id} className="flex min-w-[36vw] w-[36vw] lg:w-[15vw] lg:min-w-[15vw] xl:min-w-0 xl:w-1/8">
                       <Card
                         image={history.recipes?.image || history.parsed?.image}
-                        url={history.recipes ? `/recipes/${history.recipes.id}` : `/parse?url=${history.parsed.url}`}
-                        title={history.recipes?.name || history.parsed?.name}
+                        url={history.recipes ? `/recipes/${history.recipes.id}` : `/parse?url=${history.parsed?.url}`}
+                        title={history.recipes?.name || history.parsed?.name || ''}
                         subtitle={subtitle}
                       />
                     </div>
@@ -71,7 +71,7 @@ export default async function Home() {
                       key={recipe.id}
                       image={recipe.image}
                       url={`/parse?url=${recipe.url}`}
-                      title={recipe.name}
+                      title={recipe.name || ''}
                       subtitle={subtitle?.replace('www.', '')}
                     />
                   </div>
@@ -90,7 +90,7 @@ export default async function Home() {
                         key={recipe.id}
                         image={recipe.image}
                         url={`/recipes/${recipe.id}`}
-                        title={recipe.name}
+                        title={recipe.name || ''}
                         subtitle={recipe.collections?.name}
                       />
                     </div>

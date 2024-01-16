@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { toast } from '@/components/ui/use-toast'
+import { PostgrestResponseFailure } from '@/lib/types'
 import * as AlertDialog from '@radix-ui/react-alert-dialog'
 import { TrashIcon } from '@radix-ui/react-icons'
 import { PostgrestSingleResponse } from '@supabase/supabase-js'
@@ -9,7 +10,7 @@ import { useRouter } from 'next/navigation'
 
 type Props = {
   id: string;
-  onConfirm: (id: string) => Promise<PostgrestSingleResponse<null>>;
+  onConfirm: (id: string) => Promise<PostgrestResponseFailure|PostgrestSingleResponse<null>>;
 }
 
 export default function DeleteRecipe({ id, onConfirm }: Props) {

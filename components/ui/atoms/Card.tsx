@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils'
 
 interface Props {
   url: string;
-  image?: string;
+  image?: string|null;
   title: string;
   subtitle?: string;
   className?: string

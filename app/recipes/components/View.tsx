@@ -9,7 +9,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 type Props = {
   recipes: Recipe[]
-  collections: Collection[]
+  collections?: Collection[]|null
 }
 export default function View({ recipes: initialRecipes, collections, }: Props) {
   const [recipes, setRecipes] = useState<Recipe[]>(initialRecipes)
