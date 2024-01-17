@@ -3,14 +3,9 @@ import { Inter, Yeseva_One } from 'next/font/google'
 import './globals.css'
 import { Toaster } from '@/components/ui/toaster'
 import Link from 'next/link'
-import Image from 'next/image'
-import { Button } from '@/components/ui/button'
 import readUserSession from '@/lib/actions'
-import SignOut from './auth-server-action/components/SignOut'
 import { cn } from '@/lib/utils'
-import { CaretDownIcon } from '@radix-ui/react-icons'
-import MenuDropdown from '@/components/ui/molecules/MenuDropdown'
-import ParseRecipeDialog from '@/components/ui/molecules/ParseRecipeDialog'
+import Header from '@/components/ui/molecules/Header'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -39,42 +34,7 @@ export default async function RootLayout({
       <body className={cn(inter.variable, yesevaOne.variable, 'font-sans')}>
         <div />
         <div className="flex flex-col justify-stretch min-h-screen">
-          <div className="print:hidden px-4 border-b border-b-slate-200 sticky top-0 bg-white z-10">
-            {data.session && (
-              <div className="bg-slate-50">
-                <div className="max-w-5xl m-auto flex items-center justify-end gap-3 text-sm">
-                  <Link href="/account" className="p-2">My Account</Link>
-                  <SignOut />
-                </div>
-              </div>
-            )}
-            <div className="max-w-5xl m-auto flex items-center gap-3">
-              <div className="flex items-center gap-6 grow">
-                <Link href="/">
-                  <span className="sr-only">Reciparse.com</span>
-                  <Image width="100" height="100" className="h-8 max-w-[125px] w-auto" src="/logo.svg" alt="" />
-                </Link>
-                <div className="flex items-center">
-                  {data.session && (
-                    <>
-                      <MenuDropdown
-                        label={<button className="data-[state=open]:bg-slate-50 cursor-pointer inline-flex gap-1 items-center py-6 px-4 hover:bg-slate-50">My stuff <CaretDownIcon className="w-5 h-5" /></button>}
-                        items={[
-                          <Link key="recipes" href="/recipes" className="py-2 px-4 hover:bg-slate-50 block focus-visible:outline-0">Recipes</Link>,
-                          <Link key="collections" href="/collections" className="py-2 px-4 hover:bg-slate-50 block focus-visible:outline-0">Collections</Link>,
-                        ]}
-                      />
-                      <Link href="/recipes/add" className="py-6 px-4 border-b border-b-transparent hover:bg-slate-50 hover:border-b-primary -mb-[1px]">Add a recipe</Link>
-                    </>
-                  )}
-                  <ParseRecipeDialog trigger={<button className="py-6 px-4 border-b border-b-transparent hover:bg-slate-50 hover:border-b-primary -mb-[1px]">Parse a recipe</button>} />
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                {data?.session ? null : <><Link href="/auth-server-action"><Button variant="outline">Sign In</Button></Link><Button>Sign Up</Button></>}
-              </div>
-            </div>
-          </div>
+          <Header session={data.session} />
           <div className="grow pt-4 pb-8 print:pt-0 print:pb-0">
             {children}
           </div>

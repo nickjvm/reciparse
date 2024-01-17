@@ -1,17 +1,8 @@
-import createSupabaseServerClient from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
+import { handleSignOut } from '../actions'
 
 export default function SignOut() {
-  const logout = async () => {
-    'use server'
-
-    const supabase = await createSupabaseServerClient()
-    await supabase.auth.signOut()
-
-    redirect('/auth-server-action')
-  }
   return (
-    <form action={logout} className="inline-block">
+    <form action={handleSignOut} className="inline-block">
       <button className="p-2 -mr-2 inline-block">Sign Out</button>
     </form>
   )
