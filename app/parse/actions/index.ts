@@ -106,7 +106,7 @@ export async function getRecipeIngredients(ingredients: string[]): Promise<Ingre
         .replace(/^[\d.]+/, `${
           parseFloat(amount[0]).toFixed(2)
             .replace('.00', '')
-            .replace(/.([1-9])0$/, '.$1')
+            .replace(/\.([1-9])0$/, '.$1')
         }`)
     }
     return finalIngredient
