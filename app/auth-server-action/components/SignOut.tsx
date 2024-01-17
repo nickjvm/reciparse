@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button'
 import createSupabaseServerClient from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
@@ -12,8 +11,8 @@ export default function SignOut() {
     redirect('/auth-server-action')
   }
   return (
-    <form action={logout}>
-      <Button>Sign Out</Button>
+    <form action={logout} className="inline-block">
+      <button className="p-2 -mr-2 inline-block">Sign Out</button>
     </form>
   )
 }

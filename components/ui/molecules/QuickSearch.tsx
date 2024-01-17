@@ -10,23 +10,34 @@ interface Props {
   inputClassName?: string
   autoFocus?: boolean
   placeholder?: string
+  onSubmitSuccess?: () => void
 }
 
-export default function QuickSearch({ size = 'md', inputClassName, autoFocus, placeholder }: Props) {
-  const searchParams = useSearchParams()
-  const pathname = usePathname()
+export default function QuickSearch({ size = 'md', inputClassName, autoFocus, placeholder, onSubmitSuccess }: Props) {
   const router = useRouter()
-
-  const [url, setUrl] = useState(pathname === '/recipe' ? searchParams.get('url') || '' : '')
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const [url, setUrl] = useState('')
   const [error, setError] = useState(false)
   const [loading, setLoading] = useState(false)
 
+  const firstUpdate = useRef(true)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     setError(false)
     setUrl(e.target.value)
   }
+
+  useEffect(() => {
+    if (firstUpdate.current) {
+      firstUpdate.current = false
+    } else {
+      if (onSubmitSuccess) {
+        onSubmitSuccess()
+      }
+    }
+  }, [pathname, searchParams])
 
   useEffect(() => {
     if (autoFocus && global.window?.innerWidth > 768 && !('ontouchstart' in global.window)) {
@@ -45,8 +56,14 @@ export default function QuickSearch({ size = 'md', inputClassName, autoFocus, pl
     if (inputRef.current) {
       try {
         const recipeUrl = new URL(url)
-        setLoading(true)
-        router.push(`/parse?url=${recipeUrl}`)
+        if (decodeURIComponent(searchParams.get('url') || '') !== recipeUrl.toString()) {
+          setLoading(true)
+          router.push(`/parse?url=${encodeURIComponent(recipeUrl.toString())}`)
+        } else {
+          if (onSubmitSuccess) {
+            onSubmitSuccess()
+          }
+        }
       } catch (err) {
         setError(true)
         inputRef.current.focus()
