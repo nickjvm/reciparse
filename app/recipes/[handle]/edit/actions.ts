@@ -33,5 +33,12 @@ export async function deleteRecipe(id: string) {
     }
   }
 
-  return await supabase.from('recipes').delete().eq('id', id).eq('created_by', data.session.user.id)
+  const response = await supabase.from('recipes').delete().eq('id', id).eq('created_by', data.session.user.id)
+
+  if (!response.error) {
+    revalidatePath('/recipes')
+    revalidatePath('/collections')
+  }
+
+  return response
 }

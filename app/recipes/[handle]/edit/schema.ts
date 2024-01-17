@@ -1,8 +1,9 @@
+import { TriggerConfig, UseFormGetValues, UseFormTrigger } from 'react-hook-form'
 import * as z from 'zod'
 
-const FormSchema = z
+export const FormSchema = z
   .object({
-    name: z.string(),
+    name: z.string().min(1, { message: 'Required.' }),
     collection_id: z.string({ invalid_type_error: 'Select a collection.' }).uuid(),
     source: z.string().optional(),
     prepTime: z.string().nullable().optional(),
@@ -10,15 +11,52 @@ const FormSchema = z
     totalTime: z.string().nullable().optional(),
     yield: z.number({ invalid_type_error: 'Enter a number.' }).min(1).optional(),
     is_public: z.boolean(),
-    ingredients: z.string().min(1, { message: 'Required.' }).array(),
+    ingredients: z.string().min(1, { message: 'Required.' }),
     instructions: z.object({
       name: z.string().min(1, { message: 'Required.'}),
       steps: z.object({
         name: z.string().optional(),
         text: z.string().min(1, { message: 'Required.'}),
-      }).array(),
-    }).array(),
+      }).array().min(1, { message: 'Required.' }),
+    }).array().min(1, { message: 'Required.' }),
     image: z.string().url().nullable().optional()
   })
 
-export default FormSchema
+export type Inputs = z.infer<typeof FormSchema>
+
+export type FieldName = keyof Inputs
+
+/** modified from https://github.com/react-hook-form/react-hook-form/issues/2379#issuecomment-757479521 */
+export function getAllNamesByKey(values: Inputs, key: FieldName): FieldName[] {
+  // Choose which parser we are using, as arrays use [ ] notation in useForm
+  const parseArray = (stack: string, property: FieldName) => `${stack}[${property}]`
+  const parseObj = (stack: string, property: FieldName) => `${stack}.${property}`
+  // Recursively unpack the keys
+  const unpackKeys = (obj: Inputs, stack: string, toReturn: FieldName[]) => {
+    // Check which parser we will use
+    const parser = Array.isArray(obj) ? parseArray: parseObj
+    Object.entries(obj).forEach(([property, value]) => {
+      const returnString = parser(stack, property as FieldName)
+      // If its an object, recurse
+      if (value && typeof value === 'object') {
+        unpackKeys(value as unknown as Inputs, returnString, toReturn)
+      } else {
+        // This has a leading "." in it due to the start step in the
+        // recursion.  Remove it using slice.
+        toReturn.push(returnString.slice(1) as FieldName)
+      }
+    })
+
+  }
+  const toReturn: FieldName[] = []
+  unpackKeys(values, '', toReturn)
+  return toReturn.filter((fullKey) => fullKey.startsWith(key))
+}
+
+export function triggerByKeyGenerate(getValues: UseFormGetValues<Inputs>, trigger: UseFormTrigger<Inputs>, opts: TriggerConfig) {
+  return async (key: FieldName) => {
+    const values = getValues()
+    const namesToTrigger = getAllNamesByKey(values, key)
+    return await trigger(namesToTrigger, opts)
+  }
+}

@@ -1,5 +1,5 @@
 import { NextPage } from '@/lib/types'
-import TabNav from './components/TabNav'
+import TabNav from '../../components/TabNav'
 import createSupabaseServerClient from '@/lib/supabase/server'
 
 export default async function EditRecipe({ params }: NextPage) {

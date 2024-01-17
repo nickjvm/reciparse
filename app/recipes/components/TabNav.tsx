@@ -10,17 +10,31 @@ import { Switch } from '@headlessui/react'
 import * as Tabs from '@radix-ui/react-tabs'
 import Link from 'next/link'
 import DurationInput from './DurationInput'
-import { deleteRecipe, updateRecipe } from '../actions'
+import { deleteRecipe, updateRecipe } from '../[handle]/edit/actions'
 import { useToast } from '@/components/ui/use-toast'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { TrashIcon } from '@radix-ui/react-icons'
 import SectionSteps from './SectionSteps'
-import FormSchema from '../schema'
-import DeleteRecipe from './DeleteRecipe'
+import { FormSchema, FieldName, Inputs, triggerByKeyGenerate } from '../[handle]/edit/schema'
+import DeleteRecipe from '../[handle]/edit/components/DeleteRecipe'
+import { createRecipe } from '../actions'
+import { useEffect } from 'react'
 
 type Props = {
   recipe: DBRecipe
   collections: Collection[]
+}
+
+const defaultRecipe = {
+  name: '',
+  ingredients: '',
+  is_public: false,
+  instructions: [{
+    name: 'Instructions',
+    steps: [{
+      text: ''
+    }]
+  }]
 }
 
 export default function TabNav({ recipe, collections }: Props) {
@@ -30,23 +44,39 @@ export default function TabNav({ recipe, collections }: Props) {
 
   const toast = useToast()
 
-  const form = useForm<z.infer<typeof FormSchema>>({
+  const form = useForm<Inputs>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      ...recipe,
+      ...defaultRecipe,
+      ...{
+        ...recipe,
+        ingredients: recipe?.ingredients?.join('\n'),
+      },
     }
   })
+
+  useEffect(() => {
+    router.push(`${pathname}?tab=${tabs[0].value}`)
+  }, [])
+  const triggerByKey = triggerByKeyGenerate(form.getValues, form.trigger, { shouldFocus: true })
 
   const tabs = [{
     value: 'general',
     label: 'Overview',
+    fields: ['name', 'collection_id', 'source', 'is_public', 'prepTime', 'cookTime', 'totalTime', 'yield']
   }, {
     value: 'ingredients',
     label: 'Ingredients',
+    fields: ['ingredients']
   }, {
     value: 'directions',
     label: 'Directions & Steps',
+    fields: ['instructions']
   }]
+
+  const activeTab = tabs.find(t => t.value === searchParams.get('tab')) || tabs[0]
+  const activeTabValue = activeTab.value
+  const activeTabIndex = tabs.findIndex(tab => tab.value === activeTabValue)
 
   const onSubmitError = (errors: FieldErrors) => {
     const [firstErrorField] = Object.keys(errors)
@@ -61,28 +91,75 @@ export default function TabNav({ recipe, collections }: Props) {
       router.push(`${pathname}?tab=${tabContainingError}`)
     }
   }
-  const onSubmit = async (values: z.infer<typeof FormSchema>) => {
-    const { data, error } = await updateRecipe(recipe.id, values)
-    if (data) {
-      form.reset(data as DBRecipe)
-    }
 
-    toast.toast({
-      variant: error ? 'destructive' : 'default',
-      title: error ? 'Error' : 'Success!',
-      description: error ? error.message : <p>Your recipe has been updated. <Link href={`/recipes/${data.id}`} onClick={() => toast.dismiss()} className="underline">View</Link></p>
-    })
+  const stepIsValid = async () => {
+    const fields = activeTab.fields
+    const output = []
+    for (let i = 0; i < fields.length; i++) {
+      output.push(await triggerByKey(fields[i] as FieldName))
+    }
+    if (output.some(v => !v)) {
+      return false
+    }
+    return true
+  }
+  const next = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (await stepIsValid()) {
+      if (activeTabValue === tabs[tabs.length - 1].value) {
+        await form.handleSubmit(onSubmit, onSubmitError)()
+      } else {
+        router.push(`${pathname}?tab=${tabs[activeTabIndex + 1].value}`)
+      }
+    }
   }
 
-  const activeTab = tabs.find(t => t.value === searchParams.get('tab'))?.value || tabs[0].value
+  const onSubmit = async (values: z.infer<typeof FormSchema>) => {
+    let data = null
+    let error = null
+    if (recipe?.id) {
+      ({ data, error } = await updateRecipe(recipe.id, values))
+
+      toast.toast({
+        variant: error ? 'destructive' : 'default',
+        title: error ? 'Error' : 'Success!',
+        description: error ? error.message : <p>Your recipe has been updated. <Link href={`/recipes/${data?.id}`} onClick={() => toast.dismiss()} className="underline">View</Link></p>
+      })
+
+      if (data) {
+        form.reset(data as DBRecipe)
+      }
+    } else {
+      ({ data, error } = await createRecipe(values))
+      if (data) {
+        router.push(`/recipes/${data.id}`)
+      }
+      toast.toast({
+        variant: error ? 'destructive' : 'default',
+        title: error ? 'Error' : 'Success!',
+        description: error ? error.message : <p>Your recipe has been created!</p>
+      })
+    }
+  }
+
 
   const { fields: instructions, append: addSection, remove: removeSection } = useFieldArray({ control: form.control, name: 'instructions' })
 
-  const onTabChange = (value: string) => {
-    router.push(`${pathname}?tab=${value}`)
+  const onTabChange = async (value: string) => {
+    const desiredIndex = tabs.findIndex(tab => tab.value === value)
+    let canChange = true
+    if (!recipe?.id) {
+      canChange = desiredIndex < activeTabIndex
+    }
+
+    if (canChange) {
+      router.push(`${pathname}?tab=${value}`)
+    }
   }
+
   return (
-    <Tabs.Root className="TabsRoot"value={activeTab} onValueChange={onTabChange}>
+    <Tabs.Root className="TabsRoot"value={activeTabValue} onValueChange={onTabChange}>
       <div className="grid grid-cols-4 gap-6 items-start">
         <Tabs.List aria-label="Edit recipe" className="col-span-1 flex flex-col rounded overflow-hidden mb-3">
           {tabs.map(tab => (
@@ -98,15 +175,16 @@ export default function TabNav({ recipe, collections }: Props) {
               {tab.label}
             </Tabs.Trigger>
           ))}
-          <DeleteRecipe id={recipe.id} onConfirm={deleteRecipe} />
+          {recipe && <DeleteRecipe id={recipe.id} onConfirm={deleteRecipe} />}
         </Tabs.List>
         <div className="col-span-3">
           <Tabs.Content value="general">
-            <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit, onSubmitError)}>
+            <form className="space-y-6" onSubmit={next}>
               <div className="grid grid-cols-4 gap-4">
                 <div className="col-span-3">
                   <label htmlFor="name" className="text-sm text-slate-600">Recipe name</label>
                   <Input {...form.register('name')} type="text" className="w-full"/>
+                  <div className="text-red-800 mt-2 text-sm">{form.formState.errors.name?.message}</div>
                 </div>
                 <div>
                   <label htmlFor="collection_id" className="text-sm text-slate-600">Collection</label>
@@ -167,45 +245,32 @@ export default function TabNav({ recipe, collections }: Props) {
               <div className="text-center mt-3">
               </div>
               <div className="col-start-2 col-span-3 text-center mt-3 gap-4 flex items-center justify-end">
-                <Link href={`/recipes/${recipe.id}`} className="underline text-slate-600 text-sm">Cancel</Link>
-                <Button>Save</Button>
+                <Link href={recipe ? `/recipes/${recipe.id}` : '/recipes'} className="underline text-slate-600 text-sm">Cancel</Link>
+                <Button>{recipe?.id ? 'Save' : 'Continue'}</Button>
               </div>
             </form>
           </Tabs.Content>
           <Tabs.Content className="TabsContent" value="ingredients">
-            <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit, onSubmitError)}>
+            <form className="space-y-6" onSubmit={next}>
               <div className="grid grid-cols-4 gap-4">
                 <div className="col-span-3">
                   <label htmlFor="name" className="sr-only text-xl font-semibold text-slate-600">Ingredients</label>
                   <p className="text-slate-800 mb-2">Enter the ingredients for this recipe, one per line.</p>
-                  <Controller control={form.control} name="ingredients" render={({ field }) => {
-                    const value = field.value.join('\n')
-                    const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-                      field.onChange(e.target.value.split('\n'))
-                    }
-                    return (
-                      <>
-                        <textarea
-                          {...form.register('ingredients')}
-                          {...field}
-                          value={value}
-                          onChange={onChange}
-                          className="bg-white flex h-96 w-full rounded-md border border-input px-3 py-1 text-md shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                        />
-                        <div className="text-red-800 mt-2 text-sm">{form.formState.errors.ingredients?.[0]?.message}</div>
-                      </>
-                    )
-                  }} />
+                  <textarea
+                    {...form.register('ingredients')}
+                    className="bg-white flex h-96 w-full rounded-md border border-input px-3 py-1 text-md shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  />
+                  <div className="text-red-800 mt-2 text-sm">{form.formState.errors?.ingredients?.message}</div>
                 </div>
               </div>
               <div className="col-start-2 col-span-3 text-center mt-3 gap-4 flex items-center justify-end">
-                <Link href={`/recipes/${recipe.id}`} className="underline text-slate-600 text-sm">Cancel</Link>
-                <Button>Save</Button>
+                <Link href={recipe ? `/recipes/${recipe.id}` : '/recipes'} className="underline text-slate-600 text-sm">Cancel</Link>
+                <Button>{recipe?.id ? 'Save' : 'Continue'}</Button>
               </div>
             </form>
           </Tabs.Content>
           <Tabs.Content value="directions">
-            <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit, onSubmitError)}>
+            <form className="space-y-5" onSubmit={next}>
               {instructions.map((section, i) => {
                 return (
                   <div key={section.id} className="space-y-3">
@@ -224,8 +289,8 @@ export default function TabNav({ recipe, collections }: Props) {
                 )
               })}
               <div className="col-start-2 col-span-3 text-center mt-3 gap-4 flex items-center justify-end">
-                <Link href={`/recipes/${recipe.id}`} className="underline text-slate-600 text-sm">Cancel</Link>
-                <Button>Save</Button>
+                <Link href={recipe ? `/recipes/${recipe.id}` : '/recipes'} className="underline text-slate-600 text-sm">Cancel</Link>
+                <Button>{recipe?.id ? 'Save' : 'Save & Finish'}</Button>
               </div>
             </form>
           </Tabs.Content>

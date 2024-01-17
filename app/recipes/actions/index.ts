@@ -1,7 +1,8 @@
 'use server'
 
 import createSupabaseServerClient from '@/lib/supabase/server'
-import { Collection } from '@/lib/types'
+import { Collection, DBRecipe } from '@/lib/types'
+import pick from 'lodash.pick'
 import { unstable_noStore } from 'next/cache'
 
 // export async function createTodo(title: string) {
@@ -56,6 +57,12 @@ export async function readCollections() {
   return result as { data: Collection[] }
 }
 
-// export async function deleteTodoById(id: string) {}
+export async function createRecipe(values: DBRecipe) {
+  if (typeof values.ingredients === 'string') {
+    values.ingredients = values.ingredients.split('\n').map((v: string) => v.trim())
+  }
+  const supabase = await createSupabaseServerClient()
+  const response = await supabase.from('recipes').insert(pick(values, ['name', 'collection_id', 'prepTime', 'cookTime', 'totalTime', 'yield', 'source', 'is_public', 'ingredients', 'instructions'])).select().single()
 
-// export async function updateTodoById(id: string, completed: boolean) {}
+  return response
+}

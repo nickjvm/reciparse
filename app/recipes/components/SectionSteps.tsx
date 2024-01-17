@@ -1,13 +1,12 @@
-import * as z from 'zod'
 import { Button } from '@/components/ui/button'
 import { TrashIcon } from '@radix-ui/react-icons'
 import { UseFieldArrayAppend, UseFormReturn, useFieldArray } from 'react-hook-form'
-import FormSchema from '../schema'
+import { Inputs } from '../[handle]/edit/schema'
 
 type Props = {
   sectionIndex: number;
-  form: UseFormReturn<z.infer<typeof FormSchema>>;
-  addSection: UseFieldArrayAppend<z.infer<typeof FormSchema>, 'instructions'>|null;
+  form: UseFormReturn<Inputs>;
+  addSection: UseFieldArrayAppend<Inputs, 'instructions'>|null;
 }
 export default function SectionSteps({
   sectionIndex,
