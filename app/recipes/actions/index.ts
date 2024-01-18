@@ -1,9 +1,15 @@
 'use server'
-
+import path from 'path'
+import kebabCase from 'lodash.kebabcase'
+import { nanoid } from 'nanoid'
 import createSupabaseServerClient from '@/lib/supabase/server'
 import { Collection, DBRecipe } from '@/lib/types'
 import pick from 'lodash.pick'
 import { unstable_noStore } from 'next/cache'
+
+import client from '@/lib/aws/config'
+import { PutObjectCommand } from '@aws-sdk/client-s3'
+import { Inputs } from '../[handle]/edit/schema'
 
 // export async function createTodo(title: string) {
 //   const supabase = await createSupabaseServerClient()
@@ -57,12 +63,49 @@ export async function readCollections() {
   return result as { data: Collection[] }
 }
 
-export async function createRecipe(values: DBRecipe) {
+export async function createRecipe(_values: Inputs, fileData: FormData) {
+  const values: DBRecipe = _values
+  values.handle = `${kebabCase(values.name.substr(0, 50).trim())}-${nanoid(8)}`
   if (typeof values.ingredients === 'string') {
-    values.ingredients = values.ingredients.split('\n').map((v: string) => v.trim())
+    values.ingredients = values.ingredients?.split('\n').map((v: string) => v.trim())
   }
-  const supabase = await createSupabaseServerClient()
-  const response = await supabase.from('recipes').insert(pick(values, ['name', 'collection_id', 'prepTime', 'cookTime', 'totalTime', 'yield', 'source', 'is_public', 'ingredients', 'instructions'])).select().single()
 
-  return response
+  try {
+    if (fileData) {
+      const file = fileData.get('file') as File
+      if (file) {
+        const fileName = values.handle
+        const fileType = file?.type
+
+        const binaryFile = await file.arrayBuffer()
+        const fileBuffer = Buffer.from(binaryFile)
+        const extension = path.extname(file.name)
+
+        const params = {
+          Bucket: 'reciparse',
+          Key: `${fileName}${extension}`,
+          Body: fileBuffer,
+          ContentType: fileType
+        }
+        await client.send(new PutObjectCommand(params))
+        console.log('params.key', params.Key)
+        values.image = `https://d2goxnc5qxbnja.cloudfront.net/${params.Key}`
+      }
+    }
+
+    const supabase = await createSupabaseServerClient()
+    const response = await supabase.from('recipes').insert(pick(values as DBRecipe, ['name', 'collection_id', 'prepTime', 'cookTime', 'totalTime', 'yield', 'source', 'is_public', 'ingredients', 'instructions', 'image', 'handle'])).select().single()
+    return response
+  } catch (e) {
+    console.log('error creating recipe', e)
+    return {
+      data: null,
+      error: {
+        message: (e as Error).message,
+      },
+      count: null,
+      status: 400,
+      statusText: 'ServerError'
+    }
+  }
 }

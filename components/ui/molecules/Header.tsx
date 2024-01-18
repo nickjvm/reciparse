@@ -21,7 +21,6 @@ export default function Header({ session }: Props) {
     const completeThreshold = 300
     let lastScrollY = global?.window?.scrollY
     const onScroll = () => {
-      console.log(window.scrollY, lastScrollY)
       if (window.scrollY < lastScrollY) {
         if (window.scrollY < partialThreshold) {
           setHiddenState(null)
@@ -46,7 +45,6 @@ export default function Header({ session }: Props) {
     }
   }, [])
 
-  console.log(hiddenState)
   return (
     <div className={cn(
       'print:hidden px-4 border-b border-b-slate-200 sticky top-0 bg-white z-10 transition-transform',

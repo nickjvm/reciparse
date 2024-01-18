@@ -13,12 +13,14 @@ import DurationInput from './DurationInput'
 import { deleteRecipe, updateRecipe } from '../[handle]/edit/actions'
 import { useToast } from '@/components/ui/use-toast'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { TrashIcon } from '@radix-ui/react-icons'
+import { Cross2Icon, TrashIcon } from '@radix-ui/react-icons'
 import SectionSteps from './SectionSteps'
 import { FormSchema, FieldName, Inputs, triggerByKeyGenerate } from '../[handle]/edit/schema'
 import DeleteRecipe from '../[handle]/edit/components/DeleteRecipe'
 import { createRecipe } from '../actions'
 import { useEffect } from 'react'
+import Image from 'next/image'
+import PlaceholderImage from '@/components/ui/atoms/PlaceholderImage'
 
 type Props = {
   recipe: DBRecipe
@@ -107,19 +109,26 @@ export default function TabNav({ recipe, collections }: Props) {
     e.preventDefault()
 
     if (await stepIsValid()) {
-      if (activeTabValue === tabs[tabs.length - 1].value) {
+      if (activeTabValue === tabs[tabs.length - 1].value || recipe?.id) {
         await form.handleSubmit(onSubmit, onSubmitError)()
       } else {
         router.push(`${pathname}?tab=${tabs[activeTabIndex + 1].value}`)
       }
     }
   }
-
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     let data = null
     let error = null
+
+    const formData = new FormData()
+    if (values.upload) {
+      formData.append('file', values.upload)
+      delete values.upload
+    }
+
+    console.log(values)
     if (recipe?.id) {
-      ({ data, error } = await updateRecipe(recipe.id, values))
+      ({ data, error } = await updateRecipe(recipe.id, values, formData))
 
       toast.toast({
         variant: error ? 'destructive' : 'default',
@@ -128,10 +137,16 @@ export default function TabNav({ recipe, collections }: Props) {
       })
 
       if (data) {
+        (data as DBRecipe).ingredients = data.ingredients.join('\n')
         form.reset(data as DBRecipe)
       }
     } else {
-      ({ data, error } = await createRecipe(values))
+
+      try {
+        ({ data, error } = await createRecipe(values, formData))
+      } catch (e) {
+        console.log(e)
+      }
       if (data) {
         router.push(`/recipes/${data.id}`)
       }
@@ -158,6 +173,8 @@ export default function TabNav({ recipe, collections }: Props) {
     }
   }
 
+  const imagePreview = form.watch('image')
+
   return (
     <Tabs.Root className="TabsRoot"value={activeTabValue} onValueChange={onTabChange}>
       <div className="grid grid-cols-4 gap-6 items-start">
@@ -180,73 +197,98 @@ export default function TabNav({ recipe, collections }: Props) {
         <div className="col-span-3">
           <Tabs.Content value="general">
             <form className="space-y-6" onSubmit={next}>
-              <div className="grid grid-cols-4 gap-4">
-                <div className="col-span-3">
+              <div className="grid grid-cols-8 gap-6">
+                <div className="col-span-2 row-span-3">
+                  <label htmlFor="name" className="text-sm text-slate-600 relative">
+                    <input {...form.register('upload')} className="opacity-0 absolute top-0 left-0 w-full h-full cursor-pointer" type="file" onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
+                      if (e.target.files) {
+                        const file = e.target.files[0]
+                        if (file) {
+                          form.setValue('upload', file)
+                          const output = await form.trigger('upload')
+                          if (output) {
+                            form.setValue('image', URL.createObjectURL(file))
+                          }
+                        }
+                      }
+                    }}/>
+                    {imagePreview
+                      ? <Image src={imagePreview} className="aspect-square object-cover" alt="image preview" width="200" height="200" />
+                      : <PlaceholderImage text="Click to add an image" />
+                    }
+                    {imagePreview && <button className="absolute top-1 right-1 p-2 shadow bg-white bg-opacity-75 text-red-600 rounded-full" onClick={() => {
+                      form.unregister('upload')
+                      form.setValue('image', null)
+                    }}><Cross2Icon /></button>}
+                  </label>
+                  {form.formState.errors.upload && <div className="text-red-800 mt-2 text-sm">{`${form.formState.errors.upload?.message}`}</div>}
+                </div>
+                <div className="col-span-4">
                   <label htmlFor="name" className="text-sm text-slate-600">Recipe name</label>
                   <Input {...form.register('name')} type="text" className="w-full"/>
                   <div className="text-red-800 mt-2 text-sm">{form.formState.errors.name?.message}</div>
                 </div>
-                <div>
+                <div className="col-span-2">
                   <label htmlFor="collection_id" className="text-sm text-slate-600">Collection</label>
                   <select {...form.register('collection_id')} className="bg-white flex h-9 w-full rounded-md border border-input px-3 py-1 text-md shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50">
                     {collections.map(collection => <option key={collection.id} value={collection.id}>{collection.name}</option>)}
                   </select>
                 </div>
-              </div>
-              <div>
-                <label htmlFor="source" className="text-sm text-slate-600">Source URL</label>
-                <Input {...form.register('source')} type="text" className="w-full"/>
-              </div>
-              <div className="items-center flex gap-3">
-                <Controller control={form.control} name="is_public" render={({ field }) => {
-                  return (
-                    <>
-                      <Switch
-                        {...field}
-                        value="on"
-                        checked={field.value}
-                        className={cn(
-                          'relative inline-flex h-6 w-11 items-center rounded-full focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2',
-                          field.value  ? 'bg-brand' : 'bg-slate-200'
-                        )}>
-                        <span className="sr-only">Make this recipe public or private</span>
-                        <span
-                          className={`${
-                            field.value ? 'translate-x-6' : 'translate-x-1'
-                          } inline-block h-4 w-4 transform rounded-full bg-white transition`}
-                        />
-                      </Switch>
-                      <label className="text-sm text-slate-600">{
-                        field.value
-                          ? 'This recipe is publicly accessible'
-                          : 'This recipe is private and only accessible by you'
-                      }
-                      </label>
-                    </>
-                  )
-                }}
-                />
-              </div>
-              <div className="grid grid-cols-5 gap-4">
-                <Controller control={form.control} name="prepTime" render={({ field }) => <DurationInput {...field} label="Prep Time" />} />
-                <Controller control={form.control} name="cookTime" render={({ field }) => <DurationInput {...field} label="Cook Time" />} />
-                <Controller control={form.control} name="totalTime" render={({ field }) => <DurationInput {...field} label="Total Time" />} />
-              </div>
-              <div className="grid grid-cols-4">
-                <div className="col-span-1">
-                  <label htmlFor="name" className="text-sm text-slate-600">Recipe Yield</label>
-                  <div className="flex items-center gap-4">
-                    <Input {...form.register('yield', { setValueAs: (v) => v === '' ? undefined : Number(v)})} type="text" className="w-full"/>
-                    <span className="text-sm text-slate-600">serving(s)</span>
-                  </div>
-                  <div className="text-red-800 mt-2 text-sm">{form.formState.errors.yield?.message}</div>
+                <div className="col-span-6">
+                  <label htmlFor="source" className="text-sm text-slate-600">Source URL</label>
+                  <Input {...form.register('source')} type="text" className="w-full"/>
                 </div>
-              </div>
-              <div className="text-center mt-3">
-              </div>
-              <div className="col-start-2 col-span-3 text-center mt-3 gap-4 flex items-center justify-end">
-                <Link href={recipe ? `/recipes/${recipe.id}` : '/recipes'} className="underline text-slate-600 text-sm">Cancel</Link>
-                <Button>{recipe?.id ? 'Save' : 'Continue'}</Button>
+                <div className="col-start-3 col-span-6 space-y-4">
+                  <div className="items-center flex gap-4">
+                    <Controller control={form.control} name="is_public" render={({ field }) => {
+                      return (
+                        <>
+                          <Switch
+                            {...field}
+                            value="on"
+                            checked={field.value}
+                            className={cn(
+                              'relative inline-flex h-6 w-11 items-center rounded-full focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2',
+                              field.value  ? 'bg-brand' : 'bg-slate-200'
+                            )}>
+                            <span className="sr-only">Make this recipe public or private</span>
+                            <span
+                              className={`${
+                                field.value ? 'translate-x-6' : 'translate-x-1'
+                              } inline-block h-4 w-4 transform rounded-full bg-white transition`}
+                            />
+                          </Switch>
+                          <label className="text-sm text-slate-600">{
+                            field.value
+                              ? 'This recipe is publicly accessible'
+                              : 'This recipe is private and only accessible by you'
+                          }
+                          </label>
+                        </>
+                      )
+                    }}
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 gap-4">
+                    <Controller control={form.control} name="prepTime" render={({ field }) => <DurationInput {...field} label="Prep Time" />} />
+                    <Controller control={form.control} name="cookTime" render={({ field }) => <DurationInput {...field} label="Cook Time" />} />
+                    <Controller control={form.control} name="totalTime" render={({ field }) => <DurationInput {...field} label="Total Time" />} />
+                  </div>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="col-span-1">
+                      <label htmlFor="name" className="text-sm text-slate-600">Recipe Yield</label>
+                      <div className="flex items-center gap-4">
+                        <Input {...form.register('yield', { setValueAs: (v) => v === '' || v === null ? undefined : Number(v) || undefined})} type="text" className="w-full"/>
+                        <span className="text-sm text-slate-600">serving(s)</span>
+                      </div>
+                      <div className="text-red-800 mt-2 text-sm">{form.formState.errors.yield?.message}</div>
+                    </div>
+                  </div>
+                  <div className="col-start-2 col-span-3 text-center mt-3 gap-4 flex items-center justify-end">
+                    <Link href={recipe ? `/recipes/${recipe.id}` : '/recipes'} className="underline text-slate-600 text-sm">Cancel</Link>
+                    <Button>{recipe?.id ? 'Save' : 'Continue'}</Button>
+                  </div>
+                </div>
               </div>
             </form>
           </Tabs.Content>

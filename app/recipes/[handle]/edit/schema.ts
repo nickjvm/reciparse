@@ -4,6 +4,7 @@ import * as z from 'zod'
 export const FormSchema = z
   .object({
     name: z.string().min(1, { message: 'Required.' }),
+    handle: z.string().min(10),
     collection_id: z.string({ invalid_type_error: 'Select a collection.' }).uuid(),
     source: z.string().optional(),
     prepTime: z.string().nullable().optional(),
@@ -11,7 +12,7 @@ export const FormSchema = z
     totalTime: z.string().nullable().optional(),
     yield: z.number({ invalid_type_error: 'Enter a number.' }).min(1).optional(),
     is_public: z.boolean(),
-    ingredients: z.string().min(1, { message: 'Required.' }),
+    ingredients: z.string().min(1, { message: 'Required.' }).or(z.string().array().min(1, { message: 'Required' })),
     instructions: z.object({
       name: z.string().min(1, { message: 'Required.'}),
       steps: z.object({
@@ -19,7 +20,13 @@ export const FormSchema = z
         text: z.string().min(1, { message: 'Required.'}),
       }).array().min(1, { message: 'Required.' }),
     }).array().min(1, { message: 'Required.' }),
-    image: z.string().url().nullable().optional()
+    image: z.string().url().nullable().optional(),
+    upload: z.any()
+      .refine((file) => file ? file?.size <= 5 * 1024 * 1024 : true, 'Max file size is 5MB.')
+      .refine(
+        (file) => file ? ['image/jpeg', 'image/jpg', 'image/png'].includes(file?.type) : true,
+        'only .jpg, .jpeg, .png and .gif files are accepted.'
+      ).optional()
   })
 
 export type Inputs = z.infer<typeof FormSchema>
