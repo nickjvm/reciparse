@@ -38,10 +38,10 @@ export default function View({ recipes: initialRecipes, collections, }: Props) {
   return (
     <div className="max-w-5xl m-auto">
       <h1 className="text-brand font-display text-3xl font-semibold text-center mb-2">My Recipes</h1>
-      <div className="flex gap-2 mb-4">
+      <div className="mb-4">
         <SearchForm collections={collections} onChange={handleChange} />
       </div>
-      <div className="grid grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         {recipes?.map(recipe => {
           let subtitle
           const source = recipe.source ? new URL(recipe.source).hostname : undefined

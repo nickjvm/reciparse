@@ -52,7 +52,7 @@ export default function Header({ session }: Props) {
       hiddenState === 'complete' && '-translate-y-[100%]'
     )}>
       {session && (
-        <div className="bg-slate-50">
+        <div className="bg-slate-50 hidden md:block">
           <div className="max-w-5xl m-auto flex items-center justify-end gap-3 text-sm">
             <Link href="/account" className="p-2">My Account</Link>
             <SignOut />
@@ -61,11 +61,11 @@ export default function Header({ session }: Props) {
       )}
       <div className="max-w-5xl m-auto flex items-center gap-3">
         <div className="flex items-center gap-6 grow">
-          <Link href="/">
+          <Link href="/" className="py-3 md:py-0">
             <span className="sr-only">Reciparse.com</span>
             <Image width="100" height="100" className="h-8 max-w-[125px] w-auto" src="/logo.svg" alt="" />
           </Link>
-          <div className="flex items-center">
+          <div className="hidden md:flex items-center">
             {session && (
               <>
                 <MenuDropdown

@@ -1,9 +1,11 @@
+import { cn } from '@/lib/utils'
 import { parse } from 'iso8601-duration'
 import { forwardRef, useId, useState } from 'react'
 import { ControllerRenderProps } from 'react-hook-form'
 
 type Props = {
-  label: string
+  label: string,
+  className?: string,
 } & ControllerRenderProps
 
 const parseFieldDuration = (value: string) => {
@@ -17,7 +19,7 @@ const parseFieldDuration = (value: string) => {
   }
 }
 const DurationInput = forwardRef<HTMLInputElement, Props>(
-  ({ label, ...field }, ref) => {
+  ({ label, className, ...field }, ref) => {
     const [value, setValue] = useState(parseFieldDuration(field.value))
     const id = useId()
     const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -43,9 +45,9 @@ const DurationInput = forwardRef<HTMLInputElement, Props>(
       field.onChange(`PT${nextValue.hours}H${nextValue.minutes}M`)
     }
     return (
-      <div>
-        <label htmlFor={`${id}.hours`} className="text-sm text-slate-600">{label}</label>
-        <div className="bg-white flex items-center h-9 w-full rounded-md border border-input px-3 py-1 text-md shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-1 focus-within::ring-ring disabled:cursor-not-allowed disabled:opacity-50">
+      <div className={className}>
+        <label htmlFor={`${id}.hours`} className={cn('block text-sm text-slate-600')}>{label}</label>
+        <div className="bg-white inline-flex items-center h-9 md:w-full rounded-md border border-input px-3 py-1 text-md shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-1 focus-within::ring-ring disabled:cursor-not-allowed disabled:opacity-50">
           <input name={`${id}.hours`} id={`${id}.hours`}ref={ref} onChange={handleChange} onBlur={onBlur} value={value.hours} type="text" className="w-8 text-right focus:outline-none h-4 placeholder:text-black" />
           <label htmlFor={`${id}.hours`}>h</label>
           <input name={`${id}.minutes`} onChange={handleChange} onBlur={onBlur} value={value.minutes} type="text" className="w-8 text-right focus:outline-none h-4 placeholder:text-black" />

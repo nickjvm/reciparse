@@ -1,6 +1,6 @@
 'use client'
 
-import { DBRecipe, InstructionSection, Recipe } from '@/lib/types'
+import { DBRecipe, InstructionSection } from '@/lib/types'
 import { cn, parseDuration } from '@/lib/utils'
 import { User } from '@supabase/supabase-js'
 import Image from 'next/image'
@@ -12,8 +12,10 @@ import SaveRecipe from '../SaveRecipe'
 import { ArrowTopRightOnSquareIcon, PencilIcon } from '@heroicons/react/24/outline'
 import CookMode from '../CookMode'
 import { decode } from 'html-entities'
-import { Fragment } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
+import IngredientsList from './Ingredients'
+import { useDebounce } from '@/lib/hooks/useDebounce'
 
 type Props = {
   recipe: DBRecipe,
@@ -25,8 +27,30 @@ const renderNutritionValue = (value: string) => {
 }
 
 export default function FullRecipe({ recipe, user }: Props) {
+
+  const [showStickyIngredients, setShowStickyIngredients] = useState(false)
+  const showStickyIngredients_debounced = useDebounce<boolean>(showStickyIngredients, 500)
+  const directionsRef = useRef<HTMLDivElement>(null)
+  const endRef = useRef<HTMLDivElement>(null)
   const searchParams = useSearchParams()
   const originalSource = searchParams.get('url')
+
+  useEffect(() => {
+    const showHideStickyIngredients = () => {
+
+      if (directionsRef.current && endRef.current) {
+        setShowStickyIngredients(
+          directionsRef.current.getBoundingClientRect().top < window.innerHeight * .66 &&
+          endRef.current.getBoundingClientRect().top > window.innerHeight * .75
+        )
+      }
+    }
+    window.addEventListener('scroll', showHideStickyIngredients)
+
+    return () => window.removeEventListener('scroll', showHideStickyIngredients)
+  }, [])
+
+
   try {
     const prepTime = parseDuration(recipe.prepTime || 'PT0H0M')
     const cookTime = parseDuration(recipe.cookTime || 'PT0H0M')
@@ -34,36 +58,36 @@ export default function FullRecipe({ recipe, user }: Props) {
 
     return (
       <div className="m-auto max-w-5xl">
-        <div className="grid grid-cols-12 gap-5">
-          {recipe.image && <Image className="aspect-square object-cover col-span-2 rounded-md" src={recipe.image} alt={recipe.name} width="500" height="500" />}
-          <div className={cn('bg-slate-50 p-4 print:p-0 rounded-md', recipe.image ? 'col-span-10' : 'col-span-12 px-6')}>
+        <div className="grid grid-cols-12 gap-5 items-start">
+          {recipe.image && <Image className="mx-auto aspect-square object-cover col-span-12 md:col-span-2 rounded-md" src={recipe.image} alt={recipe.name} width="500" height="500" />}
+          <div className={cn('-mx-4 md:mx-0 bg-slate-50 p-4 print:p-0 md:rounded-md col-span-12 ', recipe.image ? 'md:col-span-10' : 'px-6')}>
             <div className="mb-3">
-              <h1 className="text-brand font-display text-3xl font-semibold">{recipe.name}</h1>
-              {recipe.source && <p className="text-slate-600 text-sm hover:underline line-clamp-1">
+              <h1 className="text-brand font-display text-3xl font-semibold text-left sm:text-center md:text-left">{recipe.name}</h1>
+              {recipe.source && <p className="text-slate-600 text-sm hover:underline md:line-clamp-1 text-left sm:text-center md:text-left">
                 <Link target="_blank" href={recipe.source}>{recipe.source}</Link>
               </p>}
             </div>
-            <div className="flex space-x-3">
+            <div className="flex flex-wrap md:flex-nowrap md:space-x-3 gap-y-2">
               {prepTime && (
-                <div className="min-w-[150px]">
+                <div className="text-center md:text-left w-1/2 md:w-auto md:min-w-[150px] grow md:grow-0">
                   <h3 className="font-semibold">Prep Time</h3>
                   {prepTime}
                 </div>
               )}
               {cookTime && (
-                <div className="min-w-[150px]">
+                <div className="text-center md:text-left w-1/2 md:w-auto md:min-w-[150px] grow md:grow-0">
                   <h3 className="font-semibold">Cook Time</h3>
                   {cookTime}
                 </div>
               )}
               {totalTime && (
-                <div className="min-w-[150px]">
+                <div className="text-center md:text-left w-1/2 md:w-auto md:min-w-[150px] grow md:grow-0">
                   <h3 className="font-semibold">Total Time</h3>
                   {totalTime}
                 </div>
               )}
               {recipe.yield && (
-                <div className="min-w-[150px]">
+                <div className="text-center md:text-left w-1/2 md:w-auto md:min-w-[150px] grow md:grow-0">
                   <h3 className="font-semibold">Recipe Yield</h3>
                   {recipe.yield} serving{recipe.yield !== 1 && 's'}
                 </div>
@@ -74,8 +98,8 @@ export default function FullRecipe({ recipe, user }: Props) {
               <ShareRecipe recipe={recipe} />
               {user?.id === recipe.created_by
                 ? (
-                  <Button>
-                    <Link className="print:hidden hidden sm:inline-flex gap-2" href={`/recipes/${recipe.id}/edit`}>
+                  <Button className="print:hidden">
+                    <Link className="inline-flex gap-2" href={`/recipes/${recipe.id}/edit`}>
                       <PencilIcon className="w-5 h-5" /> Edit
                     </Link>
                   </Button>
@@ -85,25 +109,11 @@ export default function FullRecipe({ recipe, user }: Props) {
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-16 gap-6 mt-4">
-          <div className="col-span-6">
-            <div className="sticky top-[80px]">
-              <h2 className="text-2xl font-semibold">Ingredients</h2>
-              <ul className="divide-y print:divide-y-0 print:list-disc print:pl-5">
-                {(recipe as Recipe).ingredients.map((ingredient, i) => {
-                  if (typeof ingredient === 'string') {
-                    return <li className="py-2 print:py-0" key={i}>{ingredient}</li>
-                  }
-                  return (
-                    <li className="py-2 print:py-0" key={i}>
-                      {ingredient.primary}
-                      {ingredient.subtext ? <span className="text-slate-500 text-sm ml-1">{ingredient.subtext}</span> : null}
-                    </li>
-                  )})}
-              </ul>
-            </div>
+        <div className="grid grid-cols-12 md:grid-cols-16 gap-6 mt-4">
+          <div className="col-span-12 md:col-span-6 mb:block mb:col-span-6">
+            <IngredientsList ingredients={recipe.ingredients} showStickyIngredients={showStickyIngredients_debounced}/>
           </div>
-          <div className="space-y-8 print:space-y-2 col-span-8 print:col-span-10">
+          <div className="space-y-8 print:space-y-2 col-span-12 md:col-span-10 print:col-span-10" ref={directionsRef}>
             <CookMode />
             <div className="space-y-3 print:space-y-1">
               {recipe.instructions.map((section: InstructionSection, i: number) => {
@@ -170,6 +180,7 @@ export default function FullRecipe({ recipe, user }: Props) {
             )}
           </div>
         </div>
+        <div ref={endRef} />
       </div>
     )
   } catch (e) {

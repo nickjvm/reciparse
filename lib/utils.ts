@@ -2,6 +2,8 @@ import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import { parse } from 'iso8601-duration'
 import { stripHtml } from 'string-strip-html'
+import { Ingredient } from './types'
+import { decode } from 'html-entities'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -38,6 +40,37 @@ export function findClosingBracketMatchIndex(str: string, pos: number) {
     }
   }
   return -1    // No matching closing parenthesis
+}
+
+
+/**
+ * if an ingredient ends with parenthesis, find the last full set of parenthesis
+ * and mark it as subtext to be styled differently. This finds and cleans the following:
+ * - example ing (peeled and diced)
+ * - example ing (, peeled and diced)
+ * - example ing (, peeled (and diced))
+ * - example ing (peeled (and diced))
+ */
+export const cleanIngredientString = (ingredient: string): Ingredient => {
+  const indices = []
+  let subtext = ''
+  for(let i=0; i<ingredient.length;i++) {
+    if (ingredient[i] === '(') indices.push(i)
+  }
+
+  for (let i=0; i<indices.length;i++) {
+    const endingIndex = findClosingBracketMatchIndex(ingredient, indices[i])
+    const phrase = ingredient.substring(indices[i] + 1, endingIndex)
+    subtext = phrase
+    if (phrase.indexOf('(') > -1) {
+      break
+    }
+  }
+
+  return {
+    primary: decode(ingredient.replace(subtext, '').replace(/\(\)/, '').replace(/\s([^\s]+)$/, '&nbsp;$1')).trim().replace(/,$/, ''),
+    subtext: decode(subtext.replace(/^,?\s?/, '').replace(/\s([^\s]+)$/, '&nbsp;$1')).trim(),
+  }
 }
 
 export function parseDuration(isoDuration: string): string|null {

@@ -35,17 +35,17 @@ export default async function RootLayout({
         <div />
         <div className="flex flex-col justify-stretch min-h-screen">
           <Header session={data.session} />
-          <div className="grow pt-4 pb-8 print:pt-0 print:pb-0">
+          <div className="grow pt-4 pb-8 print:pt-0 print:pb-0 px-4 lg:px-0">
             {children}
           </div>
           <div className="bg-primary p-4 text-white print:hidden">
-            <div className="max-w-5xl m-auto grid grid-cols-12">
-              <div className="col-span-8">
-                <span className="text-3xl font-display text-white">Reciparse</span>
+            <div className="max-w-5xl m-auto grid grid-cols-12 gap-4">
+              <div className="col-span-12 md:col-span-7">
+                <span className="text-3xl font-display text-white">reciparse</span>
               </div>
-              <div className="col-span-4 grid grid-cols-2">
-                <div className="col-span-1 text-xs">
-                  <h4 className="font-semibold text-xs mt-2 mb-4">Account</h4>
+              <div className="col-span-12 md:col-span-5 grid grid-cols-2">
+                <div className="col-span-1">
+                  <h4 className="font-semibold mt-2 mb-4">Account</h4>
                   <ul className="space-y-2">
                     {!data.session ? (
                       <>
@@ -63,8 +63,8 @@ export default async function RootLayout({
                     <li><Link href="/info/bookmarklet">Bookmarklet</Link></li>
                   </ul>
                 </div>
-                <div className="col-span-1 text-xs">
-                  <h4 className="font-semibold text-xs mt-2 mb-4">Other Links</h4>
+                <div className="col-span-1">
+                  <h4 className="font-semibold mt-2 mb-4">Other Links</h4>
                   <ul className="space-y-2">
                     <li>
                       <Link href="/info/support">Support the developer</Link>

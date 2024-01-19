@@ -4,7 +4,7 @@ import fetch from 'node-fetch'
 import { decode } from 'html-entities'
 import { HTMLElement, parse } from 'node-html-parser'
 import pick from 'lodash.pick'
-import { findClosingBracketMatchIndex, isValidUrl, stripTags } from '@/lib/utils'
+import { cleanIngredientString, isValidUrl, stripTags } from '@/lib/utils'
 import { HowToSection, HowToStep, Ingredient, InstructionSection, Recipe } from '@/lib/types'
 import createSupabaseServerClient from '@/lib/supabase/server'
 import readUserSession from '@/lib/actions'
@@ -62,36 +62,6 @@ function getRecipeImage(image: ImageObj|string|string[]): string {
   return imageUrl
 }
 
-
-/**
- * if an ingredient ends with parenthesis, find the last full set of parenthesis
- * and mark it as subtext to be styled differently. This finds and cleans the following:
- * - example ing (peeled and diced)
- * - example ing (, peeled and diced)
- * - example ing (, peeled (and diced))
- * - example ing (peeled (and diced))
- */
-const cleanIngredientString = (ingredient: string): Ingredient => {
-  const indices = []
-  let subtext = ''
-  for(let i=0; i<ingredient.length;i++) {
-    if (ingredient[i] === '(') indices.push(i)
-  }
-
-  for (let i=0; i<indices.length;i++) {
-    const endingIndex = findClosingBracketMatchIndex(ingredient, indices[i])
-    const phrase = ingredient.substring(indices[i] + 1, endingIndex)
-    subtext = phrase
-    if (phrase.indexOf('(') > -1) {
-      break
-    }
-  }
-
-  return {
-    primary: decode(ingredient.replace(subtext, '').replace(/\(\)/, '').replace(/\s([^\s]+)$/, '&nbsp;$1')).trim().replace(/,$/, ''),
-    subtext: decode(subtext.replace(/^,?\s?/, '').replace(/\s([^\s]+)$/, '&nbsp;$1')).trim(),
-  }
-}
 
 export async function getRecipeIngredients(ingredients: string[]): Promise<Ingredient[]> {
   if (!ingredients) {

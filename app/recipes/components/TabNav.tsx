@@ -178,12 +178,14 @@ export default function TabNav({ recipe, collections }: Props) {
   return (
     <Tabs.Root className="TabsRoot"value={activeTabValue} onValueChange={onTabChange}>
       <div className="grid grid-cols-4 gap-6 items-start">
-        <Tabs.List aria-label="Edit recipe" className="col-span-1 flex flex-col rounded overflow-hidden mb-3">
+        <Tabs.List aria-label="Edit recipe" className="-mx-4 col-span-4 md:col-span-1 flex md:flex-col rounded overflow-hidden mb-3 whitespace-nowrap">
           {tabs.map(tab => (
             <Tabs.Trigger key={tab.value} className={cn(
-              'group text-left',
-              'first:rounded-t-lg last:rounded-b-lg',
+              'group text-left md:shrink-0',
+              'md:first:rounded-t-lg md:last:rounded-b-lg',
               'border border-slate-100',
+              'w-[45%] md:w-full',
+              'text-center md:text-left',
               'radix-state-active:border-b-primary focus-visible:radix-state-active:border-b-transparent radix-state-inactive:bg-slate-100 dark:radix-state-active:border-b-gray-100 dark:radix-state-active:bg-gray-900 focus-visible:dark:radix-state-active:border-b-transparent dark:radix-state-inactive:bg-gray-800',
               'flex-1 px-3 py-2.5',
               'focus:radix-state-active:border-b-red',
@@ -194,13 +196,14 @@ export default function TabNav({ recipe, collections }: Props) {
           ))}
           {recipe && <DeleteRecipe id={recipe.id} onConfirm={deleteRecipe} />}
         </Tabs.List>
-        <div className="col-span-3">
+        <div className="col-span-4 md:col-span-3">
           <Tabs.Content value="general">
             <form className="space-y-6" onSubmit={next}>
-              <div className="grid grid-cols-8 gap-6">
-                <div className="col-span-2 row-span-3">
+              <div className="grid grid-cols-8 gap-3 md:gap-6">
+                <div className="col-span-8 md:col-span-2 row-span-3 row-start-2 md:row-start-1">
                   <label htmlFor="name" className="text-sm text-slate-600 relative">
-                    <input {...form.register('upload')} className="opacity-0 absolute top-0 left-0 w-full h-full cursor-pointer" type="file" onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
+                    <span className="md:hidden">Photo</span>
+                    <Input {...form.register('upload')} className="md:opacity-0 md:absolute md:top-0 md:left-0 w-full md:h-full cursor-pointer" type="file" onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
                       if (e.target.files) {
                         const file = e.target.files[0]
                         if (file) {
@@ -212,33 +215,35 @@ export default function TabNav({ recipe, collections }: Props) {
                         }
                       }
                     }}/>
-                    {imagePreview
-                      ? <Image src={imagePreview} className="aspect-square object-cover" alt="image preview" width="200" height="200" />
-                      : <PlaceholderImage text="Click to add an image" />
-                    }
-                    {imagePreview && <button className="absolute top-1 right-1 p-2 shadow bg-white bg-opacity-75 text-red-600 rounded-full" onClick={() => {
-                      form.unregister('upload')
-                      form.setValue('image', null)
-                    }}><Cross2Icon /></button>}
+                    <div className="hidden md:block">
+                      {imagePreview
+                        ? <Image src={imagePreview} className="aspect-square object-cover" alt="image preview" width="200" height="200" />
+                        : <PlaceholderImage text="Click to upload a photo" />
+                      }
+                      {imagePreview && <button className="absolute top-1 right-1 p-2 shadow bg-white bg-opacity-75 text-red-600 rounded-full" onClick={() => {
+                        form.unregister('upload')
+                        form.setValue('image', null)
+                      }}><Cross2Icon /></button>}
+                    </div>
                   </label>
                   {form.formState.errors.upload && <div className="text-red-800 mt-2 text-sm">{`${form.formState.errors.upload?.message}`}</div>}
                 </div>
-                <div className="col-span-4">
+                <div className="col-span-8 md:col-span-4">
                   <label htmlFor="name" className="text-sm text-slate-600">Recipe name</label>
                   <Input {...form.register('name')} type="text" className="w-full"/>
                   <div className="text-red-800 mt-2 text-sm">{form.formState.errors.name?.message}</div>
                 </div>
-                <div className="col-span-2">
+                <div className="col-span-4 md:col-span-2">
                   <label htmlFor="collection_id" className="text-sm text-slate-600">Collection</label>
                   <select {...form.register('collection_id')} className="bg-white flex h-9 w-full rounded-md border border-input px-3 py-1 text-md shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50">
                     {collections.map(collection => <option key={collection.id} value={collection.id}>{collection.name}</option>)}
                   </select>
                 </div>
-                <div className="col-span-6">
+                <div className="col-span-8 md:col-span-6">
                   <label htmlFor="source" className="text-sm text-slate-600">Source URL</label>
                   <Input {...form.register('source')} type="text" className="w-full"/>
                 </div>
-                <div className="col-start-3 col-span-6 space-y-4">
+                <div className="col-span-8 md:col-start-3 md:col-span-6 space-y-4">
                   <div className="items-center flex gap-4">
                     <Controller control={form.control} name="is_public" render={({ field }) => {
                       return (
@@ -269,13 +274,13 @@ export default function TabNav({ recipe, collections }: Props) {
                     }}
                     />
                   </div>
-                  <div className="grid grid-cols-4 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <Controller control={form.control} name="prepTime" render={({ field }) => <DurationInput {...field} label="Prep Time" />} />
                     <Controller control={form.control} name="cookTime" render={({ field }) => <DurationInput {...field} label="Cook Time" />} />
                     <Controller control={form.control} name="totalTime" render={({ field }) => <DurationInput {...field} label="Total Time" />} />
                   </div>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="col-span-1">
+                  <div className="grid grid-cols-5 md:grid-cols-3 gap-4">
+                    <div className="col-span-2 md:col-span-1">
                       <label htmlFor="name" className="text-sm text-slate-600">Recipe Yield</label>
                       <div className="flex items-center gap-4">
                         <Input {...form.register('yield', { setValueAs: (v) => v === '' || v === null ? undefined : Number(v) || undefined})} type="text" className="w-full"/>
@@ -295,7 +300,7 @@ export default function TabNav({ recipe, collections }: Props) {
           <Tabs.Content className="TabsContent" value="ingredients">
             <form className="space-y-6" onSubmit={next}>
               <div className="grid grid-cols-4 gap-4">
-                <div className="col-span-3">
+                <div className="col-span-4 md:col-span-3">
                   <label htmlFor="name" className="sr-only text-xl font-semibold text-slate-600">Ingredients</label>
                   <p className="text-slate-800 mb-2">Enter the ingredients for this recipe, one per line.</p>
                   <textarea
