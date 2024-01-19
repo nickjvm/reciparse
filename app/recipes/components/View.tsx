@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useMemo, useState, useTransition } from 'react'
 import SearchForm from './SearchForm'
 import { Collection, Recipe } from '@/lib/types'
 import Card from '@/components/ui/atoms/Card'
@@ -18,8 +18,9 @@ export default function View({ recipes: initialRecipes, collections, }: Props) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  const handleChange = (args: { q: string, collection_id: string }) => {
+  const handleChange = useMemo(() => (args: { q: string, collection_id: string }) => {
     startTransition(async () => {
+      console.log('transition starting...')
       const searchParams = new URLSearchParams()
 
       if (args.q) {
@@ -33,11 +34,11 @@ export default function View({ recipes: initialRecipes, collections, }: Props) {
       const { data: recipes } = await getRecipes(args)
       setRecipes(recipes as unknown as Recipe[])
     })
-  }
+  }, [setRecipes, router])
 
   return (
     <div className="max-w-5xl m-auto">
-      <h1 className="text-brand font-display text-3xl font-semibold text-center mb-2">My Recipes</h1>
+      <h1 className="text-brand font-display text-3xl font-semibold text-center mb-4">My Recipes</h1>
       <div className="mb-4">
         <SearchForm collections={collections} onChange={handleChange} />
       </div>
@@ -61,6 +62,9 @@ export default function View({ recipes: initialRecipes, collections, }: Props) {
             />
           )
         })}
+        {!recipes.length && (
+          <h2 className="col-span-2 md:col-span-5 text-center text-lg font-slate-800 py-4">No recipes matched your search.</h2>
+        )}
       </div>
     </div>
   )

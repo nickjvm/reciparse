@@ -19,13 +19,14 @@ export default function SearchForm({ onChange, collections }: Props) {
 
   const [collection, setCollection] = useState<string>(searchParams.get('collection') || '')
 
-  const prevCollectionRef = useRef<string>(collection)
+  const mountRef = useRef<boolean>(false)
   useEffect(() => {
-    if (debouncedQuery !== query || prevCollectionRef.current !== collection) {
-      prevCollectionRef.current = collection
-      onChange({ q: query, collection_id: collection})
+    if (mountRef.current) {
+      onChange({ q: debouncedQuery, collection_id: collection})
+    } else {
+      mountRef.current = true
     }
-  }, [debouncedQuery, collection, query])
+  }, [debouncedQuery, collection])
 
   return (
     <div className="grid grid-cols-12 gap-3">
