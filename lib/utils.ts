@@ -73,8 +73,8 @@ export function parseDuration(isoDuration: string): string|null {
   if (config.days || config.hours || config.minutes) {
     return [
       config.days ? `${config.days} day${config.days === 1 ? '' : 's'}` : false,
-      config.hours ? `${config.hours} hour${config.hours === 1 ? '' : 's'}` : 0,
-      config.minutes ? `${config.minutes} minute${config.minutes === 1 ? '' : 's'}` : false ].filter(v => v).join(', ')
+      config.hours ? `${config.hours} hr${config.hours === 1 ? '' : 's'}` : 0,
+      config.minutes ? `${config.minutes} min${config.minutes === 1 ? '' : 's'}` : false ].filter(v => v).join(', ')
   }
 
   return null
