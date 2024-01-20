@@ -126,7 +126,6 @@ export default function TabNav({ recipe, collections }: Props) {
       delete values.upload
     }
 
-    console.log(values)
     if (recipe?.id) {
       ({ data, error } = await updateRecipe(recipe.id, values, formData))
 
@@ -178,7 +177,7 @@ export default function TabNav({ recipe, collections }: Props) {
   return (
     <Tabs.Root className="TabsRoot"value={activeTabValue} onValueChange={onTabChange}>
       <div className="grid grid-cols-4 gap-6 items-start">
-        <Tabs.List aria-label="Edit recipe" className="-mx-4 col-span-4 md:col-span-1 flex md:flex-col rounded overflow-hidden mb-3 whitespace-nowrap">
+        <Tabs.List aria-label="Edit recipe" className="-mx-4 md:mx-0 col-span-4 md:col-span-1 flex md:flex-col rounded overflow-hidden mb-3 whitespace-nowrap">
           {tabs.map(tab => (
             <Tabs.Trigger key={tab.value} className={cn(
               'group text-left md:shrink-0',
@@ -203,7 +202,7 @@ export default function TabNav({ recipe, collections }: Props) {
                 <div className="col-span-8 md:col-span-2 row-span-3 row-start-2 md:row-start-1">
                   <label htmlFor="name" className="text-sm text-slate-600 relative">
                     <span className="md:hidden">Photo</span>
-                    <Input {...form.register('upload')} className="md:opacity-0 md:absolute md:top-0 md:left-0 w-full md:h-full cursor-pointer" type="file" onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
+                    <Input className="md:opacity-0 md:absolute md:top-0 md:left-0 w-full md:h-full cursor-pointer" type="file" onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
                       if (e.target.files) {
                         const file = e.target.files[0]
                         if (file) {

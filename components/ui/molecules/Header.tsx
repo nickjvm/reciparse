@@ -16,7 +16,7 @@ import { usePathname, useSearchParams } from 'next/navigation'
 import { useDidUpdateEffect } from '@/lib/hooks/useDidUpdateEffect'
 
 type Props = {
-  session: Session|null
+  session?: Session|null
 }
 export default function Header({ session }: Props) {
   const pathname = usePathname()

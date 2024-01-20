@@ -1,7 +1,11 @@
+import { Session } from '@supabase/supabase-js'
 import { Json } from './supabase/types/supabase'
 
 export type NextPage = {
-  params: { [key: string]: string }
+  params: {
+    session: Session|null
+    [key: string]: string
+   }
   searchParams: { [key: string]: string | undefined }
 }
 

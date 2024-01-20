@@ -6,6 +6,7 @@ import { getRecipeIngredients } from '@/app/parse/actions'
 import readUserSession from '@/lib/actions'
 
 import FullRecipe from '@/components/ui/molecules/FullRecipe'
+import AppLayout from '@/components/ui/templates/AppLayout'
 
 export default async function Page({ params }: NextPage) {
   const supabase = await createSupabaseServerClient()
@@ -14,6 +15,7 @@ export default async function Page({ params }: NextPage) {
   const { data, error } = await supabase.from('recipes').select().eq('id', params.handle).single()
 
   if (error) {
+    // TODO: is_public = false UI error handling
     console.log(error)
     throw new Error('something went wrong')
   }
@@ -32,6 +34,9 @@ export default async function Page({ params }: NextPage) {
     })
   }
 
-  return <FullRecipe recipe={recipe} user={sessionData?.session?.user} />
-
+  return (
+    <AppLayout session={sessionData?.session}>
+      <FullRecipe recipe={recipe} user={sessionData?.session?.user} />
+    </AppLayout>
+  )
 }

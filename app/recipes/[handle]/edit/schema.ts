@@ -4,7 +4,7 @@ import * as z from 'zod'
 export const FormSchema = z
   .object({
     name: z.string().min(1, { message: 'Required.' }),
-    handle: z.string().min(10),
+    handle: z.string().min(10).optional(),
     collection_id: z.string({ invalid_type_error: 'Select a collection.' }).uuid(),
     source: z.string().optional(),
     prepTime: z.string().nullable().optional(),
@@ -22,7 +22,10 @@ export const FormSchema = z
     }).array().min(1, { message: 'Required.' }),
     image: z.string().url().nullable().optional(),
     upload: z.any()
-      .refine((file) => file ? file?.size <= 5 * 1024 * 1024 : true, 'Max file size is 5MB.')
+      .refine((file) => {
+        console.log(file, file.size)
+        return file ? file?.size <= 5 * 1024 * 1024 : true
+      }, 'Max file size is 5MB.')
       .refine(
         (file) => file ? ['image/jpeg', 'image/jpg', 'image/png'].includes(file?.type) : true,
         'only .jpg, .jpeg, .png and .gif files are accepted.'

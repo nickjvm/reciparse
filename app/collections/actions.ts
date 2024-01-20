@@ -8,6 +8,5 @@ export async function deleteCollection(id: string) {
 
   const response = await supabase.from('collections').delete().eq('id', id)
 
-  console.log(response)
   return response
 }
