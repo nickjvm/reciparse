@@ -17,8 +17,8 @@ export default function ParseRecipeDialog({ trigger }: Props) {
         {trigger}
       </Dialog.Trigger>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed bg-slate-900/70 w-full h-full top-0 left-0 z-20" />
-        <div className="p-4 fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full flex justify-center items-center">
+        <Dialog.Overlay className="fixed bg-slate-900/70 w-full h-full top-0 left-0 z-[60]" />
+        <div className="p-4 fixed z-[70] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full flex justify-center items-center">
           <Dialog.Content onCloseAutoFocus={(e) => e.preventDefault()} className={cn(
             'w-[95vw] max-w-xl rounded-lg p-8 md:w-full max-h-full overflow-auto',
             'bg-white dark:bg-gray-800 relative',
