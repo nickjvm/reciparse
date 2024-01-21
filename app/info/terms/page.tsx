@@ -1,19 +1,16 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 
-import AppLayout from '@/components/ui/templates/AppLayout'
-import readUserSession from '@/lib/actions'
 import Heading from '@/components/ui/atoms/Heading'
+import FixedWidth from '@/components/ui/templates/FixedWidth'
 
 export const metadata: Metadata = {
   title: 'Terms & Conditions | Reciparse'
 }
 
 export default async function Page() {
-  const { data } = await readUserSession()
-
   return (
-    <AppLayout session={data?.session}>
+    <FixedWidth>
       <Heading>Terms and Conditions</Heading>
 
       <p className="mb-2">Welcome to Reciparse.com!</p>
@@ -136,6 +133,6 @@ export default async function Page() {
       <p className="mb-2">As long as the website and the information and services on the website are provided free of charge, we will not be liable for any loss or damage of any nature.</p>
       <h3 className="mb-2 text-xl"><strong>Contact</strong></h3>
       <p className="mb-2">For any qustions regarding this website or the terms and conditions outlined above, you may email contact@reciparse.com.</p>
-    </AppLayout>
+    </FixedWidth>
   )
 }

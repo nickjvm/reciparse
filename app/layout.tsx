@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/toaster'
 import readUserSession from '@/lib/actions'
 import { cn } from '@/lib/utils'
 import { Session } from '@supabase/supabase-js'
+import AppLayout from '@/components/ui/templates/AppLayout'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -37,7 +38,9 @@ export default async function RootLayout({
     <html lang="en">
       <body className={cn(inter.variable, yesevaOne.variable, 'font-sans')}>
         <div />
-        {children}
+        <AppLayout session={data?.session}>
+          {children}
+        </AppLayout>
         <Toaster />
       </body>
     </html>

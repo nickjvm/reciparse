@@ -4,6 +4,7 @@ import React from 'react'
 import { AuthForm } from './components/AuthForm'
 import readUserSession from '@/lib/actions'
 import { redirect } from 'next/navigation'
+import ContentContainer from '@/components/ui/templates/ContentContainer'
 
 export default async function page() {
   const { data } = await readUserSession()
@@ -13,10 +14,12 @@ export default async function page() {
   }
 
   return (
-    <div className="flex justify-center items-center h-full">
-      <div className="w-96">
-        <AuthForm />
+    <ContentContainer>
+      <div className="flex justify-center items-center h-full">
+        <div className="w-96">
+          <AuthForm />
+        </div>
       </div>
-    </div>
+    </ContentContainer>
   )
 }

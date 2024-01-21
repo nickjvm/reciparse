@@ -11,11 +11,11 @@ type Props = {
 
 export default async function AppLayout({ className, children, session }: Props) {
   return (
-    <div className="flex flex-col justify-stretch min-h-screen">
+    <div className={cn('flex flex-col justify-stretch min-h-screen', className)}>
       <Header session={session} />
-      <div className={cn('grow pt-4 pb-8 print:pt-0 print:pb-0 px-4 lg:px-0 mx-auto max-w-5xl', className)}>
+      <main className="grow">
         {children}
-      </div>
+      </main>
       <div className="bg-primary p-4 text-white print:hidden">
         <div className="max-w-5xl m-auto grid grid-cols-12 gap-4">
           <div className="col-span-12 md:col-span-7">

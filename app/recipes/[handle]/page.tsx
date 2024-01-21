@@ -6,7 +6,7 @@ import { getRecipeIngredients } from '@/app/parse/actions'
 import readUserSession from '@/lib/actions'
 
 import FullRecipe from '@/components/ui/molecules/FullRecipe'
-import AppLayout from '@/components/ui/templates/AppLayout'
+import ContentContainer from '@/components/ui/templates/ContentContainer'
 
 export default async function Page({ params }: NextPage) {
   const supabase = await createSupabaseServerClient()
@@ -35,8 +35,8 @@ export default async function Page({ params }: NextPage) {
   }
 
   return (
-    <AppLayout session={sessionData?.session}>
+    <ContentContainer>
       <FullRecipe recipe={recipe} user={sessionData?.session?.user} />
-    </AppLayout>
+    </ContentContainer>
   )
 }

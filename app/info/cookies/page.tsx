@@ -1,15 +1,14 @@
 import Heading from '@/components/ui/atoms/Heading'
-import AppLayout from '@/components/ui/templates/AppLayout'
-import { NextPage } from '@/lib/types'
+import FixedWidth from '@/components/ui/templates/FixedWidth'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Cookie Policy | Reciparse'
 }
 
-export default function Page({ params }: NextPage) {
+export default async function Page() {
   return (
-    <AppLayout {...params}>
+    <FixedWidth>
       <Heading>Cookie Policy</Heading>
 
       <p className="mb-2">This is the Cookie Policy for Reciparse, accessible from www.reciparse.com</p>
@@ -71,6 +70,6 @@ export default function Page({ params }: NextPage) {
 
       <p className="mb-2">However if you are still looking for more information then you can contact us at cookies@reciparse.com.</p>
 
-    </AppLayout>
+    </FixedWidth>
   )
 }

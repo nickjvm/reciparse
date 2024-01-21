@@ -1,5 +1,6 @@
 import Card from '@/components/ui/atoms/Card'
 import QuickSearch from '@/components/ui/molecules/QuickSearch'
+import ContentContainer from '@/components/ui/templates/ContentContainer'
 import readUserSession from '@/lib/actions'
 import createSupabaseServerClient from '@/lib/supabase/server'
 
@@ -18,7 +19,7 @@ export default async function Home() {
   }
 
   return (
-    <>
+    <ContentContainer fullWidth>
       <div className="items-center justify-between p-4 print:px-0 gap-2 bg-gradient-to-br from-brand-alt to-35% to-primary mb-4 -mt-4 -mx-4 lg:mx-auto">
         <div className="w-full max-w-5xl mx-auto py-12 md:py-24 md:px-6">
           <h1 className="text-2xl md:text-5xl font-display text-white max-w-2xl">
@@ -62,11 +63,11 @@ export default async function Home() {
           )}
           <div className="pt-5">
             <h3 className="font-display text-primary text-xl lg:text-3xl text-center">Discover new recipes</h3>
-            <div className="flex gap-3 overflow-auto p-3">
+            <div className="flex overflow-auto p-3">
               {parsedRecipes?.map(recipe => {
                 const subtitle = recipe.url ? new URL(recipe.url).hostname : undefined
                 return (
-                  <div key={recipe.id} className="flex min-w-[36vw] w-[36vw] lg:w-[15vw] lg:min-w-[15vw] xl:min-w-1/8 xl:w-1/8">
+                  <div key={recipe.id} className="px-1.5 flex min-w-[36vw] w-[36vw] lg:w-[15vw] lg:min-w-[15vw] xl:min-w-1/8 xl:w-1/8">
                     <Card
                       key={recipe.id}
                       image={recipe.image}
@@ -82,10 +83,10 @@ export default async function Home() {
           {savedRecipes && (
             <div className="pt-5">
               <h3 className="font-display text-primary text-xl lg:text-3xl text-center">Saved to your collections</h3>
-              <div className="flex gap-3 overflow-auto p-3">
+              <div className="flex overflow-auto p-3">
                 {savedRecipes?.map(recipe => {
                   return (
-                    <div key={recipe.id} className="flex min-w-[36vw] w-[36vw] lg:w-[15vw] lg:min-w-[15vw] xl:min-w-0 xl:w-[calc(12.5%-0.375rem)]">
+                    <div key={recipe.id} className="px-1.5 flex min-w-[36vw] w-[36vw] lg:w-[15vw] lg:min-w-[15vw] xl:min-w-1/8 xl:w-1/8">
                       <Card
                         key={recipe.id}
                         image={recipe.image}
@@ -101,6 +102,6 @@ export default async function Home() {
           )}
         </div>
       </div>
-    </>
+    </ContentContainer>
   )
 }

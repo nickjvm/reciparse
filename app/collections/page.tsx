@@ -6,8 +6,8 @@ import DeleteCollection from './components/DeleteCollection'
 import { deleteCollection } from './actions'
 import readUserSession from '@/lib/actions'
 import Heading from '@/components/ui/atoms/Heading'
-import AppLayout from '@/components/ui/templates/AppLayout'
 import { redirect } from 'next/navigation'
+import ContentContainer from '@/components/ui/templates/ContentContainer'
 
 export default async function Collections() {
   const { data } = await readUserSession()
@@ -24,7 +24,7 @@ export default async function Collections() {
     return 'Error'
   }
   return (
-    <AppLayout session={data?.session}>
+    <ContentContainer>
       <Heading>My Collections</Heading>
       <div className="grid grid-cols-2 md:grid-cols-5 gap-5">
         {recipe.map(collection => {
@@ -46,6 +46,6 @@ export default async function Collections() {
           )
         })}
       </div>
-    </AppLayout>
+    </ContentContainer>
   )
 }

@@ -3,18 +3,16 @@ import Link from 'next/link'
 import { SparklesIcon } from '@heroicons/react/24/solid'
 
 import Image from 'next/image'
-import AppLayout from '@/components/ui/templates/AppLayout'
-import readUserSession from '@/lib/actions'
+import FixedWidth from '@/components/ui/templates/FixedWidth'
 
 export const metadata: Metadata = {
-  title: 'Support | Reciparse'
+  title: 'Support the Developer | Reciparse'
 }
 
 export default async function Page() {
-  const { data } = await readUserSession()
   const linkClasses = 'underline text-brand-alt hover:text-brand hover:no-underline focus_visible:text-brand transition'
   return (
-    <AppLayout session={data?.session}>
+    <FixedWidth>
       <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8">
         <div className="md:col-span-3">
           <Image src="/avatar.jpg" width="100" height="100" className="rounded-full max-w-[225px] mx-auto w-full shadow ring-2 ring-offset-2 ring-brand mt-2" alt="Hi, I'm Nick" />
@@ -45,6 +43,6 @@ export default async function Page() {
           </p>
         </div>
       </div>
-    </AppLayout>
+    </FixedWidth>
   )
 }

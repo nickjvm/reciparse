@@ -2,8 +2,8 @@ import readUserSession from '@/lib/actions'
 import TabNav from '../components/TabNav'
 import createSupabaseServerClient from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import AppLayout from '@/components/ui/templates/AppLayout'
 import Heading from '@/components/ui/atoms/Heading'
+import ContentContainer from '@/components/ui/templates/ContentContainer'
 
 export default async function AddRecipe() {
   const { data: { session } } = await readUserSession()
@@ -14,9 +14,9 @@ export default async function AddRecipe() {
     return redirect('/auth-server-action')
   }
   return (
-    <AppLayout session={session}>
+    <ContentContainer>
       <Heading>Add a Recipe</Heading>
       <TabNav recipe={null} collections={collections || []} />
-    </AppLayout>
+    </ContentContainer>
   )
 }

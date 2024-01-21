@@ -4,7 +4,7 @@ import { readCollections, getRecipes } from './actions'
 import { redirect } from 'next/navigation'
 import { NextPage } from '@/lib/types'
 import View from './components/View'
-import AppLayout from '@/components/ui/templates/AppLayout'
+import ContentContainer from '@/components/ui/templates/ContentContainer'
 
 export default async function Page({ searchParams }: NextPage) {
   const { data } = await readUserSession()
@@ -18,9 +18,9 @@ export default async function Page({ searchParams }: NextPage) {
 
   if (recipes) {
     return (
-      <AppLayout session={data?.session}>
+      <ContentContainer>
         <View recipes={recipes} collections={collections} />
-      </AppLayout>
+      </ContentContainer>
     )
   }
 }
