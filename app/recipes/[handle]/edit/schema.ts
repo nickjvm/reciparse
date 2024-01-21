@@ -31,9 +31,7 @@ export const FormSchema = z
         'only .jpg, .jpeg, .png and .gif files are accepted.'
       ).optional()
   }).superRefine((values, context) => {
-    console.log(values)
     if (values.collection_id === '-1' && ! values.collection_name) {
-      console.log('here!')
       context.addIssue({
         message: 'Required.',
         code: z.ZodIssueCode.custom,

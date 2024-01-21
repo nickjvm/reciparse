@@ -21,12 +21,13 @@ import readUserSession from '@/lib/actions'
 // }
 
 type SearchParams = {
-  q?: string
-  page?: string
-  collection_id?: string
+  q?: string|null
+  page?: string|null
+  collection_id?: string|null
+  perPage: number
 }
 
-export async function getRecipes({ q, page, collection_id }: SearchParams) {
+export async function getRecipes({ q, page = '1', collection_id, perPage = 25 }: SearchParams) {
   unstable_noStore()
   const supabase = await createSupabaseServerClient()
 
@@ -42,11 +43,8 @@ export async function getRecipes({ q, page, collection_id }: SearchParams) {
     query.eq('collection_id', collection_id)
   }
 
-  if (page) {
-    const pageIndex = Number(page) - 1
-    const perPage = 25
-    query.range(pageIndex * perPage, (pageIndex * perPage) + (perPage - 1))
-  }
+  const pageIndex = Number(page) - 1
+  query.range(pageIndex * perPage, (pageIndex * perPage) + (perPage - 1))
 
   query.order('created_at', { ascending: false })
 

@@ -22,7 +22,7 @@ export default function SearchForm({ onChange, collections }: Props) {
   const mountRef = useRef<boolean>(false)
   useEffect(() => {
     if (mountRef.current) {
-      onChange({ q: debouncedQuery, collection_id: collection})
+      onChange({ q: debouncedQuery, collection_id: collection })
     } else {
       mountRef.current = true
     }

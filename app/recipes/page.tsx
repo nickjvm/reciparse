@@ -13,14 +13,13 @@ export default async function Page({ searchParams }: NextPage) {
     return redirect('/auth-server-action')
   }
 
-  const { data: recipes } = await getRecipes({ q: searchParams.q, collection_id: searchParams.collection })
+  const { data: recipes, count } = await getRecipes({ q: searchParams.q, collection_id: searchParams.collection, page: searchParams.page, perPage: 20 })
   const { data: collections } = await readCollections()
 
-  if (recipes) {
-    return (
-      <ContentContainer>
-        <View recipes={recipes} collections={collections} />
-      </ContentContainer>
-    )
-  }
+
+  return (
+    <ContentContainer>
+      <View recipes={recipes || []} collections={collections} count={count || 0}/>
+    </ContentContainer>
+  )
 }

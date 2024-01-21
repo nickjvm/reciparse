@@ -1,3 +1,4 @@
+import { GoogleAnalytics } from '@next/third-parties/google'
 import type { Metadata } from 'next'
 import { Inter, Yeseva_One } from 'next/font/google'
 import './globals.css'
@@ -48,6 +49,7 @@ export default async function RootLayout({
           {children}
         </AppLayout>
         <Toaster />
+        {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />}
       </body>
     </html>
   )
