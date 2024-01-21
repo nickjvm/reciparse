@@ -65,7 +65,7 @@ export default function TabNav({ recipe, collections }: Props) {
   const tabs = [{
     value: 'general',
     label: 'Overview',
-    fields: ['name', 'collection_id', 'source', 'is_public', 'prepTime', 'cookTime', 'totalTime', 'yield']
+    fields: ['name', 'collection_id', 'collection_name', 'is_public', 'prepTime', 'cookTime', 'totalTime', 'yield']
   }, {
     value: 'ingredients',
     label: 'Ingredients',
@@ -173,6 +173,7 @@ export default function TabNav({ recipe, collections }: Props) {
   }
 
   const imagePreview = form.watch('image')
+  const collection_id = form.watch('collection_id')
 
   return (
     <Tabs.Root className="TabsRoot"value={activeTabValue} onValueChange={onTabChange}>
@@ -198,9 +199,9 @@ export default function TabNav({ recipe, collections }: Props) {
         <div className="col-span-4 md:col-span-3">
           <Tabs.Content value="general">
             <form className="space-y-6" onSubmit={next}>
-              <div className="grid grid-cols-8 gap-3 md:gap-6">
+              <div className="grid grid-cols-8 gap-3 md:gap-6 md:gap-y-3">
                 <div className="col-span-8 md:col-span-2 row-span-3 row-start-2 md:row-start-1">
-                  <label htmlFor="name" className="text-sm text-slate-600 relative">
+                  <label htmlFor="image" className="text-sm text-slate-600 relative">
                     <span className="md:hidden">Photo</span>
                     <Input className="md:opacity-0 md:absolute md:top-0 md:left-0 w-full md:h-full cursor-pointer" type="file" onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
                       if (e.target.files) {
@@ -227,21 +228,25 @@ export default function TabNav({ recipe, collections }: Props) {
                   </label>
                   {form.formState.errors.upload && <div className="text-red-800 mt-2 text-sm">{`${form.formState.errors.upload?.message}`}</div>}
                 </div>
-                <div className="col-span-8 md:col-span-4">
+                <div className="col-span-8 md:col-span-6">
                   <label htmlFor="name" className="text-sm text-slate-600">Recipe name</label>
-                  <Input {...form.register('name')} type="text" className="w-full"/>
-                  <div className="text-red-800 mt-2 text-sm">{form.formState.errors.name?.message}</div>
+                  <Input {...form.register('name')} id="name" type="text" className="w-full"/>
+                  {form.formState.errors.name && <div className="text-red-800 mt-2 text-sm">{form.formState.errors.name?.message}</div>}
                 </div>
-                <div className="col-span-4 md:col-span-2">
+                <div className="col-span-4 md:col-span-3">
                   <label htmlFor="collection_id" className="text-sm text-slate-600">Collection</label>
-                  <select {...form.register('collection_id')} className="bg-white flex h-9 w-full rounded-md border border-input px-3 py-1 text-md shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50">
+                  <select {...form.register('collection_id')} id="collection_id" className="bg-white flex h-9 w-full rounded-md border border-input px-3 py-1 text-md shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50">
                     {collections.map(collection => <option key={collection.id} value={collection.id}>{collection.name}</option>)}
+                    <option value="-1">Create a new collection</option>
                   </select>
                 </div>
-                <div className="col-span-8 md:col-span-6">
-                  <label htmlFor="source" className="text-sm text-slate-600">Source URL</label>
-                  <Input {...form.register('source')} type="text" className="w-full"/>
-                </div>
+                {collection_id === '-1' && (
+                  <div className="col-span-8 md:col-span-6">
+                    <label htmlFor="collection_name" className="text-sm text-slate-600">New collection name</label>
+                    <Input autoFocus {...form.register('collection_name')} id="collection_name" type="text" className="w-full"/>
+                    {form.formState.errors.collection_name && <div className="text-red-800 mt-2 text-sm">{form.formState.errors.collection_name?.message}</div>}
+                  </div>
+                )}
                 <div className="col-span-8 md:col-start-3 md:col-span-6 space-y-4">
                   <div className="items-center flex gap-4">
                     <Controller control={form.control} name="is_public" render={({ field }) => {

@@ -3,8 +3,8 @@ import TabNav from '../../components/TabNav'
 import createSupabaseServerClient from '@/lib/supabase/server'
 import readUserSession from '@/lib/actions'
 import { redirect } from 'next/navigation'
-import AppLayout from '@/components/ui/templates/AppLayout'
 import Heading from '@/components/ui/atoms/Heading'
+import ContentContainer from '@/components/ui/templates/ContentContainer'
 
 export default async function EditRecipe({ params }: NextPage) {
   const { data } = await readUserSession()
@@ -23,9 +23,9 @@ export default async function EditRecipe({ params }: NextPage) {
   }
 
   return (
-    <AppLayout session={data?.session}>
+    <ContentContainer>
       <Heading>Edit {recipe.name} Recipe</Heading>
       <TabNav recipe={recipe} collections={collections || []} />
-    </AppLayout>
+    </ContentContainer>
   )
 }

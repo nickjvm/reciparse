@@ -4,8 +4,9 @@ import * as z from 'zod'
 export const FormSchema = z
   .object({
     name: z.string().min(1, { message: 'Required.' }),
-    handle: z.string().min(10).optional(),
-    collection_id: z.string({ invalid_type_error: 'Select a collection.' }).uuid(),
+    collection_name: z.string().min(1, { message: 'Required' }).optional(),
+    handle: z.string().min(10).optional().or(z.null()),
+    collection_id: z.string({ invalid_type_error: 'Select a collection.' }).uuid().or(z.literal('-1')),
     source: z.string().optional(),
     prepTime: z.string().nullable().optional(),
     cookTime: z.string().nullable().optional(),
@@ -23,13 +24,22 @@ export const FormSchema = z
     image: z.string().url().nullable().optional(),
     upload: z.any()
       .refine((file) => {
-        console.log(file, file.size)
         return file ? file?.size <= 5 * 1024 * 1024 : true
       }, 'Max file size is 5MB.')
       .refine(
         (file) => file ? ['image/jpeg', 'image/jpg', 'image/png'].includes(file?.type) : true,
         'only .jpg, .jpeg, .png and .gif files are accepted.'
       ).optional()
+  }).superRefine((values, context) => {
+    console.log(values)
+    if (values.collection_id === '-1' && ! values.collection_name) {
+      console.log('here!')
+      context.addIssue({
+        message: 'Required.',
+        code: z.ZodIssueCode.custom,
+        path: ['collection_name'],
+      })
+    }
   })
 
 export type Inputs = z.infer<typeof FormSchema>

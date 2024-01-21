@@ -40,7 +40,17 @@ export async function updateRecipe(id: string, _values: Inputs, fileData: FormDa
   }
 
   const supabase = await createSupabaseServerClient()
-  const response = await supabase.from('recipes').update(pick(values, ['name', 'collection_id', 'prepTime', 'cookTime', 'totalTime', 'yield', 'source', 'is_public', 'ingredients', 'instructions', 'image', 'handle'])).eq('id', id).select().single()
+
+  if (values.collection_id === '-1') {
+    const { data: collection, error } = await supabase.from('collections').insert({ name: values.collection_name }).select().single()
+    if (collection) {
+      values.collection_id = collection.id
+    } else {
+      throw new Error(error.message)
+    }
+  }
+
+  const response = await supabase.from('recipes').update(pick(values, ['name', 'collection_id', 'prepTime', 'cookTime', 'totalTime', 'yield', 'is_public', 'ingredients', 'instructions', 'image'])).eq('id', id).select().single()
 
   if (!response.error) {
     revalidatePath(`/recipes/${response.data.id}`)

@@ -65,7 +65,9 @@ export async function readCollections() {
 
 export async function createRecipe(_values: Inputs, fileData: FormData) {
   const values: DBRecipe = _values
+
   values.handle = `${kebabCase(values.name.substr(0, 50).trim())}-${nanoid(8)}`
+
   if (typeof values.ingredients === 'string') {
     values.ingredients = values.ingredients?.split('\n').map((v: string) => v.trim())
   }
@@ -94,7 +96,17 @@ export async function createRecipe(_values: Inputs, fileData: FormData) {
     }
 
     const supabase = await createSupabaseServerClient()
-    const response = await supabase.from('recipes').insert(pick(values as DBRecipe, ['name', 'collection_id', 'prepTime', 'cookTime', 'totalTime', 'yield', 'source', 'is_public', 'ingredients', 'instructions', 'image', 'handle'])).select().single()
+
+    if (values.collection_id === '-1') {
+      const { data: collection, error } = await supabase.from('collections').insert({ name: values.collection_name }).select().single()
+      if (collection) {
+        values.collection_id = collection.id
+      } else {
+        throw new Error(error.message)
+      }
+    }
+
+    const response = await supabase.from('recipes').insert(pick(values as DBRecipe, ['name', 'collection_id', 'prepTime', 'cookTime', 'totalTime', 'yield', 'is_public', 'ingredients', 'instructions', 'image', 'handle'])).select().single()
     return response
   } catch (e) {
     console.log('error creating recipe', e)
