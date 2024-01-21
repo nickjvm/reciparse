@@ -45,7 +45,7 @@ export type Recipe = {
   prepTime?: string|null;
   cookTime?: string|null;
   totalTime?: string|null;
-  ingredients: Ingredient[]|string[];
+  ingredients: Ingredient[];
   instructions: Json[];
   nutrition?: { [key: string]: string };
   image?: string|null;

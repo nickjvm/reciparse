@@ -1,7 +1,7 @@
 'use server'
 
 import createSupabaseServerClient from '@/lib/supabase/server'
-import { Recipe } from '@/lib/types'
+import { DBRecipe, Ingredient, Recipe } from '@/lib/types'
 
 type CopyRecipe = {
   id: string;
@@ -10,7 +10,8 @@ type CopyRecipe = {
   source?: string|null;
 }
 
-export async function copyRecipe({ id: collection_id, collectionName, recipe, source}: CopyRecipe) {
+export async function copyRecipe({ id: collection_id, collectionName, recipe: _recipe, source}: CopyRecipe) {
+  const recipe: DBRecipe = _recipe
   const supabase = await createSupabaseServerClient()
   if (collection_id === '-1') {
     if (!collectionName) {
@@ -31,7 +32,7 @@ export async function copyRecipe({ id: collection_id, collectionName, recipe, so
   }
 
   recipe.source = source
-  recipe.ingredients = recipe.ingredients.map(ingredient => {
+  recipe.ingredients = recipe.ingredients.map((ingredient: string|Ingredient) => {
     if (typeof ingredient === 'string') {
       return ingredient
     }
@@ -53,8 +54,7 @@ export async function copyRecipe({ id: collection_id, collectionName, recipe, so
     collection_id: recipe.collection_id,
     yield: recipe.yield,
     source: recipe.source
-  }
-  ).select().single()
+  } as DBRecipe).select().single()
 
   if (error) {
     throw new Error(error.message)

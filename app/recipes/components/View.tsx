@@ -2,13 +2,13 @@
 
 import { useMemo, useState, useTransition } from 'react'
 import SearchForm from './SearchForm'
-import { Collection, Recipe } from '@/lib/types'
+import { Collection, DBRecipe, Recipe } from '@/lib/types'
 import Card from '@/components/ui/atoms/Card'
 import { getRecipes } from '../actions'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 type Props = {
-  recipes: Recipe[]
+  recipes: DBRecipe[]
   collections?: Collection[]|null
 }
 export default function View({ recipes: initialRecipes, collections, }: Props) {

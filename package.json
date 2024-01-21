@@ -40,6 +40,7 @@
     "react-dom": "^18",
     "react-hook-form": "^7.48.2",
     "react-icons": "^4.11.0",
+    "schema-dts": "^1.1.2",
     "string-strip-html": "^13.4.5",
     "tailwind-merge": "^2.0.0",
     "tailwindcss-animate": "^1.0.7",
