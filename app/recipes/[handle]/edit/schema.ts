@@ -7,7 +7,7 @@ export const FormSchema = z
     collection_name: z.string().min(1, { message: 'Required' }).optional(),
     handle: z.string().min(10).optional().or(z.null()),
     collection_id: z.string({ invalid_type_error: 'Select a collection.' }).uuid().or(z.literal('-1')),
-    source: z.string().optional(),
+    source: z.string().optional().or(z.null()),
     prepTime: z.string().nullable().optional(),
     cookTime: z.string().nullable().optional(),
     totalTime: z.string().nullable().optional(),

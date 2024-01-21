@@ -10,6 +10,7 @@ import { unstable_noStore } from 'next/cache'
 import client from '@/lib/aws/config'
 import { PutObjectCommand } from '@aws-sdk/client-s3'
 import { Inputs } from '../[handle]/edit/schema'
+import readUserSession from '@/lib/actions'
 
 // export async function createTodo(title: string) {
 //   const supabase = await createSupabaseServerClient()
@@ -119,5 +120,19 @@ export async function createRecipe(_values: Inputs, fileData: FormData) {
       status: 400,
       statusText: 'ServerError'
     }
+  }
+}
+
+export async function saveToHistory(recipe_id: string) {
+  const supabase = await createSupabaseServerClient()
+  const { data } = await readUserSession()
+
+  if (data.session) {
+    await supabase.from('history').upsert({
+      user_id: data.session.user.id,
+      recipe_id
+    }, {
+      onConflict: 'user_id, recipe_id'
+    })
   }
 }

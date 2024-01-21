@@ -6,11 +6,20 @@ import FullRecipe from '@/components/ui/molecules/FullRecipe'
 import { decode } from 'html-entities'
 import ContentContainer from '@/components/ui/templates/ContentContainer'
 import RecipeSchema from '@/components/ui/atoms/RecipeSchema'
+import { Metadata } from 'next'
 
-export const generateMetadata = async ({ searchParams }: NextPage) => {
+
+export const generateMetadata = async ({ searchParams }: NextPage): Promise<Metadata> => {
   const recipe = await parseRecipe(searchParams.url)
   return {
     title: `${decode(recipe.name)} | Reciparse`,
+    openGraph: {
+      type: 'article',
+      siteName: 'Reciparse',
+      url: `parse?url=${searchParams.url}`,
+      images: recipe.image || 'og-image.png',
+      description: `Check out ${recipe.name}! No videos, ads or stories - it's only the recipe!`
+    }
   }
 }
 
