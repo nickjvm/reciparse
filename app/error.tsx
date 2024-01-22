@@ -1,9 +1,14 @@
 'use client'
 
+import LogRocket from 'logrocket'
+
 import { Button } from '@/components/ui/button'
 import FixedWidth from '@/components/ui/templates/FixedWidth'
 import Image from 'next/image'
 import { useEffect } from 'react'
+import { usePathname, useSearchParams } from 'next/navigation'
+import getUrl from '@/lib/getUrl'
+import env from '@/lib/getEnv'
 
 type Props = {
   error: Error;
@@ -11,9 +16,21 @@ type Props = {
 }
 
 export default function Error({ error, reset }: Props) {
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
   useEffect(() => {
     console.log(error)
-  })
+
+    if (env === 'production') {
+      LogRocket.captureException(error, {
+        extra: {
+          pageName: document.title,
+          url: getUrl(`${pathname}?${searchParams}`),
+        }
+      })
+    }
+  }, [])
 
   return (
     <FixedWidth className="max-w-xl text-center">

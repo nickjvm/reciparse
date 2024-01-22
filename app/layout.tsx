@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 import { Session } from '@supabase/supabase-js'
 import AppLayout from '@/components/ui/templates/AppLayout'
 import getUrl from '@/lib/getUrl'
+import LogRocketInit from '@/components/ui/atoms/LogRocket'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -49,6 +50,7 @@ export default async function RootLayout({
           {children}
         </AppLayout>
         <Toaster />
+        <LogRocketInit />
         {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />}
       </body>
     </html>
