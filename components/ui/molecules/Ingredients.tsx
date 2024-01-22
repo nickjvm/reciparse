@@ -27,11 +27,11 @@ export default function IngredientsList({ ingredients, showStickyIngredients }: 
   return (
     <div className="md:sticky md:top-[80px] md:self-start">
       <div>
-        <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
+        <h3 className="text-xl font-semibold mb-2 flex items-center gap-2">
           Ingredients
           <Copy text={ingredients.map(ing => ing.primary).join('\n')} />
         </h3>
-        <ul className={cn(ingredients.length > 8 && 'print:columns-2', 'print:mb-4')}>
+        <ul className="print:list-disc">
           {ingredients.map((ingredient: Ingredient, i: number) => (
             <li key={i} className="border-b print:border-b-0 print:pb-0 print:mb-0 last:border-b-0 border-b-slate-200 pb-2 mb-2">
               {ingredient.primary}

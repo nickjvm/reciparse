@@ -69,35 +69,35 @@ export default function FullRecipe({ recipe, user }: Props) {
   return (
     <div className="m-auto max-w-5xl">
       <div className="grid grid-cols-12 gap-5 items-start">
-        {recipe.image && <Image className="mx-auto aspect-square object-cover col-span-12 md:col-span-2 rounded-md" src={recipe.image} alt={recipe.name} width="500" height="500" />}
-        <div className={cn('-mx-4 md:mx-0 bg-slate-50 p-4 print:p-0 md:rounded-md col-span-12 ', recipe.image ? 'md:col-span-10' : 'px-6')}>
+        {recipe.image && <Image className="mx-auto aspect-square object-cover col-span-12 print:col-span-2 md:col-span-2 rounded-md" src={recipe.image} alt={recipe.name} width="500" height="500" />}
+        <div className={cn('-mx-4 print:mx-0 md:mx-0 bg-slate-50 p-4 print:p-0 md:rounded-md col-span-12 ', recipe.image ? 'print:col-span-10 md:col-span-10' : 'px-6')}>
           <div className="mb-3">
-            <h1 className="text-brand font-display text-3xl font-semibold text-left sm:text-center md:text-left">{recipe.name}</h1>
-            {recipe.source && <p className="text-slate-600 text-sm hover:underline md:line-clamp-1 text-left sm:text-center md:text-left">
+            <h1 className="text-brand font-display text-3xl print:text-xl font-semibold text-left sm:text-center print:text-left md:text-left">{recipe.name}</h1>
+            {recipe.source && <p className="text-slate-600 text-sm hover:underline md:line-clamp-1 print:line-clamp-none text-left sm:text-center print:text-left md:text-left">
               <Link target="_blank" href={recipe.source}>{recipe.source}</Link>
             </p>}
           </div>
-          <div className="flex flex-wrap md:flex-nowrap md:space-x-3 gap-y-2">
-            {prepTime && (
-              <div className="text-center md:text-left w-1/2 md:w-auto md:min-w-[150px] grow md:grow-0">
+          <div className="flex flex-wrap md:flex-nowrap md:space-x-3 print:flex-nowrap gap-y-2">
+            {!!prepTime && (
+              <div className="text-center md:text-left print:text-left w-1/2 md:w-auto md:min-w-[150px] grow md:grow-0">
                 <h3 className="font-semibold">Prep Time</h3>
                 {prepTime}
               </div>
             )}
-            {cookTime && (
-              <div className="text-center md:text-left w-1/2 md:w-auto md:min-w-[150px] grow md:grow-0">
+            {!!cookTime && (
+              <div className="text-center md:text-left print:text-left w-1/2 md:w-auto md:min-w-[150px] grow md:grow-0">
                 <h3 className="font-semibold">Cook Time</h3>
                 {cookTime}
               </div>
             )}
-            {totalTime && (
-              <div className="text-center md:text-left w-1/2 md:w-auto md:min-w-[150px] grow md:grow-0">
+            {!!totalTime && (
+              <div className="text-center md:text-left print:text-left w-1/2 md:w-auto md:min-w-[150px] grow md:grow-0">
                 <h3 className="font-semibold">Total Time</h3>
                 {totalTime}
               </div>
             )}
-            {recipe.yield && (
-              <div className="text-center md:text-left w-1/2 md:w-auto md:min-w-[150px] grow md:grow-0">
+            {!!recipe.yield && (
+              <div className="text-center md:text-left print:text-left w-1/2 md:w-auto md:min-w-[150px] grow md:grow-0">
                 <h3 className="font-semibold">Recipe Yield</h3>
                 {recipe.yield} serving{recipe.yield !== 1 && 's'}
               </div>
@@ -119,17 +119,17 @@ export default function FullRecipe({ recipe, user }: Props) {
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-12 md:grid-cols-16 gap-6 mt-4">
-        <div className="col-span-12 md:col-span-6 mb:block mb:col-span-6">
+      <div className="grid grid-cols-12 md:grid-cols-16 print:grid-cols-16 gap-6 mt-4">
+        <div className="col-span-12 print:col-span-6 md:col-span-6 mb:block mb:col-span-6">
           <IngredientsList ingredients={recipe.ingredients} showStickyIngredients={showStickyIngredients_debounced}/>
         </div>
-        <div className="space-y-8 print:space-y-2 col-span-12 md:col-span-10 print:col-span-10" ref={directionsRef}>
+        <div className="space-y-8 print:space-y-8 col-span-12 md:col-span-10 print:col-span-10" ref={directionsRef}>
           <CookMode />
-          <div className="space-y-3 print:space-y-1">
+          <div className="space-y-3 print:space-y-1 print:!mt-0">
             {recipe.instructions.map((section: InstructionSection, i: number) => {
               return (
                 <Fragment key={i}>
-                  <h2 key={i} className="text-2xl font-semibold mb-2">{decode(section.name)}</h2>
+                  <h2 key={i} className="text-xl font-semibold mb-2">{decode(section.name)}</h2>
                   <ol className={cn('space-y-2 print:space-y-0', section.steps.length > 1 && 'list-decimal pl-8')}>
                     {section.steps.map((step, j) => {
                       return <li key={j}>{step.name !== step.text && <strong>{step.name}</strong>} {step.text}</li>
