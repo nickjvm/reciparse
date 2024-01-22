@@ -32,16 +32,24 @@ export default function RecentlyViewedCarousel({ history: serverHistory }: Props
 
   useEffect(() => {
     if (!serverHistory?.length) {
-      const history = JSON.parse(global?.window?.localStorage.getItem('search_history') || '[]').map((item: LocalSearchHistory, i: number) => ({
-        id: i,
-        recipes: null,
-        parsed_id: item.id,
-        parsed: {
-          name: item.name,
-          url: item.url,
-          image: item.image_url,
+      const history = JSON.parse(global?.window?.localStorage.getItem('search_history') || '[]').map((item: LocalSearchHistory, i: number) => {
+        const recipeType = item.type || 'parsed'
+        return {
+          id: item.id || i,
+          recipes: recipeType === 'saved' ? {
+            name: item.name,
+            id: item.url,
+            image: item.image_url,
+          } : null,
+          recipe_id: recipeType === 'saved' ? item.id : null,
+          parsed_id: recipeType === 'parsed' ? item.id : null,
+          parsed: recipeType === 'parsed'  ? {
+            name: item.name,
+            url: item.url,
+            image: item.image_url,
+          } : null
         }
-      }))
+      })
       setHistory(history)
     }
   }, [])
@@ -61,7 +69,14 @@ export default function RecentlyViewedCarousel({ history: serverHistory }: Props
               if (i > 7) {
                 return null
               }
-              const subtitle = history.parsed?.url ? new URL(history.parsed.url).hostname : `Saved to ${history.recipes?.collections?.name}`
+
+              let subtitle
+              if (history.recipes?.collections?.name) {
+                subtitle = `Saved to ${history.recipes?.collections?.name}`
+              } else if (history.parsed?.url) {
+                subtitle = new URL(history.parsed.url).hostname
+              }
+
               return (
                 <div key={history.id} className="px-1.5 flex min-w-[36vw] w-[36vw] lg:w-[15vw] lg:min-w-[15vw] xl:min-w-1/8 xl:w-1/8">
                   <Card

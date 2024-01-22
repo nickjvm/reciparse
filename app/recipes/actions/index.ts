@@ -5,7 +5,7 @@ import { nanoid } from 'nanoid'
 import createSupabaseServerClient from '@/lib/supabase/server'
 import { Collection, DBRecipe } from '@/lib/types'
 import pick from 'lodash.pick'
-import { unstable_noStore } from 'next/cache'
+import { revalidatePath, unstable_noStore } from 'next/cache'
 
 import client from '@/lib/aws/config'
 import { PutObjectCommand } from '@aws-sdk/client-s3'
@@ -132,5 +132,7 @@ export async function saveToHistory(recipe_id: string) {
     }, {
       onConflict: 'user_id, recipe_id'
     })
+
+    revalidatePath('/')
   }
 }

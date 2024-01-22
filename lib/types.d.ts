@@ -79,4 +79,5 @@ export type LocalSearchHistory = {
   url: string
   name: string
   image_url: string
+  type: 'parsed'|'saved'
 }

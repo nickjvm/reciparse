@@ -1,6 +1,6 @@
 'use client'
 
-import { DBRecipe, InstructionSection } from '@/lib/types'
+import { DBRecipe, InstructionSection, LocalSearchHistory } from '@/lib/types'
 import { cn, parseDuration } from '@/lib/utils'
 import { User } from '@supabase/supabase-js'
 import Image from 'next/image'
@@ -32,17 +32,21 @@ export default function FullRecipe({ recipe, user }: Props) {
   const endRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const history = JSON.parse(global?.window?.localStorage.getItem('search_history') || '[]')
+    let history = JSON.parse(global?.window?.localStorage.getItem('search_history') || '[]')
     history.unshift({
       id: recipe.id,
       name: recipe.name,
-      url: recipe.source,
+      // TODO: recipe.handle here
+      url: recipe.created_by ? recipe.id : recipe.source,
       image_url: recipe.image,
+      type: recipe.created_by ? 'saved' : 'parsed'
     })
 
     history.length = Math.min(history.length, 8)
+    history = history.filter((h: LocalSearchHistory, index: number, self: LocalSearchHistory[]) => index === self.findIndex(t => t.id === h.id))
     global?.window?.localStorage.setItem('search_history', JSON.stringify(history))
   }, [])
+
   useEffect(() => {
     const showHideStickyIngredients = () => {
 

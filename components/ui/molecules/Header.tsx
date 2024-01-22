@@ -30,18 +30,18 @@ export default function Header({ session }: Props) {
   }, [pathname, searchParams])
 
   useEffect(() => {
-    const partialThreshold = 100
-    const completeThreshold = 300
+    const partialThreshold = userNavRef.current ? 100 : 200
+    const completeThreshold = userNavRef.current ? 300 : 200
     let lastScrollY = global?.window?.scrollY
     const onScroll = () => {
       if (window.scrollY < lastScrollY) {
-        if (window.scrollY < partialThreshold || !userNavRef.current) {
+        if (window.scrollY < partialThreshold) {
           setHiddenState(null)
         } else {
           setHiddenState('partial')
         }
       } else {
-        if (window.scrollY > completeThreshold || !userNavRef.current) {
+        if (window.scrollY > completeThreshold) {
           setHiddenState('complete')
         } else if (window.scrollY > partialThreshold) {
           setHiddenState('partial')

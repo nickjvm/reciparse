@@ -8,6 +8,7 @@ import { cleanIngredientString, isValidUrl, stripTags } from '@/lib/utils'
 import { HowToSection, HowToStep, Ingredient, InstructionSection, Recipe } from '@/lib/types'
 import createSupabaseServerClient from '@/lib/supabase/server'
 import readUserSession from '@/lib/actions'
+import { revalidatePath } from 'next/cache'
 
 const isPinterestLink = (location: URL) => location.hostname === 'www.pinterest.com' || location.hostname === 'pin.it'
 
@@ -322,6 +323,8 @@ export async function parseRecipe(url?: string): Promise<Recipe> {
     }, {
       onConflict: 'user_id, parsed_id'
     })
+
+    revalidatePath('/')
   }
 
   if (response.data?.id) {
