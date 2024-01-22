@@ -81,3 +81,57 @@ export type LocalSearchHistory = {
   image_url: string
   type: 'parsed'|'saved'
 }
+
+export interface Nutrition {
+  '@type': 'NutritionInformation'
+  calories: number|string|null
+  unsaturatedFatContent: string|null
+  carbohydrateContent: sring|null
+  cholesterolContent: string|null,
+  fatContent:  string|null
+  fiberContent:  string|null
+  proteinContent:  string|null
+  saturatedFatContent:  string|null
+  sodiumContent:  string|null
+  sugarContent:  string|null
+  transFatContent: string|null
+}
+
+type Nutrients = 'ENERC_KCAL'|'FAT'|'FASAT'|'FATRN'|'FAMS'|'FAPU'|'CHOCDF'|'CHOCDF'|'FIBTG'|'SUGAR'|'PROCNT'|'CHOLE'|'NA'|'CA'|'MG'|'K'|'FE'|'ZN'|'P'|'VITA_RAE'|'VITC'|'THIA'|'RIBF'|'NIA'|'VITB6A'|'FOLDFE'|'FOLFD'|'FOLAC'|'VITB12'|'VITD'|'TOCPHA'|'VITK1'|'WATER'|'ENERC_KCAL'
+type EdamamNutrients = {
+  label: string
+  quantity: number
+  unit: string
+}
+export type EdamamResponse = {
+  uri: string
+  yield: number
+  calories: number
+  totalWeight: number
+  dietLabels: string[]
+  healthLabels: string[]
+  cautions: string[]
+  totalNutrients: {
+    [key in keyof typeof Nutrients]: EdamamNutrients
+  }
+  totalDaily: {
+    [key in keyof typeof Nutrients]: EdamamNutrients
+  }
+  ingredients: {
+    text: string
+    parsed: {
+      quantity: number
+      measure: string
+      foodMatch: string
+      food: string
+      foodId: string
+      weight: number
+      retainedWeight: number
+      nutrients: {
+        [key in keyof typeof Nutrients]: EdamamNutrients
+      }
+      measureURI: string
+      status: string
+    }
+  }
+}

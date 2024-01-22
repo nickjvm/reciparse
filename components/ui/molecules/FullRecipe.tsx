@@ -15,14 +15,11 @@ import { decode } from 'html-entities'
 import { Fragment, useEffect, useRef, useState } from 'react'
 import IngredientsList from './Ingredients'
 import { useDebounce } from '@/lib/hooks/useDebounce'
+import NutritionInfo from './Nutrition'
 
 type Props = {
   recipe: DBRecipe,
   user?: User
-}
-
-const renderNutritionValue = (value: string) => {
-  return value.replace('milli', 'm').replace(/grams?/, 'g')
 }
 
 export default function FullRecipe({ recipe, user }: Props) {
@@ -139,55 +136,7 @@ export default function FullRecipe({ recipe, user }: Props) {
               )
             })}
           </div>
-          {recipe.nutrition && (
-            <div>
-              <h2 className="text-xl font-semibold mb-2">Nutrition</h2>
-              <div className="text-sm mb-3">Note: The information shown below is an estimate based on available ingredients and preparation. It should not be considered a substitute for a professional advice.</div>
-              <div className="grid grid-cols-1 sm:grid-cols-2">
-                {recipe.nutrition.servingSize && <span className="font-bold col-span-2">Serving size: {recipe.nutrition.servingSize}</span>}
-                {recipe.nutrition.calories && <span className="font-bold col-span-2">
-                  {typeof recipe.nutrition.calories === 'number' && `${recipe.nutrition.calories} calories`}
-                  {typeof recipe.nutrition.calories === 'string' && (recipe.nutrition.calories.includes('cal') ? recipe.nutrition.calories : `${recipe.nutrition.calories} calories`)}
-                </span>}
-                {recipe.nutrition.fatContent && <div>
-                  <span className="font-medium">Total fat: </span>
-                  {renderNutritionValue(recipe.nutrition.fatContent)}
-                </div>}
-                {recipe.nutrition.saturatedFatContent && <div>
-                  <span className="font-medium">Saturated fat: </span>
-                  {renderNutritionValue(recipe.nutrition.saturatedFatContent)}
-                </div>}
-                {recipe.nutrition.unsaturatedFatContent && <div>
-                  <span className="font-medium">Unsaturated fat: </span>
-                  {renderNutritionValue(recipe.nutrition.unsaturatedFatContent)}
-                </div>}
-                {recipe.nutrition.transFatContent && <div>
-                  <span className="font-medium">Trans fat: </span>
-                  {renderNutritionValue(recipe.nutrition.transFatContent)}
-                </div>}
-                {recipe.nutrition.sodiumContent && <div>
-                  <span className="font-medium">Sodium: </span>
-                  {renderNutritionValue(recipe.nutrition.sodiumContent)}
-                </div>}
-                {recipe.nutrition.carbohydrateContent && <div>
-                  <span className="font-medium">Total carbs: </span>
-                  {renderNutritionValue(recipe.nutrition.carbohydrateContent)}
-                </div>}
-                {recipe.nutrition.fiberContent && <div>
-                  <span className="font-medium">Fiber: </span>
-                  {renderNutritionValue(recipe.nutrition.fiberContent)}
-                </div>}
-                {recipe.nutrition.sugarContent && <div>
-                  <span className="font-medium">Sugar: </span>
-                  {renderNutritionValue(recipe.nutrition.sugarContent)}
-                </div>}
-                {recipe.nutrition.proteinContent && <div>
-                  <span className="font-medium">Protein: </span>
-                  {renderNutritionValue(recipe.nutrition.proteinContent)}
-                </div>}
-              </div>
-            </div>
-          )}
+          {user && <NutritionInfo data={recipe.nutrition} source={recipe.source} ingredients={recipe.ingredients} recipeYield={recipe.yield} />}
         </div>
       </div>
       <div ref={endRef} />

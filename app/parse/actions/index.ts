@@ -5,7 +5,7 @@ import { decode } from 'html-entities'
 import { HTMLElement, parse } from 'node-html-parser'
 import pick from 'lodash.pick'
 import { cleanIngredientString, isValidUrl, stripTags } from '@/lib/utils'
-import { HowToSection, HowToStep, Ingredient, InstructionSection, Recipe } from '@/lib/types'
+import { EdamamNutrients, EdamamResponse, HowToSection, HowToStep, Ingredient, InstructionSection, Nutrition, Recipe } from '@/lib/types'
 import createSupabaseServerClient from '@/lib/supabase/server'
 import readUserSession from '@/lib/actions'
 import { revalidatePath } from 'next/cache'
@@ -332,4 +332,37 @@ export async function parseRecipe(url?: string): Promise<Recipe> {
   }
 
   return data
+}
+
+export async function getNutrition(ingredients: string[]) {
+  const data = await fetch(`https://api.edamam.com/api/nutrition-details?app_id=${process.env.EDAMAM_APP_ID}&app_key=${process.env.EDAMAM_APP_KEY}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      ingr: ingredients.filter((i: string) => i.match(/^[\d\u00BC-\u00BE\u2150-\u215E]/)),
+    }),
+  }).then((r) => r.json() as Promise<EdamamResponse>)
+
+  const { totalNutrients, calories, yield: servings } = data
+
+  const getNutritionDisplay = (item: EdamamNutrients) => `${Math.round(item.quantity / servings).toFixed(1).replace('.0', '')} ${item.unit}`
+
+  const nutritionSchema: Nutrition = {
+    '@type': 'NutritionInformation',
+    calories: `${Math.floor(calories / servings)} kcal (${servings} serving${servings !== 1 ? 's' : ''})`,
+    unsaturatedFatContent: getNutritionDisplay(totalNutrients.FAPU),
+    carbohydrateContent: getNutritionDisplay(totalNutrients.CHOCDF),
+    cholesterolContent: getNutritionDisplay(totalNutrients.CHOLE),
+    fatContent: getNutritionDisplay(totalNutrients.FAT),
+    fiberContent: getNutritionDisplay(totalNutrients.FIBTG),
+    proteinContent: getNutritionDisplay(totalNutrients.PROCNT),
+    saturatedFatContent: getNutritionDisplay(totalNutrients.FASAT),
+    sodiumContent: getNutritionDisplay(totalNutrients.NA),
+    sugarContent: getNutritionDisplay(totalNutrients.SUGAR),
+    transFatContent: getNutritionDisplay(totalNutrients.FATRN),
+  }
+
+  return nutritionSchema
 }
