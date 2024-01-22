@@ -202,6 +202,8 @@ export async function parseRecipe(url?: string): Promise<Recipe> {
   }
 
   const recipe = {
+    id: '',
+    source: url,
     '@content': 'https://schema.org',
     '@type': 'Recipe',
     name: '',
@@ -320,6 +322,10 @@ export async function parseRecipe(url?: string): Promise<Recipe> {
     }, {
       onConflict: 'user_id, parsed_id'
     })
+  }
+
+  if (response.data?.id) {
+    data.id = response.data?.id
   }
 
   return data

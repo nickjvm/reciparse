@@ -1,5 +1,6 @@
 import Card from '@/components/ui/atoms/Card'
 import QuickSearch from '@/components/ui/molecules/QuickSearch'
+import RecentlyViewedCarousel from '@/components/ui/molecules/RecentlyViewedCarousel'
 import ContentContainer from '@/components/ui/templates/ContentContainer'
 import readUserSession from '@/lib/actions'
 import createSupabaseServerClient from '@/lib/supabase/server'
@@ -33,34 +34,7 @@ export default async function Home() {
       </div>
       <div className="m-auto max-w-screen-2xl">
         <div className="space-y-3 divide-y divide-slate-200">
-          {viewHistory && (
-            <div className="pt-5">
-              <h3 className="font-display text-primary text-xl lg:text-3xl text-center">Pick up where you left off</h3>
-              <div className="flex overflow-auto p-3">
-                {viewHistory?.filter((item, _, items) => {
-                  if (item.parsed_id) {
-                    return !items.find(i => item.parsed?.url === i.recipes?.source)
-                  }
-                  return !!item.recipe_id
-                }).map((history, i) => {
-                  if (i > 7) {
-                    return null
-                  }
-                  const subtitle = history.parsed?.url ? new URL(history.parsed.url).hostname : `Saved to ${history.recipes?.collections?.name}`
-                  return (
-                    <div key={history.id} className="px-1.5 flex min-w-[36vw] w-[36vw] lg:w-[15vw] lg:min-w-[15vw] xl:min-w-1/8 xl:w-1/8">
-                      <Card
-                        image={history.recipes?.image || history.parsed?.image}
-                        url={history.recipes ? `/recipes/${history.recipes.id}` : `/parse?url=${history.parsed?.url}`}
-                        title={history.recipes?.name || history.parsed?.name || ''}
-                        subtitle={subtitle}
-                      />
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          )}
+          <RecentlyViewedCarousel history={viewHistory} />
           <div className="pt-5">
             <h3 className="font-display text-primary text-xl lg:text-3xl text-center">Discover new recipes</h3>
             <div className="flex overflow-auto p-3">

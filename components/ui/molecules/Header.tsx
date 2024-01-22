@@ -9,7 +9,7 @@ import MenuDropdown from './MenuDropdown'
 import ParseRecipeDialog from './ParseRecipeDialog'
 import { Button } from '../button'
 import { CaretDownIcon, Cross2Icon } from '@radix-ui/react-icons'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Bars3Icon } from '@heroicons/react/20/solid'
 import { usePathname, useSearchParams } from 'next/navigation'
@@ -24,6 +24,7 @@ export default function Header({ session }: Props) {
   const [hiddenState, setHiddenState] = useState<'partial'|'complete'|null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false)
 
+  const userNavRef = useRef<HTMLDivElement>(null)
   useDidUpdateEffect(() => {
     setMobileMenuOpen(false)
   }, [pathname, searchParams])
@@ -34,13 +35,13 @@ export default function Header({ session }: Props) {
     let lastScrollY = global?.window?.scrollY
     const onScroll = () => {
       if (window.scrollY < lastScrollY) {
-        if (window.scrollY < partialThreshold) {
+        if (window.scrollY < partialThreshold || !userNavRef.current) {
           setHiddenState(null)
         } else {
           setHiddenState('partial')
         }
       } else {
-        if (window.scrollY > completeThreshold) {
+        if (window.scrollY > completeThreshold || !userNavRef.current) {
           setHiddenState('complete')
         } else if (window.scrollY > partialThreshold) {
           setHiddenState('partial')
@@ -64,7 +65,7 @@ export default function Header({ session }: Props) {
       hiddenState === 'complete' && '-translate-y-[100%]'
     )}>
       {session && (
-        <div className="bg-slate-50 hidden md:block">
+        <div className="bg-slate-50 hidden md:block" ref={userNavRef}>
           <div className="max-w-5xl m-auto flex items-center justify-end gap-3 text-sm">
             <Link href="/account" className="p-2">My Account</Link>
             <SignOut />

@@ -32,6 +32,18 @@ export default function FullRecipe({ recipe, user }: Props) {
   const endRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    const history = JSON.parse(global?.window?.localStorage.getItem('search_history') || '[]')
+    history.unshift({
+      id: recipe.id,
+      name: recipe.name,
+      url: recipe.source,
+      image_url: recipe.image,
+    })
+
+    history.length = Math.min(history.length, 8)
+    global?.window?.localStorage.setItem('search_history', JSON.stringify(history))
+  }, [])
+  useEffect(() => {
     const showHideStickyIngredients = () => {
 
       if (directionsRef.current && endRef.current) {

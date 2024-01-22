@@ -73,3 +73,10 @@ export type PostgrestResponseFailure = {
   status: number,
   statusText: string
 }
+
+export type LocalSearchHistory = {
+  id: string|number
+  url: string
+  name: string
+  image_url: string
+}
