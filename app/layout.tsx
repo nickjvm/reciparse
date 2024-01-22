@@ -9,6 +9,8 @@ import { Session } from '@supabase/supabase-js'
 import AppLayout from '@/components/ui/templates/AppLayout'
 import getUrl from '@/lib/getUrl'
 import LogRocketInit from '@/components/ui/atoms/LogRocket'
+import CookieBanner from '@/components/ui/CookieBanner'
+import { cookies } from 'next/headers'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -42,6 +44,17 @@ export default async function RootLayout({
   const { data } = await readUserSession()
   params.session = data?.session
 
+  const setAcceptCookie = async () => {
+    'use server'
+    const expires = new Date()
+    expires.setFullYear(expires.getFullYear() + 1)
+    cookies().set('cookie_consent', '1', {
+      expires
+    })
+  }
+
+  const cookieConsent = cookies().get('cookie_consent')?.value
+
   return (
     <html lang="en">
       <body className={cn(inter.variable, yesevaOne.variable, 'font-sans')}>
@@ -51,6 +64,7 @@ export default async function RootLayout({
         </AppLayout>
         <Toaster />
         <LogRocketInit />
+        {!cookieConsent && <CookieBanner onAccept={setAcceptCookie} />}
         {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />}
       </body>
     </html>
