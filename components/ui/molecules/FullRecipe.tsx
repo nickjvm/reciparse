@@ -106,7 +106,7 @@ export default function FullRecipe({ recipe, user }: Props) {
           <div className="space-x-3 mt-3">
             <Print />
             <ShareRecipe recipe={recipe} />
-            {user?.id === recipe.created_by
+            {user?.id && user?.id === recipe.created_by
               ? (
                 <Button className="print:hidden">
                   <Link className="inline-flex gap-2" href={`/recipes/${recipe.id}/edit`}>

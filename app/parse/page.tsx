@@ -18,7 +18,7 @@ export const generateMetadata = async ({ searchParams }: NextPage): Promise<Meta
       siteName: 'Reciparse',
       url: `parse?url=${searchParams.url}`,
       images: recipe.image || 'og-image.png',
-      description: `Check out ${recipe.name}! No videos, ads or stories - it's only the recipe!`
+      description: `Check out this ${recipe.name} recipe! No videos, ads or stories - it's only the recipe!`
     }
   }
 }
