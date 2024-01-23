@@ -10,7 +10,7 @@ export default async function Page({ searchParams }: NextPage) {
   const { data } = await readUserSession()
 
   if (!data?.session) {
-    return redirect('/auth-server-action')
+    return redirect('/auth')
   }
 
   const { data: recipes, count } = await getRecipes({ q: searchParams.q, collection_id: searchParams.collection, page: searchParams.page, perPage: 20 })

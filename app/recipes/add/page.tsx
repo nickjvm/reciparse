@@ -11,7 +11,7 @@ export default async function AddRecipe() {
   const { data: collections } = await supabase.from('collections').select()
 
   if (!session) {
-    return redirect('/auth-server-action')
+    return redirect('/auth')
   }
   return (
     <ContentContainer>

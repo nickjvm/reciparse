@@ -1,5 +1,6 @@
 'use server'
 
+import getUrl from '@/lib/getUrl'
 import createSupabaseServerClient from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
@@ -28,5 +29,21 @@ export async function handleSignOut() {
   const supabase = await createSupabaseServerClient()
   await supabase.auth.signOut()
 
-  redirect('/auth-server-action')
+  redirect('/auth')
+}
+
+export async function sendPasswordReset(email: string) {
+  const supabase = await createSupabaseServerClient()
+
+  return await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: getUrl('/auth/reset')
+  })
+}
+
+export async function confirmResetPassword(password: string) {
+  const supabase = await createSupabaseServerClient()
+
+  return await supabase.auth.updateUser({
+    password,
+  })
 }

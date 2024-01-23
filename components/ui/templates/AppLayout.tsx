@@ -27,8 +27,8 @@ export default async function AppLayout({ className, children, session }: Props)
               <ul className="space-y-2">
                 {!session ? (
                   <>
-                    <li><Link href="/auth-server-action#signin">Sign In</Link></li>
-                    <li><Link href="/auth-server-action#registeer">Register</Link></li>
+                    <li><Link href="/auth#signin">Sign In</Link></li>
+                    <li><Link href="/auth#registeer">Register</Link></li>
                   </>
                 ) : (<>
                   <li>

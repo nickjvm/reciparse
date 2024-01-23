@@ -1,7 +1,7 @@
 'use client'
 
 import * as Dialog from '@radix-ui/react-dialog'
-import SignOut from '@/app/auth-server-action/components/SignOut'
+import SignOut from '@/app/auth/components/SignOut'
 import { Session } from '@supabase/supabase-js'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -95,7 +95,7 @@ export default function Header({ session }: Props) {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          {session ? null : <><Link href="/auth-server-action"><Button variant="outline">Sign In</Button></Link><Button>Sign Up</Button></>}
+          {session ? null : <><Link href="/auth"><Button variant="outline">Sign In</Button></Link><Button>Sign Up</Button></>}
         </div>
         {session && (
           <div className="flex md:hidden col-start-10 col-span-3 justify-end print:hidden gap-2 whitespace-nowrap">

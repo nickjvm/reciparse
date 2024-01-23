@@ -13,13 +13,13 @@ export default async function Collections() {
   const { data } = await readUserSession()
 
   if (!data?.session) {
-    redirect('/auth-server-action')
+    redirect('/auth')
   }
 
   const supabase = await createSupabaseServerClient()
-  const { data: recipe } = await supabase.from('collections').select('*, recipes(*)').order('created_at', { ascending: false })
+  const { data: collections } = await supabase.from('collections').select('*, recipes(*)').order('created_at', { ascending: false })
 
-  if (!recipe) {
+  if (!collections) {
     // TODO: error UI handling
     return 'Error'
   }
@@ -27,7 +27,7 @@ export default async function Collections() {
     <ContentContainer>
       <Heading>My Collections</Heading>
       <div className="grid grid-cols-2 md:grid-cols-5 gap-5">
-        {recipe.map(collection => {
+        {collections.map(collection => {
           return (
             <Link href={`/recipes/?collection=${collection.id}`} key={collection.id} className="group overflow-hidden md:hover:bg-white md:hover:ring-brand transition ring-2 ring-transparent rounded md:p-3 md:-mx-1.5 h-full">
               <div className="aspect-square grid grid-cols-2 bg-slate-50 gap-0.5 mb-3">

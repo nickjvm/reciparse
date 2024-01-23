@@ -10,7 +10,7 @@ export default async function EditRecipe({ params }: NextPage) {
   const { data } = await readUserSession()
 
   if (!data?.session) {
-    redirect('/auth-server-action')
+    redirect('/auth')
   }
 
   const supabase = await createSupabaseServerClient()
