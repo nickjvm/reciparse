@@ -1,5 +1,5 @@
 import createSupabaseServerClient from '@/lib/supabase/server'
-import { DBRecipe } from '@/lib/types'
+import { Collection, DBRecipe } from '@/lib/types'
 import Image from 'next/image'
 import Link from 'next/link'
 import DeleteCollection from './components/DeleteCollection'
@@ -40,7 +40,7 @@ export default async function Collections() {
               </div>
               <div className="leading-tight text-sm line-clamp-2 mb-1 flex justify-between items-center">
                 {collection.name}
-                <DeleteCollection collection={collection} onConfirm={deleteCollection} />
+                <DeleteCollection collection={collection as Collection} onConfirm={deleteCollection} />
               </div>
             </Link>
           )

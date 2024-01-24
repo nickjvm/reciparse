@@ -5,14 +5,17 @@ import { Collection } from '@/lib/types'
 import * as AlertDialog from '@radix-ui/react-alert-dialog'
 import { TrashIcon } from '@radix-ui/react-icons'
 import { useRouter } from 'next/navigation'
+import { forwardRef } from 'react'
 
 type Props = {
   collection: Collection;
   onConfirm: (id: string) => void;
-  trigger: React.JSX.Element;
+  trigger?: React.JSX.Element;
 }
 
-const DefaultTrigger = () => <Button variant="ghost" className="opacity-0 group-hover:opacity-100"><TrashIcon /></Button>
+const DefaultTrigger = forwardRef<HTMLButtonElement>((props, forwardedRef) => <Button {...props} ref={forwardedRef} variant="ghost" className="opacity-0 group-hover:opacity-100"><TrashIcon /></Button>)
+
+DefaultTrigger.displayName = 'DefaultTrigger'
 
 export default function DeleteCollection({ collection, onConfirm, trigger }: Props) {
   const router = useRouter()

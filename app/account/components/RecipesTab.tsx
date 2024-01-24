@@ -1,8 +1,10 @@
 'use client;'
+import { deleteRecipe } from '@/app/recipes/[handle]/edit/actions'
+import DeleteRecipe from '@/app/recipes/[handle]/edit/components/DeleteRecipe'
 import { getRecipes } from '@/app/recipes/actions'
 import { Button } from '@/components/ui/button'
 import { DBRecipe } from '@/lib/types'
-import { PencilIcon } from '@heroicons/react/24/solid'
+import { PencilIcon, TrashIcon } from '@heroicons/react/24/solid'
 import { CaretLeftIcon, CaretRightIcon } from '@radix-ui/react-icons'
 import Link from 'next/link'
 import { useState } from 'react'
@@ -28,7 +30,6 @@ export default function RecipesTab({ recipes: _recipes }: Props) {
     return <div>You have no saved recipes</div>
   }
 
-
   return (
     <>
       <ul className="divide-y divide-slate-200 mb-4">
@@ -38,16 +39,28 @@ export default function RecipesTab({ recipes: _recipes }: Props) {
               <span>{recipe.name}</span>
               {recipe.is_public && <span className="text-green-700 text-sm">(public)</span>}
             </Link>
+            <DeleteRecipe
+              onConfirm={deleteRecipe}
+              recipe={recipe}
+              trigger={
+                <button className="opacity-0 group-hover:opacity-100 hover:text-slate-800 text-slate-400 transition">
+                  <TrashIcon className="w-4 h-4" />
+                </button>
+              }
+            />
             <Link href={`/recipes/${recipe.id}/edit`} className="opacity-0 group-hover:opacity-100 hover:text-slate-800 text-slate-400 transition">
               <PencilIcon className="w-4 h-4 "/>
             </Link>
           </li>
         ))}
       </ul>
-      <div className="flex justify-center items-center gap-4">
-        <Button variant="ghost" onClick={goToPage('prev')}><CaretLeftIcon className="w-5 h-5" /></Button>
-        <Button variant="ghost" onClick={goToPage('next')}><CaretRightIcon className="w-5 h-5" /></Button>
-      </div>
+      {totalPageCount > 1 && (
+        <div className="flex justify-center items-center gap-4">
+          <Button disabled={page === 1} variant="ghost" onClick={goToPage('prev')}><CaretLeftIcon className="w-5 h-5" /></Button>
+          <span className="text-sm text-slate-600">Page {page} of {totalPageCount}</span>
+          <Button disabled={page === totalPageCount} variant="ghost" onClick={goToPage('next')}><CaretRightIcon className="w-5 h-5" /></Button>
+        </div>
+      )}
     </>
   )
 }

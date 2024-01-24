@@ -194,7 +194,7 @@ export default function TabNav({ recipe, collections }: Props) {
               {tab.label}
             </Tabs.Trigger>
           ))}
-          {recipe && <DeleteRecipe id={recipe.id} onConfirm={deleteRecipe} />}
+          {recipe && <DeleteRecipe recipe={recipe} onConfirm={deleteRecipe} />}
         </Tabs.List>
         <div className="col-span-4 md:col-span-3">
           <Tabs.Content value="general">
