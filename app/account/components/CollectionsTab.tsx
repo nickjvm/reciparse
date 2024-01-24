@@ -44,12 +44,12 @@ export default function CollectionsTab({ collections }: Props) {
               <DeleteCollection
                 collection={collection}
                 onConfirm={async () => await deleteCollection(collection.id)}
-                trigger={<button className="hover:text-slate-800 text-slate-400"><TrashIcon className="w-4 h-4"/></button>}
+                trigger={<button className="hover:text-slate-800 text-slate-400 transition"><TrashIcon className="w-4 h-4"/></button>}
               />
               <EditCollection
                 collection={collection}
                 onConfirm={handleEdit}
-                trigger={<button className="hover:text-slate-800 text-slate-400"><PencilIcon className="w-4 h-4"/></button>}
+                trigger={<button className="hover:text-slate-800 text-slate-400 transition"><PencilIcon className="w-4 h-4"/></button>}
               />
             </div>
           </li>

@@ -13,13 +13,14 @@ type Props = {
   recipe: DBRecipe;
   onConfirm: (id: string) => Promise<PostgrestResponseFailure|PostgrestSingleResponse<null>>;
   trigger?: React.JSX.Element
+  redirectTo?: string
 }
 
 const DefaultTrigger = forwardRef<HTMLButtonElement>((props, forwardedRef) => <Button {...props} ref={forwardedRef} variant="outline" className="flex items-center gap-2 m-auto mt-6"><TrashIcon /> Delete Recipe</Button>)
 
 DefaultTrigger.displayName = 'DefaultTrigger'
 
-export default function DeleteRecipe({ recipe, onConfirm, trigger }: Props) {
+export default function DeleteRecipe({ recipe, onConfirm, trigger, redirectTo }: Props) {
   const router = useRouter()
 
   return (
@@ -48,7 +49,9 @@ export default function DeleteRecipe({ recipe, onConfirm, trigger }: Props) {
                   <Button variant="destructive" onClick={async () => {
                     const { error } = await onConfirm(recipe.id)
                     if (!error) {
-                      router.push('/recipes')
+                      if (redirectTo) {
+                        router.push(redirectTo)
+                      }
                       toast({
                         title: 'Recipe deleted',
                         description: 'The recipe has been deleted successfully.'
