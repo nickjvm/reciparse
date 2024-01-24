@@ -9,8 +9,12 @@ import { useRouter } from 'next/navigation'
 type Props = {
   collection: Collection;
   onConfirm: (id: string) => void;
+  trigger: React.JSX.Element;
 }
-export default function DeleteCollection({ collection, onConfirm }: Props) {
+
+const DefaultTrigger = () => <Button variant="ghost" className="opacity-0 group-hover:opacity-100"><TrashIcon /></Button>
+
+export default function DeleteCollection({ collection, onConfirm, trigger }: Props) {
   const router = useRouter()
   return (
     <div onClick={(e) => {
@@ -20,7 +24,7 @@ export default function DeleteCollection({ collection, onConfirm }: Props) {
 
       <AlertDialog.Root>
         <AlertDialog.Trigger asChild>
-          <Button variant="ghost" className="opacity-0 group-hover:opacity-100"><TrashIcon /></Button>
+          {trigger || <DefaultTrigger />}
         </AlertDialog.Trigger>
         <AlertDialog.Portal>
           <AlertDialog.Overlay className="fixed bg-slate-900/70 w-full h-full top-0 left-0 z-20" />

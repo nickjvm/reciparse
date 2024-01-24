@@ -6,6 +6,9 @@ import * as Tabs from '@radix-ui/react-tabs'
 import { Session } from '@supabase/supabase-js'
 import { useState } from 'react'
 import AccountTab from './AccountTab'
+import CollectionsTab from './CollectionsTab'
+import { Collection, DBRecipe } from '@/lib/types'
+import RecipesTab from './RecipesTab'
 
 const tabs = [{
   label: 'Sign In & Security',
@@ -17,8 +20,11 @@ const tabs = [{
 
 type Props = {
   session: Session
+  collections: Collection[]|null
+  recipes: { count: number|null, recipes: DBRecipe[]|null }
 }
-export default function AccountTabs({ session }: Props) {
+
+export default function AccountTabs({ session, collections, recipes }: Props) {
   const [activeTab, setActiveTab] = useState<string>(tabs[0].value)
 
   return (
@@ -47,7 +53,9 @@ export default function AccountTabs({ session }: Props) {
           </Tabs.Content>
           <Tabs.Content value="content">
             <Heading>My Collections</Heading>
+            <CollectionsTab collections={collections} />
             <Heading>My Recipes</Heading>
+            <RecipesTab recipes={recipes} />
           </Tabs.Content>
         </div>
       </div>

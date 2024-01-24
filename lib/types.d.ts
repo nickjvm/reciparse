@@ -62,6 +62,9 @@ export type DBRecipe = Omit<Recipe, 'ingredients'|'id', 'nutrition'> & {
 export type Collection = {
   id: string;
   name: string;
+  recipes?: {
+    count?: number
+  }[]
 }
 
 export type PostgrestResponseFailure = {

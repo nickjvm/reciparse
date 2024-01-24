@@ -2,6 +2,7 @@
 
 import readUserSession from '@/lib/actions'
 import createSupabaseServerClient from '@/lib/supabase/server'
+import { revalidatePath } from 'next/cache'
 
 type UpdateProfileValues = {
   email: string
@@ -57,4 +58,19 @@ export async function updateUserProfile({ email, password, newPassword }: Update
     },
     error: null,
   }
+}
+
+export async function getCollections() {
+  const supabase = await createSupabaseServerClient()
+
+  return await supabase.from('collections').select('*, recipes(count)').order('created_at')
+}
+
+export async function getRecipes() {
+  const supabase = await createSupabaseServerClient()
+
+  revalidatePath('/account')
+
+  return await supabase.from('recipes').select()
+
 }
