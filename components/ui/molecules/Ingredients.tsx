@@ -1,9 +1,11 @@
 'use client'
+import pluralize from 'pluralize'
+
 import { Disclosure } from '@headlessui/react'
 import { ChevronUpIcon } from '@heroicons/react/24/outline'
-
+import { formatQuantity } from 'format-quantity'
 import Copy from '../atoms/Copy'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Ingredient } from '@/lib/types'
 
@@ -13,6 +15,9 @@ interface Props {
 }
 
 export default function IngredientsList({ ingredients, showStickyIngredients }: Props) {
+  const [scale, setScale] = useState<number>(1)
+
+  console.log(ingredients)
   const disclosureRef = useRef<HTMLButtonElement>(null)
   useEffect(() => {
     if (!showStickyIngredients) {
@@ -24,18 +29,70 @@ export default function IngredientsList({ ingredients, showStickyIngredients }: 
     }
   }, [showStickyIngredients])
 
+  const formattedIngredients = ingredients.map(ingredient => {
+    const { primary, quantity, quantity2, unitOfMeasure, subtext } = ingredient
+    let finalString = ''
+    if (quantity) {
+      finalString += formatQuantity(quantity * scale)
+    }
+    if (quantity2) {
+      finalString += `-${formatQuantity(quantity2 * scale)}`
+    }
+
+    if (unitOfMeasure) {
+      finalString += ` ${pluralize(unitOfMeasure, quantity2 ? quantity2 * scale : (quantity || 0) * scale )}`
+    }
+
+    finalString += ` ${primary}`
+
+    return {
+      isHeading: ingredient.isGroupHeader,
+      primary: finalString,
+      subtext
+    }
+  })
   return (
     <div className="md:sticky md:top-[80px] md:self-start">
       <div>
         <h3 className="text-xl font-semibold mb-2 flex items-center gap-2">
           Ingredients
-          <Copy text={ingredients.map(ing => ing.primary).join('\n')} />
+
+          <Copy text={formattedIngredients.filter(ing => !ing.isHeading).map(ing => ing.primary).join('\n')} />
         </h3>
-        <ul className="print:list-disc">
-          {ingredients.map((ingredient: Ingredient, i: number) => (
-            <li key={i} className="border-b print:border-b-0 print:pb-0 print:mb-0 last:border-b-0 border-b-slate-200 pb-2 mb-2">
-              {ingredient.primary}
-              {ingredient.subtext && <em className="ml-1 text-sm italic text-slate-500">{ingredient.subtext}</em>}
+        <div className="flex leading-0 font-normal text-sm mb-4">
+          <span className="pr-2">Scale recipe:</span>
+          <label className="cursor-pointer">
+            <input className="peer hidden" type="radio" name="scale" value=".5" onChange={(e => setScale(Number(e.target.value)))} />
+            <span className="peer-checked:font-medium peer-checked:bg-slate-100 peer-checked:font-mediumrounded py-1 px-2">half</span>
+          </label>
+          <label className="cursor-pointer">
+            <input className="peer hidden" type="radio" name="scale" value="1" defaultChecked onChange={(e => setScale(Number(e.target.value)))} />
+            <span className="peer-checked:font-medium peer-checked:bg-slate-100 rounded py-1 px-2">single</span>
+          </label>
+          <label className="cursor-pointer">
+            <input className="peer hidden" type="radio" name="scale" value="2" onChange={(e => setScale(Number(e.target.value)))} />
+            <span className="peer-checked:font-medium peer-checked:bg-slate-100 rounded py-1 px-2">double</span>
+          </label>
+          <label className="cursor-pointer">
+            <input className="peer hidden" type="radio" name="scale" value="4" onChange={(e => setScale(Number(e.target.value)))} />
+            <span className="peer-checked:font-medium peer-checked:bg-slate-100 rounded py-1 px-2">triple</span>
+          </label>
+        </div>
+        <ul className={cn(ingredients.length > 8 && 'print:columns-2', 'print:mb-4')}>
+          {formattedIngredients.map((ingredient, i: number) => (
+            <li key={i} className={cn(
+              !ingredient.isHeading && 'border-b',
+              'print:border-b-0 print:pb-0 print:mb-0 last:border-b-0 border-b-slate-200 pb-2 mb-2')}>
+              {ingredient.isHeading
+                ? <h2 className="mt-4 font-bold">{ingredient.primary}</h2>
+                : (
+                  <>
+                    {ingredient.primary}
+                    {scale === 1 && ingredient.subtext && <em className="ml-1 text-sm italic text-slate-500">{ingredient.subtext}</em>}
+                  </>
+                )
+              }
+
             </li>
           ))}
         </ul>
@@ -58,7 +115,7 @@ export default function IngredientsList({ ingredients, showStickyIngredients }: 
               </Disclosure.Button>
               <Disclosure.Panel>
                 <ul className="px-5 overflow-auto max-h-80">
-                  {ingredients.map((ingredient, i: number) => (
+                  {formattedIngredients.map((ingredient, i: number) => (
                     <li key={i} className="border-b last:border-b-0 border-b-slate-200 pb-2 mb-2">
                       {ingredient.primary}
                       {ingredient.subtext && <em className="ml-1.5 text-sm italic text-slate-500">{ingredient.subtext}</em>}

@@ -5,6 +5,7 @@ import { stripHtml } from 'string-strip-html'
 import { Ingredient } from './types'
 import { decode } from 'html-entities'
 
+import { Ingredient as ParsedIngredient } from 'parse-ingredient'
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -51,16 +52,16 @@ export function findClosingBracketMatchIndex(str: string, pos: number) {
  * - example ing (, peeled (and diced))
  * - example ing (peeled (and diced))
  */
-export const cleanIngredientString = (ingredient: string): Ingredient => {
+export const cleanIngredientString = (ingredient: ParsedIngredient): Ingredient => {
   const indices = []
   let subtext = ''
-  for(let i=0; i<ingredient.length;i++) {
-    if (ingredient[i] === '(') indices.push(i)
+  for (let i=0; i<ingredient.description.length;i++) {
+    if (ingredient.description[i] === '(') indices.push(i)
   }
 
   for (let i=0; i<indices.length;i++) {
-    const endingIndex = findClosingBracketMatchIndex(ingredient, indices[i])
-    const phrase = ingredient.substring(indices[i] + 1, endingIndex)
+    const endingIndex = findClosingBracketMatchIndex(ingredient.description, indices[i])
+    const phrase = ingredient.description.substring(indices[i] + 1, endingIndex)
     subtext = phrase
     if (phrase.indexOf('(') > -1) {
       break
@@ -68,7 +69,8 @@ export const cleanIngredientString = (ingredient: string): Ingredient => {
   }
 
   return {
-    primary: decode(ingredient.replace(subtext, '').replace(/\(\)/, '').replace(/\s([^\s]+)$/, '&nbsp;$1')).trim().replace(/,$/, ''),
+    ...ingredient,
+    primary: decode(ingredient.description.replace(subtext, '').replace(/\(\)/, '').replace(/\s([^\s]+)$/, '&nbsp;$1')).trim().replace(/,$/, ''),
     subtext: decode(subtext.replace(/^,?\s?/, '').replace(/\s([^\s]+)$/, '&nbsp;$1')).trim(),
   }
 }

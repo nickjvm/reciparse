@@ -1,6 +1,8 @@
 'use server'
 
+
 import fetch from 'node-fetch'
+import { parseIngredient } from 'parse-ingredient'
 import { decode } from 'html-entities'
 import { HTMLElement, parse } from 'node-html-parser'
 import pick from 'lodash.pick'
@@ -69,19 +71,7 @@ export async function getRecipeIngredients(ingredients: string[]): Promise<Ingre
     return []
   }
 
-  return ingredients.map((ingredient) => {
-    const amount = ingredient.match(/^[\d.]+/)
-    let finalIngredient = ingredient
-    if (amount) {
-      finalIngredient = finalIngredient
-        .replace(/^[\d.]+/, `${
-          parseFloat(amount[0]).toFixed(2)
-            .replace('.00', '')
-            .replace(/\.([1-9])0$/, '.$1')
-        }`)
-    }
-    return finalIngredient
-  }).filter((r) => r.trim()).map(cleanIngredientString)
+  return ingredients.map(ingredient => parseIngredient(ingredient)[0]).map(ingredient => cleanIngredientString(ingredient))
 }
 
 function getRecipeInstructions(instructions?: string|string[]|HowToStep[]|HowToSection[]): InstructionSection[] {

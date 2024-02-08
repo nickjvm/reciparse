@@ -10,7 +10,7 @@ export default async function Home() {
 
   const { data } = await readUserSession()
 
-  const { data: parsedRecipes} = await supabase.from('random_parsed').select().limit(8)
+  const { data: parsedRecipes } = await supabase.from('random_parsed').select().limit(8)
 
   let savedRecipes
   let viewHistory

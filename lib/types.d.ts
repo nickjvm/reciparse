@@ -1,6 +1,6 @@
 import { Session } from '@supabase/supabase-js'
 import { Json } from './supabase/types/supabase'
-
+import { Ingredient as ParsedIngredient } from 'parse-ingredient'
 export type NextPage = {
   params: {
     session: Session|null
@@ -9,7 +9,7 @@ export type NextPage = {
   searchParams: { [key: string]: string | undefined }
 }
 
-export type Ingredient = {
+export type Ingredient = ParsedIngredient & {
   primary: string;
   subtext?: string;
 }
