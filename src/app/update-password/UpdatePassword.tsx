@@ -1,9 +1,11 @@
 'use client'
 import { FormEvent, useState } from 'react'
+import { AuthError } from '@supabase/gotrue-js'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
+import { ExclamationCircleIcon } from '@heroicons/react/24/outline'
 import { useNotificationContext } from '@/context/NotificationContext'
 import supabase from '@/lib/supabaseClient'
+import debug from '@/lib/debug'
 
 export default function UpdatePassword() {
   const [password, setPassword] = useState('')
@@ -30,20 +32,14 @@ export default function UpdatePassword() {
           timeout: 5000
         })
       }
-    } catch (e) {
-      setError(e as string || 'Something went wrong. Please try again.')
+    } catch (err) {
+      debug(err)
+      if (err instanceof AuthError || err instanceof Error) {
+        setError(err?.message || 'Something went wrong. Please try again.')
+      } else {
+        setError('Something went wrong. Please try again.')
+      }
     }
-  }
-
-  if (error) {
-    return (
-      <div className="max-w-xl mx-auto">
-        <h2 className="text-lg font-bold mb-4 text-center">{error}</h2>
-        <div className="text-center">
-          <Link href="/" className="transition inline-block py-1.5 mx-auto justify-center rounded-md bg-brand-alt px-8 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-alt">Return home</Link>
-        </div>
-      </div>
-    )
   }
 
   return (
@@ -61,6 +57,7 @@ export default function UpdatePassword() {
             type="password"
             autoFocus
             required
+            onInput={() => setError('')}
             onChange={e => setPassword(e.target.value)}
             value={password}
             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-brand sm:text-sm sm:leading-6"
@@ -71,6 +68,10 @@ export default function UpdatePassword() {
       <button type="submit" className="transition flex w-full justify-center rounded-md bg-brand-alt px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-alt">
         Update password
       </button>
+      {error && <div className="text-red-700 text-sm text-center mt-2 flex items-center justify-center">
+        <ExclamationCircleIcon className="w-4 mr-1" />
+        {error}
+      </div>}
     </form>
   )
 }
