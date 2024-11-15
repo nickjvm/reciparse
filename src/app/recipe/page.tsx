@@ -1,8 +1,7 @@
-import { Fragment } from 'react'
 import { decode } from 'html-entities'
 import { Metadata } from 'next'
 import { OpenGraph } from 'next/dist/lib/metadata/types/opengraph-types'
-
+import { redirect } from 'next/navigation'
 
 import { ReciparseResponse, Recipe } from '@/types'
 
@@ -20,6 +19,7 @@ export const dynamic = 'force-dynamic'
 interface Props {
   searchParams: {
     url: string
+    async: string
   }
 }
 
@@ -64,75 +64,88 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 }
 
 export default async function Page({ searchParams }: Props) {
-  const { data: recipe, error}: { data: null|Recipe, error: null|Error } = await getRecipe(searchParams.url)
+  const isAsync = searchParams.async === '1'
+  if (searchParams.url.includes('instagram') && !isAsync) {
+    return redirect(`/recipe?url=${searchParams.url}&async=1`)
+  }
 
-  if (error) {
-    return (
-      <AppLayout withSearch className="py-4">
-        <title>Something went wrong | Reciparse</title>
-        <GA4Event name="recipe_error" properties={{ url: searchParams.url, type: 'missing structured data' }} />
-        <RecipeError
-          className="max-w-xl py-8 mx-auto"
-          actionUrl={searchParams.url}
-          errorText="We tried our best, but couldn't find a recipe to parse at the URL you entered."
-          actionText="View on the original site"
-          type="parse_error"
-          url={searchParams.url}
-          details={error}
-        />
-      </AppLayout>
-    )
-  } else if (recipe) {
-    if (recipe.recipeInstructions.length === 1 && !recipe.recipeInstructions[0].itemListElement.length) {
+  if (!isAsync) {
+    const { data: recipe, error}: { data: null|Recipe, error: null|Error } = await getRecipe(searchParams.url)
+  
+    if (error) {
       return (
         <AppLayout withSearch className="py-4">
           <title>Something went wrong | Reciparse</title>
-          <GA4Event name="recipe_error" properties={{ url: searchParams.url, type: 'missing instructions' }} />
+          <GA4Event name="recipe_error" properties={{ url: searchParams.url, type: 'missing structured data' }} />
           <RecipeError
             className="max-w-xl py-8 mx-auto"
-            errorText="We couldn&apos;t find any directions in this recipe :("
-            actionText="View on the original site"
             actionUrl={searchParams.url}
+            errorText="We tried our best, but couldn't find a recipe to parse at the URL you entered."
+            actionText="View on the original site"
             type="parse_error"
             url={searchParams.url}
-            details={{
-              message: 'missing instructions'
-            }}
+            details={error}
           />
         </AppLayout>
       )
+    } else if (recipe) {
+      if (recipe.recipeInstructions.length === 1 && !recipe.recipeInstructions[0].itemListElement.length) {
+        return (
+          <AppLayout withSearch className="py-4">
+            <title>Something went wrong | Reciparse</title>
+            <GA4Event name="recipe_error" properties={{ url: searchParams.url, type: 'missing instructions' }} />
+            <RecipeError
+              className="max-w-xl py-8 mx-auto"
+              errorText="We couldn&apos;t find any directions in this recipe :("
+              actionText="View on the original site"
+              actionUrl={searchParams.url}
+              type="parse_error"
+              url={searchParams.url}
+              details={{
+                message: 'missing instructions'
+              }}
+            />
+          </AppLayout>
+        )
+      }
+  
+      const schema: Partial<Recipe> = {...recipe}
+      delete schema?.meta
+  
+      return (
+        <>
+          <AppLayout withSearch className="py-4 bg-gray-50" fullWidth>
+            <GA4Event name="view_recipe" properties={{ url: searchParams.url }} />
+            <link rel="canonical" href={getUrl(`recipe?url=${searchParams.url}`)} />
+            <script
+              id="recipe-schema"
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{
+                __html: JSON.stringify({'@context':'https://schema.org','@graph':[
+                  schema,
+                  {
+                    '@type': 'ImageObject',
+                    'inLanguage': 'en-US',
+                    '@id': `${getUrl('recipe/#primaryimage')}`,
+                    'url': recipe.image,
+                    'contentUrl': recipe.image,
+                    'caption': recipe.name
+                  }
+                ]})
+              }}
+            />
+            <View recipe={recipe} />
+          </AppLayout>
+        </>
+      )
     }
-
-    const schema: Partial<Recipe> = {...recipe}
-    delete schema?.meta
-
+  
+    return null
+  } else {
     return (
-      <>
-        <AppLayout withSearch className="py-4 bg-gray-50" fullWidth>
-          <GA4Event name="view_recipe" properties={{ url: searchParams.url }} />
-          <link rel="canonical" href={getUrl(`recipe?url=${searchParams.url}`)} />
-          <script
-            id="recipe-schema"
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify({'@context':'https://schema.org','@graph':[
-                schema,
-                {
-                  '@type': 'ImageObject',
-                  'inLanguage': 'en-US',
-                  '@id': `${getUrl('recipe/#primaryimage')}`,
-                  'url': recipe.image,
-                  'contentUrl': recipe.image,
-                  'caption': recipe.name
-                }
-              ]})
-            }}
-          />
-          <View recipe={recipe} />
-        </AppLayout>
-      </>
+      <AppLayout withSearch className="py-4 bg-gray-50 flex" fullWidth>
+        <View recipe={null} isAsync />
+      </AppLayout>
     )
   }
-
-  return null
 }

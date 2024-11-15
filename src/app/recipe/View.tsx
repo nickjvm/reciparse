@@ -23,13 +23,17 @@ import debug from '@/lib/debug'
 import { useDebounce } from '@/hooks/useDebounce'
 import { saveSearchToDb, saveSearchToLocalStorage } from '@/lib/searchHistory'
 import classNames from 'classnames'
+import RecipeError from '@/components/molecules/RecipeError'
+import Loading from '@/components/icons/Loading'
 
 interface Props {
-  recipe: Recipe
+  recipe: Recipe|null
+  isAsync?: boolean
 }
 
-export default function Recipe({ recipe }: Props) {
+export default function RecipeView({ recipe: _recipe, isAsync }: Props) {
   const { user } = useAuthContext()
+  const [recipe, setRecipe] = useState<Recipe|null>(_recipe)
   const searchParams = useSearchParams()
   const [saved, setSaved] = useState<SavedRecipe|null>(null)
   const [showStickyIngredients, setShowStickyIngredients] = useState(false)
@@ -38,7 +42,30 @@ export default function Recipe({ recipe }: Props) {
   const directionsRef = useRef<HTMLDivElement>(null)
   const endRef = useRef<HTMLDivElement>(null)
 
+  const [loading, setLoading] = useState<boolean>(false)
+  const [error, setError] = useState<Error|null>(null)
+
   useEffect(() => {
+    const getRecipe = async (url: string) => {
+      setLoading(true)
+      const { data, error } = await request(`/api/recipes/parse?url=${url}`, { method: 'POST' })
+      setLoading(false)
+      if (error) {
+        setError(error)
+      } else {
+        setRecipe(data)
+      }
+    }
+    if (isAsync) {
+      getRecipe(searchParams.get('url') as string)
+    }
+  }, [isAsync])
+
+  useEffect(() => {
+    if (!recipe?.meta?.id) {
+      return
+    }
+
     const payload: SupaRecipe = {
       id: recipe.meta.id,
       url: recipe.meta.raw_source,
@@ -52,7 +79,7 @@ export default function Recipe({ recipe }: Props) {
     }
 
     getSaved()
-  }, [user])
+  }, [user, recipe])
 
   useEffect(() => {
     const showHideStickyIngredients = () => {
@@ -70,7 +97,7 @@ export default function Recipe({ recipe }: Props) {
   }, [])
 
   const getSaved = async () => {
-    if (user) {
+    if (user && recipe?.meta?.id) {
       try {
         const { data }: { data: null|SavedRecipe} = await request(`/api/recipes/saved/${recipe.meta.id}`)
         setSaved(data)
@@ -129,57 +156,97 @@ export default function Recipe({ recipe }: Props) {
     )
   }
 
-  return (
-    <main className="print:bg-white print:min-h-0 md:p-4 md:pb-6 print:p-0 max-w-5xl mx-auto">
-      <div className="m-auto max-w-3xl p-4 md:p-8 print:p-0 md:rounded-md ring-brand-alt md:ring-2 print:ring-0 print:shadow-none shadow-lg bg-white">
-        <div>
-          <header className="grid auto-rows-auto md:grid-cols-12 print:grid-cols-12 gap-4 mb-4">
-            {recipe.image && (
-              <div className="relative w-full md:col-span-3 print:col-span-3">
-                <Image className="w-full rounded aspect-square" style={{ objectFit: 'cover' }} alt={recipe.name} width={150} height={150} src={recipe.image} />
-              </div>
-            )}
-            <div className={classNames(recipe.image ? 'md:col-span-9 print:col-span-8' : 'mb-4 col-span-12')}>
-              <div className="mb-4">
-                <h2 className="font-display text-brand-alt text-3xl font-bold">{decode(recipe.name)}</h2>
-                <p className="text-slate-500 text-sm print:hidden">from <Link target="_blank" href={recipe.meta.raw_source}>{recipe.meta.source}</Link></p>
-                <p className="text-slate-500 text-sm hidden print:block">{searchParams.get('url')}</p>
-              </div>
-              <div className="flex gap-4 flex-wrap">
-                {recipe.recipeYield && (
-                  <span className="inline-flex text-sm md:text-base ring-2 ring-brand-alt focus-visible:outline-0 gap-1 items-center px-2 py-1 rounded">
-                    <Squares2X2Icon className="w-5"/>
-                    <p className="max-w-[200px] truncate" title={parseYield(recipe.recipeYield)}>{parseYield(recipe.recipeYield)}</p>
-                  </span>
-                )}
+  const getDisplaySource = () => {
+    if (recipe?.meta.source.includes('instagram') && recipe?.author?.name) {
+      return `@${recipe.author.name} on Instagram`
+    } else {
+      return recipe?.meta.source
+    } 
+  }
 
-                <Time prepTime={recipe.prepTime} cookTime={recipe.cookTime} totalTime={recipe.totalTime} />
-                <SaveRecipe id={recipe.meta.id} saved={!!saved?.isFavorite} onChange={setSaved} />
-                <Print />
-                <CookMode />
+  if (error || (!recipe && !loading)) {
+    return (
+      <RecipeError
+        className="max-w-xl py-8 mx-auto"
+        actionUrl={searchParams.get('url')}
+        errorText="We tried our best, but couldn't find a recipe to parse at the URL you entered."
+        actionText="View on the original site"
+        type="parse_error"
+        url={searchParams.get('url') as string}
+        details={error || { message: 'something went wrong' }}
+      />
+    )
+  }
+  if (!recipe && loading) {
+    return (
+      <main className="print:bg-white print:min-h-0 md:p-4 md:pb-6 print:p-0 max-w-5xl mx-auto w-full flex">
+        <div className="flex w-full items-center justify-center m-auto max-w-3xl p-4 md:p-8 print:p-0 md:rounded-md ring-brand-alt md:ring-2 print:ring-0 print:shadow-none shadow-lg bg-white h-full">
+          <Loading animate className="w-8 h-8" />
+        </div>
+      </main>
+    )
+  } else if (recipe) {
+    return (
+      <main className="print:bg-white print:min-h-0 md:p-4 md:pb-6 print:p-0 max-w-5xl mx-auto ">
+        <div className="m-auto max-w-3xl p-4 md:p-8 print:p-0 md:rounded-md ring-brand-alt md:ring-2 print:ring-0 print:shadow-none shadow-lg bg-white">
+          <div>
+            <header className="grid auto-rows-auto md:grid-cols-12 print:grid-cols-12 gap-4 mb-4">
+              {recipe.image && (
+                <div className="relative w-full md:col-span-3 print:col-span-3">
+                  {searchParams.get('url')?.includes('instagram') && (
+                    <Link target="_blank" href={recipe.meta.raw_source}>
+                      <Image className="w-full rounded aspect-square" style={{ objectFit: 'cover' }} alt={recipe.name} width={150} height={150} src={recipe.image} />
+                    </Link>
+                  )}
+                  {!searchParams.get('url')?.includes('instagram') && (
+                    <Image className="w-full rounded aspect-square" style={{ objectFit: 'cover' }} alt={recipe.name} width={150} height={150} src={recipe.image} />
+                  )}
+                </div>
+              )}
+              <div className={classNames(recipe.image ? 'md:col-span-9 print:col-span-8' : 'mb-4 col-span-12')}>
+                <div className="mb-4">
+                  <h2 className="font-display text-brand-alt text-3xl font-bold">{decode(recipe.name)}</h2>
+                  <p className="text-slate-500 text-sm print:hidden">from <Link target="_blank" href={recipe.meta.raw_source}>{getDisplaySource()}</Link></p>
+                  <p className="text-slate-500 text-sm hidden print:block">{searchParams.get('url')}</p>
+                </div>
+                <div className="flex gap-4 flex-wrap">
+                  {recipe.recipeYield && (
+                    <span className="inline-flex text-sm md:text-base ring-2 ring-brand-alt focus-visible:outline-0 gap-1 items-center px-2 py-1 rounded">
+                      <Squares2X2Icon className="w-5"/>
+                      <p className="max-w-[200px] truncate" title={parseYield(recipe.recipeYield)}>{parseYield(recipe.recipeYield)}</p>
+                    </span>
+                  )}
+  
+                  <Time prepTime={recipe.prepTime} cookTime={recipe.cookTime} totalTime={recipe.totalTime} />
+                  {recipe?.meta?.id && <SaveRecipe id={recipe.meta.id} saved={!!saved?.isFavorite} onChange={setSaved} />}
+                  <Print />
+                  <CookMode />
+                </div>
               </div>
-            </div>
-          </header>
-          <div className="pt-3 md:pt-0 md:grid grid-cols-8 gap-8 pb-8 sm:pb-4 md:pb-0">
-            <div className="col-span-8 md:col-span-3 print:col-span-3 mb-3 md:mb-0">
-              <IngredientsList ingredients={recipe.recipeIngredient} showStickyIngredients={showStickyIngredients_debounced} />
-            </div>
-            <div className="col-span-8 md:col-span-5 print:col-span-5 print:mt-2 md:sticky md:self-start md:top-[80px]" id="directions" ref={directionsRef}>
-              {recipe.recipeInstructions.map(renderInstructionSection)}
-              {saved?.isFavorite && <RecipeNotes id={recipe.meta.id} value={saved?.notes} />}
-              <div className="mt-4">
-                <Nutrition
-                  data={recipe.nutrition}
-                  ingredientsList={recipe.recipeIngredient}
-                  recipeYield={parseYield(recipe.recipeYield)}
-                  source={recipe.meta.source}
-                />
+            </header>
+            <div className="pt-3 md:pt-0 md:grid grid-cols-8 gap-8 pb-8 sm:pb-4 md:pb-0">
+              <div className="col-span-8 md:col-span-3 print:col-span-3 mb-3 md:mb-0">
+                <IngredientsList ingredients={recipe.recipeIngredient} showStickyIngredients={showStickyIngredients_debounced} />
+              </div>
+              <div className="col-span-8 md:col-span-5 print:col-span-5 print:mt-2 md:sticky md:self-start md:top-[80px]" id="directions" ref={directionsRef}>
+                {recipe.recipeInstructions.map(renderInstructionSection)}
+                {saved?.isFavorite && <RecipeNotes id={recipe.meta.id} value={saved?.notes} />}
+                <div className="mt-4">
+                  <Nutrition
+                    data={recipe.nutrition}
+                    ingredientsList={recipe.recipeIngredient}
+                    recipeYield={parseYield(recipe.recipeYield)}
+                    source={getDisplaySource()}
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div ref={endRef} />
-    </main>
-  )
+        <div ref={endRef} />
+      </main>
+    )
+  }
+
+  return null
 }
