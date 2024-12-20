@@ -35,7 +35,18 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   }
 
   try {
+    if (searchParams.async) {
+      return {
+        title: 'Loading... | Reciparse ',
+        metadataBase: new URL(getUrl()),
+        openGraph: {
+          ...openGraph,
+        }
+      }
+    }
+
     const { data: recipe, error}: { data: null|Recipe, error: null|Error } = await getRecipe(searchParams.url)
+
     if (error) {
       throw error
     } else if (recipe) {
@@ -46,14 +57,6 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
           ...openGraph,
           title: decode(recipe.name),
           images: [recipe.meta.image]
-        }
-      }
-    } else if (searchParams.async) {
-      return {
-        title: 'Loading... | Reciparse ',
-        metadataBase: new URL(getUrl()),
-        openGraph: {
-          ...openGraph,
         }
       }
     } else {
