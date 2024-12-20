@@ -48,6 +48,14 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
           images: [recipe.meta.image]
         }
       }
+    } else if (searchParams.async) {
+      return {
+        title: 'Loading... | Reciparse ',
+        metadataBase: new URL(getUrl()),
+        openGraph: {
+          ...openGraph,
+        }
+      }
     } else {
       throw new Error('something went wrong')
     }

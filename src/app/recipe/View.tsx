@@ -54,6 +54,7 @@ export default function RecipeView({ recipe: _recipe, isAsync }: Props) {
         setError(error)
       } else {
         setRecipe(data)
+        document.title = `${decode(data.name)} | Reciparse`
       }
     }
     if (isAsync) {
@@ -113,7 +114,7 @@ export default function RecipeView({ recipe: _recipe, isAsync }: Props) {
     } else {
       const recipeYieldNum = Number(recipeYield)
       if (!isNaN(recipeYieldNum)) {
-        if (recipeYieldNum > 0 && !recipeYields?.find(y => y.startsWith(`${recipeYieldNum} `))) {
+        if (recipeYieldNum > 0 && !recipeYields?.find(y => (y + '').startsWith(`${recipeYieldNum} `))) {
           return `${recipeYieldNum} serving${recipeYieldNum !== 1 ? 's' : ''}`
         }
         return ''
