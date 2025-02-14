@@ -1,6 +1,7 @@
 'use client'
 
 import { ReactNode, useEffect } from 'react'
+import { ErrorBoundary } from 'react-error-boundary'
 
 import { useAuthContext } from '@/context/AuthContext'
 
@@ -9,13 +10,14 @@ import Footer from '@/components/partials/Footer'
 import classNames from 'classnames'
 import RecipeError from '../molecules/RecipeError'
 import { useRouter } from 'next/navigation'
+import Fallback from '@/components/molecules/ErrorFallback'
 
 interface Props {
-  fullWidth?: boolean
-  withSearch: boolean
-  children: ReactNode
-  isPrivate?: boolean
-  className?: string
+  fullWidth?: boolean;
+  withSearch: boolean;
+  children: ReactNode;
+  isPrivate?: boolean;
+  className?: string;
 }
 export default function AppLayout({
   fullWidth,
@@ -37,30 +39,36 @@ export default function AppLayout({
     if (fullWidth) {
       return children
     } else {
-      return (
-        <div className="m-auto max-w-5xl px-4">
-          {children}
-        </div>
-      )
+      return <div className="m-auto max-w-5xl px-4">{children}</div>
     }
   }
 
-  const unauthorized = isPrivate && !userLoading && !user && !sessionStorage.getItem('authdelay')
+  const unauthorized =
+    isPrivate && !userLoading && !user && !sessionStorage.getItem('authdelay')
   return (
     <>
-      <Header withBorder withSearch={withSearch} className={classNames(userLoading && 'invisible')} />
-      <div className={classNames('grow', userLoading && 'invisible', className)}>
-        {unauthorized
-          ? <RecipeError
-            errorTitle="Unauthorized"
-            errorText="You must be logged in to access this page."
-            actionText="Take me home"
-            actionUrl="/"
-            className="max-w-xl py-8 mx-auto"
-          />
-          : renderChildren()
-        }
-      </div>
+      <Header
+        withBorder
+        withSearch={withSearch}
+        className={classNames(userLoading && 'invisible')}
+      />
+      <ErrorBoundary FallbackComponent={Fallback}>
+        <div
+          className={classNames('grow', userLoading && 'invisible', className)}
+        >
+          {unauthorized ? (
+            <RecipeError
+              errorTitle="Unauthorized"
+              errorText="You must be logged in to access this page."
+              actionText="Take me home"
+              actionUrl="/"
+              className="max-w-xl py-8 mx-auto"
+            />
+          ) : (
+            renderChildren()
+          )}
+        </div>
+      </ErrorBoundary>
       <Footer className={classNames(userLoading && 'invisible')} />
     </>
   )
