@@ -38,6 +38,8 @@ export default function NutritionInfo({ data: _data, ingredientsList, recipeYiel
   const [showEdamam, setShowEdamam] = useState(false)
   const [error, setError] = useState(false)
 
+  const hasData = data && Object.keys(data).filter(k => k !== '@type').length
+
   const loadNutritionInfo = async () => {
     try {
       setLoading(true)
@@ -68,7 +70,7 @@ export default function NutritionInfo({ data: _data, ingredientsList, recipeYiel
 
   const note = <div className="text-xs mb-3">Note: The information shown below is {showEdamam ? 'Edamam\'s' : 'an'} estimate based on available ingredients and preparation. It should not be considered a substitute for a professional advice.</div>
 
-  if (!data && user) {
+  if (!hasData && user) {
     return (
       <div className="print:hidden">
         <h2 className="text-xl font-bold mb-2">Nutrition</h2>
@@ -99,7 +101,7 @@ export default function NutritionInfo({ data: _data, ingredientsList, recipeYiel
     )
   }
 
-  if (!data) {
+  if (!hasData) {
     return null
   }
 

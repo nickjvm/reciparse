@@ -1,7 +1,6 @@
 import { Open_Sans, Yeseva_One } from 'next/font/google'
 import classNames from 'classnames'
 import { cookies } from 'next/headers'
-import { ErrorBoundary } from 'react-error-boundary'
 
 import { AuthContextProvider } from '@/context/AuthContext'
 
@@ -10,7 +9,6 @@ import './globals.css'
 import CookieBanner from '@/components/molecules/CookieBanner'
 import NotificationProvider from '@/context/NotificationContext'
 import GA4 from '@/components/atoms/GA4'
-import Fallback from '@/components/molecules/ErrorFallback'
 import LogRocketInit from '@/components/atoms/LogRocket'
 import getUrl from '@/lib/api/getUrl'
 
@@ -42,18 +40,16 @@ export default async function RootLayout({ children }: {
       <GA4 />
       <body>
         <LogRocketInit />
-        <ErrorBoundary FallbackComponent={Fallback}>
-          <NotificationProvider>
-            <AuthContextProvider user={null}>
-              <div className="min-h-screen flex flex-col">
-                <div className="flex-grow flex flex-col ">
-                  {children}
-                </div>
-                {!cookies().get('cookie_consent') && <CookieBanner />}
+        <NotificationProvider>
+          <AuthContextProvider user={null}>
+            <div className="min-h-screen flex flex-col">
+              <div className="flex-grow flex flex-col ">
+                {children}
               </div>
-            </AuthContextProvider>
-          </NotificationProvider>
-        </ErrorBoundary>
+              {!cookies().get('cookie_consent') && <CookieBanner />}
+            </div>
+          </AuthContextProvider>
+        </NotificationProvider>
       </body>
     </html>
   )
