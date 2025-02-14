@@ -1,14 +1,16 @@
 'use client'
 
 import { ReactNode, useEffect } from 'react'
+import classNames from 'classnames'
+import { useRouter } from 'next/navigation'
+import { ErrorBoundary } from 'react-error-boundary'
 
 import { useAuthContext } from '@/context/AuthContext'
 
 import Header from '@/components/partials/Header'
 import Footer from '@/components/partials/Footer'
-import classNames from 'classnames'
-import RecipeError from '../molecules/RecipeError'
-import { useRouter } from 'next/navigation'
+import RecipeError from '@/components/molecules/RecipeError'
+import Fallback from '@/components/molecules/ErrorFallback'
 
 interface Props {
   fullWidth?: boolean
@@ -50,16 +52,18 @@ export default function AppLayout({
     <>
       <Header withBorder withSearch={withSearch} className={classNames(userLoading && 'invisible')} />
       <div className={classNames('grow', userLoading && 'invisible', className)}>
-        {unauthorized
-          ? <RecipeError
-            errorTitle="Unauthorized"
-            errorText="You must be logged in to access this page."
-            actionText="Take me home"
-            actionUrl="/"
-            className="max-w-xl py-8 mx-auto"
-          />
-          : renderChildren()
-        }
+        <ErrorBoundary FallbackComponent={Fallback} >
+          {unauthorized
+            ? <RecipeError
+              errorTitle="Unauthorized"
+              errorText="You must be logged in to access this page."
+              actionText="Take me home"
+              actionUrl="/"
+              className="max-w-xl py-8 mx-auto"
+            />
+            : renderChildren()
+          }
+        </ErrorBoundary>
       </div>
       <Footer className={classNames(userLoading && 'invisible')} />
     </>
