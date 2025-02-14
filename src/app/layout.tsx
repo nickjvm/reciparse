@@ -10,6 +10,7 @@ import CookieBanner from '@/components/molecules/CookieBanner'
 import NotificationProvider from '@/context/NotificationContext'
 import GA4 from '@/components/atoms/GA4'
 import LogRocketInit from '@/components/atoms/LogRocket'
+import getUrl from '@/lib/api/getUrl'
 
 const openSans = Open_Sans({
   subsets: ['latin'],
@@ -23,6 +24,7 @@ const yesevaOne = Yeseva_One({
 
 export const metadata = {
   title: 'Reciparse.com',
+  metadataBase: new URL(getUrl()),
   description: 'Ditch the endless scrolling, stories, ads and videos. Get exactly what you need: the recipe.',
   openGraph: {
     images: 'og-image.png'
