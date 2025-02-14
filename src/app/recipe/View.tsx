@@ -86,7 +86,7 @@ export default function Recipe({ recipe }: Props) {
     } else {
       const recipeYieldNum = Number(recipeYield)
       if (!isNaN(recipeYieldNum)) {
-        if (recipeYieldNum > 0 && !recipeYields?.find(y => y.startsWith(`${recipeYieldNum} `))) {
+        if (recipeYieldNum > 0 && !recipeYields?.find(y => (y + '').startsWith(`${recipeYieldNum} `))) {
           return `${recipeYieldNum} serving${recipeYieldNum !== 1 ? 's' : ''}`
         }
         return ''
