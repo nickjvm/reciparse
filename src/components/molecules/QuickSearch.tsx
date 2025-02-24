@@ -91,7 +91,7 @@ export default function QuickSearch({ size = 'md', inputClassName, autoFocus, pl
               })}
           />
           <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
-            <button type="submit" disabled={loading} className="relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-1 py-2 text-sm font-semibold">
+            <button aria-label="submit" type="submit" disabled={loading} className="relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-1 py-2 text-sm font-semibold">
               {loading && (
                 <Loading
                   animate
