@@ -16,7 +16,7 @@ export default function Footer({ className }: Props) {
           reciparse
         </div>
         <div className="col-span-6 md:col-span-3 lg:col-span-2 md:col-start-7 lg:col-start-9 text-xs">
-          <h4 className="font-semibold text-xs mt-2 mb-4">Account</h4>
+          <h3 className="font-semibold text-xs mt-2 mb-4">Account</h3>
           <ul className="space-y-2">
             {!user && (
               <>
@@ -38,7 +38,7 @@ export default function Footer({ className }: Props) {
           </ul>
         </div>
         <div className="col-span-6 md:col-span-3 lg:col-span-2 text-xs">
-          <h4 className="font-semibold text-xs mt-2 mb-4">Other Links</h4>
+          <h3 className="font-semibold text-xs mt-2 mb-4">Other Links</h3>
           <ul className="space-y-2">
             <li>
               <Link href="/info/support">Support the developer</Link>
