@@ -128,7 +128,7 @@ export default async function Page({ searchParams }: Props) {
               ]})
             }}
           />
-          <View recipe={recipe} />
+          <View recipe={recipe} key={recipe.meta.id} />
         </AppLayout>
       </>
     )
