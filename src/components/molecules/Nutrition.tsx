@@ -38,7 +38,7 @@ export default function NutritionInfo({ data: _data, ingredientsList, recipeYiel
   const [showEdamam, setShowEdamam] = useState(false)
   const [error, setError] = useState(false)
 
-  const hasData = data && Object.keys(data).filter(k => k !== '@type').length
+  const hasData = data && Object.keys(data).filter(k => k !== '@type' && k !== 'servingSize' && k).length
 
   const loadNutritionInfo = async () => {
     try {
