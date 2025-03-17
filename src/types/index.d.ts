@@ -3,6 +3,10 @@ export interface Recipe {
   message?: string
   name: string
   image: string
+  author?: {
+    '@type': 'Person'
+    name?: string
+  }
   recipeIngredient: string[]
   recipeInstructions: RecipeInstruction[]
   notes?: string
