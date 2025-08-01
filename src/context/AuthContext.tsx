@@ -173,7 +173,7 @@ export function AuthContextProvider({ children }: Props) {
         }
       } finally {
         setLoading(false)
-        router.refresh()
+        // router.refresh()
       }
     })
     return () => {
