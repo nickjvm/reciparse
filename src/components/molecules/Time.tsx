@@ -5,9 +5,9 @@ import * as td from 'tinyduration'
 import classnames from 'classnames'
 
 interface Props {
-  prepTime?: string
-  cookTime?: string
-  totalTime?: string
+  prepTime?: string | { minValue: string; maxValue: string }
+  cookTime?: string | { minValue: string; maxValue: string }
+  totalTime?: string | { minValue: string; maxValue: string }
 }
 
 function toHoursAndMinutes(totalMinutes: number): string {
@@ -37,20 +37,23 @@ export default function Time(props: Props) {
   let cookTime: number
   let totalTime: number
   try {
-    prepTime = td.parse(props.prepTime || 'PT0M').minutes || 0
-    cookTime = td.parse(props.cookTime || 'PT0M').minutes || 0
-    totalTime = td.parse(props.totalTime || 'PT0M').minutes || 0
-  } catch {
-    if (props.totalTime) {
-      return (
-        <span className="inline-flex ring-2 ring-brand-alt focus-visible:outline-0 gap-1 items-center px-2 py-1 rounded">
-          <ClockIcon className="w-5"/>
-          {props.totalTime}
-        </span>
-      )
+    if (typeof props.prepTime === 'object') {
+      prepTime = td.parse(props.prepTime.minValue).minutes || 0
     } else {
-      return null
+      prepTime = td.parse(props.prepTime || 'PT0M').minutes || 0
     }
+    if (typeof props.cookTime === 'object') {
+      cookTime = td.parse(props.cookTime.minValue).minutes || 0
+    } else {
+      cookTime = td.parse(props.cookTime || 'PT0M').minutes || 0
+    }
+    if (typeof props.totalTime === 'object') {
+      totalTime = td.parse(props.totalTime.minValue).minutes || 0
+    } else {
+      totalTime = td.parse(props.totalTime || 'PT0M').minutes || 0
+    }
+  } catch {
+    return null
   }
 
   if (!totalTime) {
