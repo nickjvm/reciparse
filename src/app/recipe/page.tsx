@@ -53,6 +53,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
     }
   } catch (e) {
     return {
+      metadataBase: new URL(getUrl()),
       title: 'Recipe not found | Reciparse',
       openGraph: {
         ...openGraph,

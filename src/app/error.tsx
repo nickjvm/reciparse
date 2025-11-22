@@ -23,7 +23,7 @@ export default function Error({error}: {
   }, [error])
 
   return (
-    <div className="max-w-xl mx-auto flex items-center min-h-screen">
+    <div className="max-w-xl mx-auto flex items-center">
       <RecipeError type="critical" details={error} />
     </div>
   )
