@@ -25,6 +25,7 @@ const yesevaOne = Yeseva_One({
 export const metadata = {
   metadataBase: new URL(getUrl()),
   title: 'Reciparse.com',
+  metadataBase: new URL(getUrl()),
   description: 'Ditch the endless scrolling, stories, ads and videos. Get exactly what you need: the recipe.',
   openGraph: {
     images: 'og-image.png'
